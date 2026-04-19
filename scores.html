@@ -64,10 +64,7 @@
       padding: 1.25rem;
       box-shadow: 0 20px 50px rgba(0,0,0,0.22);
     }
-    .scores {
-      display: grid;
-      gap: 0.75rem;
-    }
+    .scores { display: grid; gap: 0.75rem; }
     .score-row {
       display: flex;
       justify-content: space-between;
@@ -113,48 +110,13 @@
       <section class="panel">
         <h2>Saved Scores</h2>
         <div class="scores">
-          <div class="score-row">
-            <div>
-              <div class="score-name">Snake</div>
-              <div class="score-label">Best food run</div>
-            </div>
-            <div id="snakeScore" class="score-value">0</div>
-          </div>
-          <div class="score-row">
-            <div>
-              <div class="score-name">Breakout</div>
-              <div class="score-label">Best brick score</div>
-            </div>
-            <div id="breakoutScore" class="score-value">0</div>
-          </div>
-          <div class="score-row">
-            <div>
-              <div class="score-name">Pong</div>
-              <div class="score-label">Best winning score</div>
-            </div>
-            <div id="pongScore" class="score-value">0</div>
-          </div>
-          <div class="score-row">
-            <div>
-              <div class="score-name">Minesweeper</div>
-              <div class="score-label">Best medium time</div>
-            </div>
-            <div id="minesweeperScore" class="score-value">—</div>
-          </div>
-          <div class="score-row">
-            <div>
-              <div class="score-name">Jimmy's Big Catch</div>
-              <div class="score-label">Best lake haul</div>
-            </div>
-            <div id="fishingScore" class="score-value">0</div>
-          </div>
-          <div class="score-row">
-            <div>
-              <div class="score-name">Greg's Casino</div>
-              <div class="score-label">Best bankroll</div>
-            </div>
-            <div id="casinoScore" class="score-value">500</div>
-          </div>
+          <div class="score-row"><div><div class="score-name">Snake</div><div class="score-label">Best food run</div></div><div id="snakeScore" class="score-value">0</div></div>
+          <div class="score-row"><div><div class="score-name">Breakout</div><div class="score-label">Best brick score</div></div><div id="breakoutScore" class="score-value">0</div></div>
+          <div class="score-row"><div><div class="score-name">Pong</div><div class="score-label">Best winning score</div></div><div id="pongScore" class="score-value">0</div></div>
+          <div class="score-row"><div><div class="score-name">Minesweeper</div><div class="score-label">Best medium time</div></div><div id="minesweeperScore" class="score-value">—</div></div>
+          <div class="score-row"><div><div class="score-name">Jimmy's Big Catch</div><div class="score-label">Best lake haul</div></div><div id="fishingScore" class="score-value">0</div></div>
+          <div class="score-row"><div><div class="score-name">Greg's Casino</div><div class="score-label">Best bankroll</div></div><div id="casinoScore" class="score-value">500</div></div>
+          <div class="score-row"><div><div class="score-name">Chad's Shooting Gallery</div><div class="score-label">Best shooting score</div></div><div id="galleryScore" class="score-value">0</div></div>
         </div>
         <p class="tiny">These scores are stored in your own browser on this device, not on a server.</p>
       </section>
@@ -162,42 +124,19 @@
       <section class="panel">
         <h2>Arcade Notes</h2>
         <p class="tiny" style="font-size:1rem; line-height:1.7; margin-top:0;">
-          Snake rewards clean pathing and nerves. Breakout rewards angles and recovery. Pong rewards refusing to let the computer get smug. Minesweeper rewards suspicious thinking and not detonating your own confidence. Jimmy's Big Catch rewards timing and a little greed. Greg's Casino rewards doing math while pretending this is a good idea.
+          Snake rewards clean pathing and nerves. Breakout rewards angles and recovery. Pong rewards refusing to let the computer get smug. Minesweeper rewards suspicious thinking and not detonating your own confidence. Jimmy's Big Catch rewards timing and a little greed. Greg's Casino rewards doing math while pretending this is a good idea. Chad's Shooting Gallery rewards fast taps, quick reloads, and a complete disregard for subtlety.
         </p>
       </section>
     </div>
 
     <section class="games">
-      <div class="panel game-card">
-        <h3>Snake</h3>
-        <p>Swipe, tap, or key your way through a faster-and-faster survival run.</p>
-        <div class="actions"><a href="snake.html">Play Snake</a></div>
-      </div>
-      <div class="panel game-card">
-        <h3>Breakout</h3>
-        <p>Break bricks, keep the ball alive, and keep your cool when the angles get weird.</p>
-        <div class="actions"><a href="breakout.html">Play Breakout</a></div>
-      </div>
-      <div class="panel game-card">
-        <h3>Pong</h3>
-        <p>Face the CPU in a clean old-school paddle duel to seven points.</p>
-        <div class="actions"><a href="pong.html">Play Pong</a></div>
-      </div>
-      <div class="panel game-card">
-        <h3>Minesweeper</h3>
-        <p>Reveal safe tiles, flag danger, and try not to discover any mines the hard way.</p>
-        <div class="actions"><a href="minesweeper.html">Play Minesweeper</a></div>
-      </div>
-      <div class="panel game-card">
-        <h3>Jimmy's Big Catch</h3>
-        <p>Cast, hook, and reel before the timer runs out and the fish start mocking you.</p>
-        <div class="actions"><a href="fishing.html">Play Jimmy's Big Catch</a></div>
-      </div>
-      <div class="panel game-card">
-        <h3>Greg's Casino</h3>
-        <p>Deal, hit, stand, and watch your bankroll become a personal character study.</p>
-        <div class="actions"><a href="gregs-casino.html">Play Greg's Casino</a></div>
-      </div>
+      <div class="panel game-card"><h3>Snake</h3><p>Swipe, tap, or key your way through a faster-and-faster survival run.</p><div class="actions"><a href="snake.html">Play Snake</a></div></div>
+      <div class="panel game-card"><h3>Breakout</h3><p>Break bricks, keep the ball alive, and keep your cool when the angles get weird.</p><div class="actions"><a href="breakout.html">Play Breakout</a></div></div>
+      <div class="panel game-card"><h3>Pong</h3><p>Face the CPU in a clean old-school paddle duel to seven points.</p><div class="actions"><a href="pong.html">Play Pong</a></div></div>
+      <div class="panel game-card"><h3>Minesweeper</h3><p>Reveal safe tiles, flag danger, and try not to discover any mines the hard way.</p><div class="actions"><a href="minesweeper.html">Play Minesweeper</a></div></div>
+      <div class="panel game-card"><h3>Jimmy's Big Catch</h3><p>Cast, hook, and reel before the timer runs out and the fish start mocking you.</p><div class="actions"><a href="fishing.html">Play Jimmy's Big Catch</a></div></div>
+      <div class="panel game-card"><h3>Greg's Casino</h3><p>Deal, hit, stand, and watch your bankroll become a personal character study.</p><div class="actions"><a href="gregs-casino.html">Play Greg's Casino</a></div></div>
+      <div class="panel game-card"><h3>Chad's Shooting Gallery</h3><p>Blast targets, dodge bombs, and reload before the gallery turns into pure panic.</p><div class="actions"><a href="chads-shooting-gallery.html">Play Chad's Shooting Gallery</a></div></div>
     </section>
   </div>
 
@@ -210,6 +149,7 @@
       document.getElementById('minesweeperScore').textContent = mine ? `${mine}s` : '—';
       document.getElementById('fishingScore').textContent = localStorage.getItem('fishing-best-score') || '0';
       document.getElementById('casinoScore').textContent = localStorage.getItem('gregs-casino-best-bankroll') || '500';
+      document.getElementById('galleryScore').textContent = localStorage.getItem('chads-gallery-best-score') || '0';
     }
 
     document.getElementById('refresh').addEventListener('click', readScores);
@@ -222,6 +162,7 @@
       localStorage.removeItem('minesweeper-best-hard');
       localStorage.removeItem('fishing-best-score');
       localStorage.removeItem('gregs-casino-best-bankroll');
+      localStorage.removeItem('chads-gallery-best-score');
       readScores();
     });
 
