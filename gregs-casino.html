@@ -155,6 +155,25 @@
       min-height: 1.6rem;
       font-weight: 700;
     }
+    .greg-meter {
+      margin-top: .75rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .greg-pill {
+      display: inline-block;
+      padding: .45rem .8rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      font-weight: 800;
+    }
     .chips {
       display: flex;
       justify-content: center;
@@ -229,6 +248,10 @@
       </div>
 
       <div id="message" class="message">Place a bet and deal a hand.</div>
+      <div class="greg-meter">
+        <span class="greg-pill" id="gregMood">Greg mood: Mildly greasy</span>
+        <span id="gregLine">Greg is sizing you up like you just insulted his carpet.</span>
+      </div>
     </div>
 
     <p class="hint">Goal: get closer to 21 than the dealer without going over. Dealer stands on 17.</p>
@@ -250,6 +273,8 @@
     const dealerHandEl = document.getElementById('dealerHand');
     const playerHandEl = document.getElementById('playerHand');
     const messageEl = document.getElementById('message');
+    const gregMoodEl = document.getElementById('gregMood');
+    const gregLineEl = document.getElementById('gregLine');
     const dealBtn = document.getElementById('deal');
     const hitBtn = document.getElementById('hit');
     const standBtn = document.getElementById('stand');
@@ -268,6 +293,7 @@
     let isMuted = localStorage.getItem(audioKey) === 'true';
     let bestBankroll = Number(localStorage.getItem(bestKey) || 500);
     let audioCtx = null;
+    let gregScore = 0;
 
     bestEl.textContent = bestBankroll;
 
@@ -379,6 +405,72 @@
 
     function setMessage(text) { messageEl.textContent = text; }
 
+    function updateGregPersona(result = 'idle') {
+      const bragLinesLow = [
+        'Greg is acting like he invented cards five minutes ago.',
+        'Greg keeps straightening his collar like that helped the deal.',
+        'Greg has the confidence of a man winning twenty-five dollars.'
+      ];
+      const bragLinesMid = [
+        'Greg is getting loud enough to be banned from his own carpet.',
+        'Greg keeps tapping the table like the casino is named after him.',
+        'Greg is now speaking in the tone of a man who thinks probability is his son.'
+      ];
+      const bragLinesHigh = [
+        'Greg is unbearably smug. This has become a public health issue.',
+        'Greg is doing victory nods after every shuffle like he conquered mathematics.',
+        'Greg now looks at the deck like it personally loves him back.'
+      ];
+      const annoyedLinesLow = [
+        'Greg is annoyed in the specific way cheap sunglasses get annoyed.',
+        'Greg just squinted at you like the cards are somehow your fault.',
+        'Greg is pretending this result is statistically rude.'
+      ];
+      const annoyedLinesMid = [
+        'Greg is visibly irritated and now shuffling with unnecessary attitude.',
+        'Greg has entered the phase where every loss becomes a conspiracy.',
+        'Greg is smiling with all the warmth of a parking ticket.'
+      ];
+      const annoyedLinesHigh = [
+        'Greg is furious now. The man looks one hand away from arguing with the wallpaper.',
+        'Greg is so annoyed he might accuse the deck of union activity.',
+        'Greg has gone fully petty and is dealing like you insulted his bloodline.'
+      ];
+      const neutralLines = [
+        'Greg is sizing you up like you just insulted his carpet.',
+        'Greg looks calm, which only makes him seem more suspicious.',
+        'Greg is in his natural state: slightly greasy and overly confident.'
+      ];
+
+      let mood = 'Greg mood: Mildly greasy';
+      let linePool = neutralLines;
+      if (gregScore >= 4) {
+        mood = 'Greg mood: Disaster-level cocky';
+        linePool = bragLinesHigh;
+      } else if (gregScore >= 2) {
+        mood = 'Greg mood: Extremely smug';
+        linePool = bragLinesMid;
+      } else if (gregScore >= 1) {
+        mood = 'Greg mood: Cocky';
+        linePool = bragLinesLow;
+      } else if (gregScore <= -4) {
+        mood = 'Greg mood: Deeply irritated';
+        linePool = annoyedLinesHigh;
+      } else if (gregScore <= -2) {
+        mood = 'Greg mood: Annoyed';
+        linePool = annoyedLinesMid;
+      } else if (gregScore <= -1) {
+        mood = 'Greg mood: Salty';
+        linePool = annoyedLinesLow;
+      }
+
+      if (result === 'win' && gregScore < 0) linePool = annoyedLinesLow.concat(annoyedLinesMid, annoyedLinesHigh);
+      if (result === 'loss' && gregScore > 0) linePool = bragLinesLow.concat(bragLinesMid, bragLinesHigh);
+
+      gregMoodEl.textContent = mood;
+      gregLineEl.textContent = linePool[Math.floor(Math.random() * linePool.length)];
+    }
+
     function setBet(value) {
       if (roundActive) return;
       currentBet = Math.min(value, bankroll || value);
@@ -399,10 +491,12 @@
       updateStats();
       const playerTotal = handValue(playerHand);
       if (playerTotal === 21) {
-        setMessage('Blackjack. Naturally Greg is furious.');
+        setMessage('Blackjack. Greg already hates this hand personally.');
+        updateGregPersona('win');
         setTimeout(resolveDealer, 500);
       } else {
-        setMessage('Hit or stand? This feels responsible already.');
+        setMessage('Hit or stand? Greg is pretending this table belongs to destiny.');
+        updateGregPersona('idle');
       }
     }
 
@@ -416,14 +510,18 @@
         dealerHidden = false;
         renderHands();
         roundActive = false;
-        setMessage('Bust. Greg takes the chips and the attitude.');
+        gregScore += 1;
+        setMessage('Bust. Greg takes the chips and suddenly develops a personality.');
+        updateGregPersona('loss');
         sLose();
         updateStats();
       } else if (total === 21) {
-        setMessage('21. Time to see if the dealer hates this as much as Greg does.');
+        setMessage('21. Greg is already rehearsing reasons this should not count.');
+        updateGregPersona('win');
         setTimeout(resolveDealer, 400);
       } else {
-        setMessage('Still alive. That is how casinos keep you talking.');
+        setMessage('Still alive. Greg looks disappointed by your continued competence.');
+        updateGregPersona('idle');
       }
     }
 
@@ -442,20 +540,27 @@
       if (dealerTotal > 21 || playerTotal > dealerTotal) {
         bankroll += currentBet * 2;
         wins += 1;
-        setMessage('You win. Greg is pretending this is fine.');
+        gregScore -= 1;
+        setMessage('You win. Greg is acting like the cards have betrayed a sacred trust.');
+        updateGregPersona('win');
         sWin();
       } else if (playerTotal === dealerTotal) {
         bankroll += currentBet;
-        setMessage('Push. Nobody wins, which feels emotionally correct.');
+        setMessage('Push. Greg hates ties because they do not let him monologue properly.');
+        updateGregPersona('idle');
         sPush();
       } else {
-        setMessage('Dealer wins. Greg suddenly believes in house rules again.');
+        gregScore += 1;
+        setMessage('Dealer wins. Greg suddenly remembers how to smirk with his whole face.');
+        updateGregPersona('loss');
         sLose();
       }
 
       if (bankroll <= 0) {
         bankroll = 0;
-        setMessage('Bankroll wiped out. Greg thanks you for your donation. Reset to keep playing.');
+        gregScore += 2;
+        setMessage('Bankroll wiped out. Greg thanks you for your donation with revolting confidence.');
+        updateGregPersona('loss');
       }
       updateStats();
     }
@@ -463,6 +568,7 @@
     function resetBankroll() {
       bankroll = 500;
       wins = 0;
+      gregScore = 0;
       playerHand = [];
       dealerHand = [];
       roundActive = false;
@@ -470,7 +576,8 @@
       deck = makeDeck();
       renderHands();
       updateStats();
-      setMessage('Fresh stack, fresh mistakes.');
+      setMessage('Fresh stack, fresh mistakes. Greg has reset to baseline slickness.');
+      updateGregPersona('idle');
       sUi();
     }
 
@@ -498,6 +605,7 @@
     renderHands();
     setBet(25);
     updateStats();
+    updateGregPersona('idle');
   </script>
 </body>
 </html>
