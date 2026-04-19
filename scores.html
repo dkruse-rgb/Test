@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arcade Hub</title>
+  <style>
+    :root {
+      --bg: #020617;
+      --panel: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.12);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-dark: #001018;
+      --gold: #f59e0b;
+      --green: #22c55e;
+      --red: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(56,189,248,0.12), transparent 35%),
+        linear-gradient(180deg, #020617, #0f172a);
+    }
+    .wrap { width: min(1120px, calc(100% - 2rem)); margin: 0 auto; padding: 1.5rem 0 3rem; }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); }
+    .sub { color: var(--muted); margin: 0.35rem 0 0; }
+    a, button {
+      background: var(--accent);
+      color: var(--accent-dark);
+      border: 0;
+      border-radius: 999px;
+      padding: 0.85rem 1rem;
+      text-decoration: none;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    button.alt, a.alt {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.25rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.22);
+    }
+    .scores {
+      display: grid;
+      gap: 0.75rem;
+    }
+    .score-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+    }
+    .score-name { font-weight: 800; }
+    .score-label { color: var(--muted); font-size: 0.9rem; }
+    .score-value { font-size: 1.3rem; font-weight: 800; }
+    .games {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .game-card h3 { margin-top: 0; margin-bottom: 0.5rem; }
+    .game-card p { color: var(--muted); line-height: 1.6; }
+    .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+    .tiny { color: var(--muted); font-size: 0.92rem; margin-top: 1rem; }
+    @media (max-width: 900px) {
+      .grid, .games { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Arcade Hub</h1>
+        <p class="sub">One place for the games and the local browser high scores.</p>
+      </div>
+      <div class="actions">
+        <a class="alt" href="index.html">Back Home</a>
+        <button id="refresh">Refresh Scores</button>
+        <button id="clear" class="alt">Clear Saved Scores</button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <section class="panel">
+        <h2>Saved Scores</h2>
+        <div class="scores">
+          <div class="score-row">
+            <div>
+              <div class="score-name">Snake</div>
+              <div class="score-label">Best food run</div>
+            </div>
+            <div id="snakeScore" class="score-value">0</div>
+          </div>
+          <div class="score-row">
+            <div>
+              <div class="score-name">Breakout</div>
+              <div class="score-label">Best brick score</div>
+            </div>
+            <div id="breakoutScore" class="score-value">0</div>
+          </div>
+          <div class="score-row">
+            <div>
+              <div class="score-name">Pong</div>
+              <div class="score-label">Best winning score</div>
+            </div>
+            <div id="pongScore" class="score-value">0</div>
+          </div>
+        </div>
+        <p class="tiny">These scores are stored in your own browser on this device, not on a server.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Arcade Notes</h2>
+        <p class="tiny" style="font-size:1rem; line-height:1.7; margin-top:0;">
+          Snake rewards clean pathing and nerves. Breakout rewards angles and recovery. Pong rewards refusing to let the computer get smug. Together they form a deeply scientific study of whether you were planning to be productive today.
+        </p>
+      </section>
+    </div>
+
+    <section class="games">
+      <div class="panel game-card">
+        <h3>Snake</h3>
+        <p>Swipe, tap, or key your way through a faster-and-faster survival run.</p>
+        <div class="actions"><a href="snake.html">Play Snake</a></div>
+      </div>
+      <div class="panel game-card">
+        <h3>Breakout</h3>
+        <p>Break bricks, keep the ball alive, and keep your cool when the angles get weird.</p>
+        <div class="actions"><a href="breakout.html">Play Breakout</a></div>
+      </div>
+      <div class="panel game-card">
+        <h3>Pong</h3>
+        <p>Face the CPU in a clean old-school paddle duel to seven points.</p>
+        <div class="actions"><a href="pong.html">Play Pong</a></div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    function readScores() {
+      document.getElementById('snakeScore').textContent = localStorage.getItem('snake-best-score') || '0';
+      document.getElementById('breakoutScore').textContent = localStorage.getItem('breakout-best-score') || '0';
+      document.getElementById('pongScore').textContent = localStorage.getItem('pong-best-wins') || '0';
+    }
+
+    document.getElementById('refresh').addEventListener('click', readScores);
+    document.getElementById('clear').addEventListener('click', () => {
+      localStorage.removeItem('snake-best-score');
+      localStorage.removeItem('breakout-best-score');
+      localStorage.removeItem('pong-best-wins');
+      readScores();
+    });
+
+    readScores();
+  </script>
+</body>
+</html>
