@@ -82,7 +82,7 @@
     .score-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-top: 1rem; }
     .score-pill { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 16px; padding: 0.85rem; text-align: center; }
     .score-pill strong { display: block; font-size: 1.1rem; margin-bottom: 0.15rem; }
-    .cabinet-grid .preview-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.8rem; margin-top: 1rem; }
+    .cabinet-grid .preview-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0.8rem; margin-top: 1rem; }
     .preview {
       aspect-ratio: 1 / 1; border-radius: 18px; background: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px), #020617;
       background-size: 10% 10%, 10% 10%, auto; position: relative; overflow: hidden;
@@ -92,7 +92,8 @@
     .pong-preview { border: 2px solid rgba(34,197,94,0.55); }
     .mine-preview { border: 2px solid rgba(239,68,68,0.55); }
     .fish-preview { border: 2px solid rgba(14,165,233,0.6); }
-    .snake-seg, .food, .brick, .ball, .paddle, .pong-paddle, .pong-ball, .net, .mine-cell, .poster-piece, .fish-shape, .hook-line, .hook-dot {
+    .casino-preview { border: 2px solid rgba(245,158,11,0.7); }
+    .snake-seg, .food, .brick, .ball, .paddle, .pong-paddle, .pong-ball, .net, .mine-cell, .fish-shape, .hook-line, .hook-dot, .chip-dot, .card-mini {
       position: absolute; border-radius: 8px;
     }
     .snake-seg, .food { width: 18%; height: 18%; }
@@ -112,15 +113,21 @@
     .m1 { left: 12%; top: 12%; } .m2 { left: 38%; top: 12%; background: #0b1220; color: #60a5fa; } .m3 { left: 64%; top: 12%; background: rgba(245,158,11,0.18); } .m4 { left: 12%; top: 38%; background: #0b1220; color: #22c55e; } .m5 { left: 38%; top: 38%; background: rgba(239,68,68,0.18); } .m6 { left: 64%; top: 38%; background: #1e293b; } .m7 { left: 12%; top: 64%; background: #0b1220; } .m8 { left: 38%; top: 64%; background: #1e293b; } .m9 { left: 64%; top: 64%; background: #0b1220; }
     .fish-water { position:absolute; inset:0; background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 22%, #1d4ed8 23%, #1e3a8a 100%); }
     .fish-boat { position:absolute; left:18px; top:22px; width:56px; height:16px; background:#92400e; clip-path: polygon(0 0, 100% 0, 84% 100%, 16% 100%); }
-    .fish-shape { width: 34px; height: 18px; border-radius: 999px 999px 999px 999px / 70% 70% 70% 70%; background: var(--gold); }
+    .fish-shape { width: 34px; height: 18px; border-radius: 999px; background: var(--gold); }
     .fish-shape.small { background:#38bdf8; }
     .fish-shape.medium { background:#22c55e; }
     .fish-shape.big { background:#f59e0b; }
     .hook-line { width:2px; background:#e2e8f0; }
     .hook-dot { width:10px; height:10px; border-radius:999px; background:#f8fafc; }
+    .casino-felt { position:absolute; inset:0; background: radial-gradient(circle at center, #14532d, #0b3b20); }
+    .card-mini { width:28px; height:40px; background:#f8fafc; color:#0f172a; border:1px solid rgba(15,23,42,0.1); padding:4px; font-size:12px; font-weight:900; }
+    .card-mini.red { color:#b91c1c; }
+    .chip-dot { width:26px; height:26px; border-radius:999px; background:#f59e0b; border:2px solid #fde68a; }
+    .chip-dot.red { background:#ef4444; border-color:#fecaca; }
+    .chip-dot.blue { background:#38bdf8; border-color:#bfdbfe; }
     .section { padding: 1rem 0 3rem; }
     .section-intro { max-width: 64ch; margin-bottom: 1.3rem; }
-    .games-grid, .features-grid, .steps, .leaderboard-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
+    .games-grid, .features-grid, .steps, .leaderboard-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; }
     .tile, .feature, .howto, .leader-card {
       padding: 1.2rem; background: var(--panel); border: 1px solid var(--border); border-radius: 22px; box-shadow: 0 16px 40px rgba(0,0,0,0.2);
     }
@@ -141,17 +148,14 @@
       text-transform: uppercase; font-weight: 900; letter-spacing: 0.12em; color: white;
       text-shadow: 0 2px 10px rgba(0,0,0,0.45);
     }
-    .poster-sub {
-      display: block; margin-top: 0.35rem; font-size: 0.78rem; color: rgba(226,232,240,0.86); letter-spacing: 0.08em;
-    }
+    .poster-sub { display: block; margin-top: 0.35rem; font-size: 0.78rem; color: rgba(226,232,240,0.86); letter-spacing: 0.08em; }
     .art-snake { background: radial-gradient(circle at top, rgba(56,189,248,0.22), transparent 35%), linear-gradient(180deg, #041325, #071629 55%, #10231b); }
     .art-breakout { background: radial-gradient(circle at top, rgba(245,158,11,0.2), transparent 35%), linear-gradient(180deg, #261407, #1f1221 55%, #0b1322); }
     .art-pong { background: radial-gradient(circle at top, rgba(34,197,94,0.18), transparent 35%), linear-gradient(180deg, #081724, #0d1f18 55%, #0a1423); }
     .art-mine { background: radial-gradient(circle at top, rgba(239,68,68,0.18), transparent 35%), linear-gradient(180deg, #201018, #151d2f 55%, #111827); }
     .art-fish { background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 22%, #1d4ed8 23%, #1e3a8a 100%); }
-    .snake-trail, .snake-food, .break-brick, .break-ball, .break-paddle, .pong-line, .pong-dot, .pong-bar, .mine-square {
-      position: absolute;
-    }
+    .art-casino { background: radial-gradient(circle at top, rgba(245,158,11,0.18), transparent 35%), linear-gradient(180deg, #1a1204, #14532d 40%, #0b3b20 100%); }
+    .snake-trail, .snake-food, .break-brick, .break-ball, .break-paddle, .pong-line, .pong-dot, .pong-bar, .mine-square { position: absolute; }
     .snake-trail { width: 44px; height: 44px; border-radius: 12px; }
     .snake-trail.head { background: var(--accent); box-shadow: 0 0 18px rgba(56,189,248,0.35); }
     .snake-trail.body { background: var(--green); }
@@ -214,6 +218,7 @@
           <a href="pong.html">Pong</a>
           <a href="minesweeper.html">Minesweeper</a>
           <a href="fishing.html">Jimmy's Big Catch</a>
+          <a href="gregs-casino.html">Greg's Casino</a>
         </div>
       </nav>
     </header>
@@ -223,7 +228,7 @@
         <div class="marquee">Insert Coin Energy</div>
         <h1 class="arcade-title">TEST <span>ARCADE</span></h1>
         <p class="subtitle">
-          Five browser games, shared sound controls, local score tracking, and just enough retro nonsense to feel like a tiny neon game cabinet living inside your repo.
+          Six browser games, shared sound controls, local score tracking, and just enough retro nonsense to feel like a tiny neon game cabinet living inside your repo.
         </p>
         <div class="press-start">Press Start*</div>
         <p class="note">*No coin required. Reckless time management still applies.</p>
@@ -233,7 +238,7 @@
             <div>
               <h2>Choose your cabinet</h2>
               <p>
-                Snake for panic and pathing. Breakout for ricochets and brick carnage. Pong for a personal feud with a paddle bot. Minesweeper for calm suspicion. Jimmy's Big Catch for laid-back score chasing with a sneaky timer.
+                Snake for panic and pathing. Breakout for ricochets and brick carnage. Pong for a personal feud with a paddle bot. Minesweeper for calm suspicion. Jimmy's Big Catch for laid-back score chasing. Greg's Casino for blackjack and instantly questionable judgment.
               </p>
             </div>
             <div>
@@ -243,10 +248,11 @@
                 <a class="btn btn-secondary" href="pong.html">Play Pong</a>
                 <a class="btn btn-secondary" href="minesweeper.html">Play Minesweeper</a>
                 <a class="btn btn-secondary" href="fishing.html">Play Jimmy's Big Catch</a>
+                <a class="btn btn-secondary" href="gregs-casino.html">Play Greg's Casino</a>
                 <a class="btn btn-secondary" href="scores.html">Open Hub</a>
               </div>
               <div class="score-strip">
-                <div class="score-pill"><strong>5</strong><span>Games</span></div>
+                <div class="score-pill"><strong>6</strong><span>Games</span></div>
                 <div class="score-pill"><strong>Sound</strong><span>Mute toggle</span></div>
                 <div class="score-pill"><strong>Local</strong><span>Saved scores</span></div>
                 <div class="score-pill"><strong>Mobile</strong><span>Touch controls</span></div>
@@ -256,13 +262,14 @@
 
           <section class="panel panel-pad cabinet-grid">
             <h2>Arcade lineup</h2>
-            <p class="section-intro">A tiny roster of classics and one suspiciously chill fishing cabinet.</p>
+            <p class="section-intro">A tiny roster of classics, one fishing cabinet, and one establishment that absolutely should be inspected.</p>
             <div class="preview-grid" aria-hidden="true">
               <div class="preview snake-preview"><div class="snake-seg snake-head seg1"></div><div class="snake-seg seg2"></div><div class="snake-seg seg3"></div><div class="food apple"></div></div>
               <div class="preview breakout-preview"><div class="brick b1"></div><div class="brick b2"></div><div class="brick b3"></div><div class="brick b4"></div><div class="brick b5"></div><div class="paddle"></div><div class="ball"></div></div>
               <div class="preview pong-preview"><div class="net"></div><div class="pong-paddle pong-left"></div><div class="pong-paddle pong-right"></div><div class="pong-ball"></div></div>
               <div class="preview mine-preview"><div class="mine-cell m1"></div><div class="mine-cell m2">1</div><div class="mine-cell m3">🚩</div><div class="mine-cell m4">2</div><div class="mine-cell m5">💣</div><div class="mine-cell m6"></div><div class="mine-cell m7"></div><div class="mine-cell m8"></div><div class="mine-cell m9"></div></div>
               <div class="preview fish-preview"><div class="fish-water"></div><div class="fish-boat"></div><div class="hook-line" style="left:30px; top:38px; height:54px;"></div><div class="hook-dot" style="left:26px; top:88px;"></div><div class="fish-shape small" style="left:56px; top:68px;"></div><div class="fish-shape medium" style="left:30px; top:112px;"></div></div>
+              <div class="preview casino-preview"><div class="casino-felt"></div><div class="card-mini" style="left:18px; top:22px;">A♠</div><div class="card-mini red" style="left:46px; top:34px;">K♥</div><div class="chip-dot" style="left:22px; top:86px;"></div><div class="chip-dot red" style="left:54px; top:96px;"></div><div class="chip-dot blue" style="left:86px; top:86px;"></div></div>
             </div>
           </section>
         </div>
@@ -314,6 +321,10 @@
             <div class="cabinet-art art-fish"><div class="fish-boat"></div><div class="hook-line" style="left:54px; top:26px; height:84px;"></div><div class="hook-dot" style="left:50px; top:106px;"></div><div class="fish-shape small" style="left:112px; top:74px;"></div><div class="fish-shape medium" style="left:70px; top:124px;"></div><div class="fish-shape big" style="left:130px; top:138px; width:44px; height:22px;"></div><div class="poster-title">Jimmy's Big Catch<span class="poster-sub">Cast • Hook • Reel</span></div></div>
             <h3>Jimmy's Big Catch</h3><p>Cast your line, hook fish, and reel them in before the timer runs out.</p><div class="button-row"><a class="btn btn-primary" href="fishing.html">Play Jimmy's Big Catch</a></div>
           </div>
+          <div class="tile">
+            <div class="cabinet-art art-casino"><div class="casino-felt"></div><div class="card-mini" style="left:18px; top:22px;">A♠</div><div class="card-mini red" style="left:46px; top:34px;">K♥</div><div class="chip-dot" style="left:22px; top:86px;"></div><div class="chip-dot red" style="left:54px; top:96px;"></div><div class="chip-dot blue" style="left:86px; top:86px;"></div><div class="poster-title">Greg's Casino<span class="poster-sub">Deal • Hit • Stand</span></div></div>
+            <h3>Greg's Casino</h3><p>Blackjack, bankroll swings, and the exact kind of confidence that gets people in trouble.</p><div class="button-row"><a class="btn btn-primary" href="gregs-casino.html">Play Greg's Casino</a></div>
+          </div>
         </div>
       </section>
 
@@ -326,6 +337,7 @@
           <div class="feature"><h3>Local score memory</h3><p>Your browser keeps your best runs and best times so there is always a rematch waiting.</p></div>
           <div class="feature"><h3>Arcade hub page</h3><p>The hub keeps the whole thing tied together like a proper little game collection.</p></div>
           <div class="feature"><h3>More variety now</h3><p>Not every cabinet has to be pure panic. Sometimes Jimmy's Big Catch is the problem.</p></div>
+          <div class="feature"><h3>Casino energy</h3><p>Greg's Casino adds that important layer of fake confidence and completely real regret.</p></div>
         </div>
       </section>
 
@@ -333,17 +345,18 @@
         <h2>How to play</h2>
         <p class="section-intro">Very technical stuff here: choose a game, try not to embarrass yourself immediately, then hit restart like it owes you money.</p>
         <div class="steps">
-          <div class="howto"><span class="step-number">1</span><h3>Pick a vibe</h3><p>Fast reflexes, angles, paddle duels, logic under pressure, or suspiciously relaxing fishing.</p></div>
+          <div class="howto"><span class="step-number">1</span><h3>Pick a vibe</h3><p>Fast reflexes, angles, paddle duels, logic under pressure, fishing, or cards and poor judgment.</p></div>
           <div class="howto"><span class="step-number">2</span><h3>Start quick</h3><p>Every game is simple to jump into, so you can be losing immediately with very little delay.</p></div>
           <div class="howto"><span class="step-number">3</span><h3>Check your score</h3><p>Use the hub to see local bests and decide which cabinet deserves your next revenge run.</p></div>
           <div class="howto"><span class="step-number">4</span><h3>Repeat irresponsibly</h3><p>This is where one round becomes twelve and the laws of time stop mattering.</p></div>
           <div class="howto"><span class="step-number">5</span><h3>Catch something shiny</h3><p>Jimmy's Big Catch looks calm right up until the timer starts getting ideas.</p></div>
+          <div class="howto"><span class="step-number">6</span><h3>Trust Greg at your peril</h3><p>The dealer smile in Greg's Casino is entirely theoretical, which somehow makes it worse.</p></div>
         </div>
       </section>
     </main>
 
     <footer>
-      <p>Test Arcade • Five games, shared sound controls, local score hub, retro title-screen nonsense, cabinet art, and a champion board</p>
+      <p>Test Arcade • Six games, shared sound controls, local score hub, retro title-screen nonsense, cabinet art, and a champion board</p>
     </footer>
   </div>
 
@@ -354,7 +367,8 @@
         { name: 'Breakout', raw: localStorage.getItem('breakout-best-score'), type: 'score', label: 'best score', href: 'breakout.html' },
         { name: 'Pong', raw: localStorage.getItem('pong-best-wins'), type: 'score', label: 'best wins', href: 'pong.html' },
         { name: 'Minesweeper', raw: localStorage.getItem('minesweeper-best-medium'), type: 'time', label: 'best medium time', href: 'minesweeper.html' },
-        { name: "Jimmy's Big Catch", raw: localStorage.getItem('fishing-best-score'), type: 'score', label: 'best score', href: 'fishing.html' }
+        { name: "Jimmy's Big Catch", raw: localStorage.getItem('fishing-best-score'), type: 'score', label: 'best score', href: 'fishing.html' },
+        { name: "Greg's Casino", raw: localStorage.getItem('gregs-casino-best-bankroll'), type: 'score', label: 'best bankroll', href: 'gregs-casino.html' }
       ];
 
       const parsed = entries.map(entry => ({ ...entry, value: entry.raw === null ? null : Number(entry.raw) })).filter(entry => entry.value !== null && !Number.isNaN(entry.value));
