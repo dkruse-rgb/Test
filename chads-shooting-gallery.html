@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chad's Shooting Gallery</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.12);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-dark: #001018;
+      --good: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, rgba(56,189,248,0.16), transparent 35%), linear-gradient(180deg, #020617, #0f172a);
+    }
+    .wrap {
+      width: min(96vw, 760px);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.25rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      text-align: center;
+    }
+    h1 { margin: 0 0 .35rem; font-size: clamp(2rem, 5vw, 2.8rem); }
+    .subtext { margin: 0 0 1rem; color: var(--muted); }
+    .topbar {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: .75rem;
+      margin: 1rem 0;
+    }
+    .stat {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: .8rem;
+    }
+    .stat-label { display:block; color: var(--muted); font-size: .8rem; margin-bottom: .25rem; text-transform: uppercase; letter-spacing: .08em; }
+    .stat-value { font-size: 1.1rem; font-weight: 800; }
+    .action-row, .control-row {
+      display: flex;
+      justify-content: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    a, button {
+      background: var(--accent);
+      color: var(--accent-dark);
+      border: 0;
+      border-radius: 999px;
+      padding: .85rem 1rem;
+      text-decoration: none;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
+      font-family: inherit;
+    }
+    a:hover, button:hover { transform: translateY(-1px); opacity: .96; }
+    .secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .board-wrap { position: relative; width: min(100%, 680px); margin: 0 auto; }
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #040b15;
+      border: 2px solid var(--accent);
+      border-radius: 18px;
+      touch-action: none;
+    }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2,6,23,.74);
+      border-radius: 18px;
+      padding: 1rem;
+    }
+    .overlay.hidden { opacity: 0; pointer-events: none; }
+    .overlay-card { max-width: 340px; }
+    .overlay h2 { margin: 0 0 .5rem; font-size: 1.8rem; }
+    .overlay p { color: var(--muted); line-height: 1.55; }
+    .hint { color: var(--muted); margin-top: 1rem; line-height: 1.6; }
+    @media (max-width: 680px) { .topbar { grid-template-columns: repeat(2, 1fr); } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Chad's Shooting Gallery</h1>
+    <p class="subtext">A chunky arcade shooter with targets, ammo panic, and exactly zero subtlety.</p>
+
+    <div class="topbar">
+      <div class="stat"><span class="stat-label">Score</span><span id="score" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label">Best</span><span id="best" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label">Round</span><span id="round" class="stat-value">1</span></div>
+      <div class="stat"><span class="stat-label">Ammo</span><span id="ammo" class="stat-value">6</span></div>
+      <div class="stat"><span class="stat-label">Time</span><span id="timer" class="stat-value">45</span></div>
+    </div>
+
+    <div class="action-row">
+      <a class="secondary" href="index.html">Back Home</a>
+      <button id="mute" class="secondary">Sound: On</button>
+      <button id="pause" class="secondary">Pause</button>
+      <button id="reload">Reload</button>
+      <button id="restart">Restart</button>
+    </div>
+
+    <div class="board-wrap">
+      <canvas id="game" width="680" height="760"></canvas>
+      <div id="overlay" class="overlay">
+        <div class="overlay-card">
+          <h2 id="overlayTitle">Ready to shoot?</h2>
+          <p id="overlayText">Tap targets to blast them. Reload when your chamber is empty. Red targets are worth more, tiny blue targets are harder to hit, and bombs are bad news.</p>
+          <button id="overlayButton">Start Round</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-row">
+      <button id="shootBtn">Shoot</button>
+      <button id="reloadBtn" class="secondary">Reload</button>
+    </div>
+
+    <p class="hint">Desktop: click targets to shoot. Space also fires at the crosshair. R reloads. Mobile: tap targets directly.</p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const bestEl = document.getElementById('best');
+    const roundEl = document.getElementById('round');
+    const ammoEl = document.getElementById('ammo');
+    const timerEl = document.getElementById('timer');
+    const muteBtn = document.getElementById('mute');
+    const pauseBtn = document.getElementById('pause');
+    const reloadBtn = document.getElementById('reload');
+    const restartBtn = document.getElementById('restart');
+    const shootBtn = document.getElementById('shootBtn');
+    const reloadBtn2 = document.getElementById('reloadBtn');
+    const overlay = document.getElementById('overlay');
+    const overlayTitle = document.getElementById('overlayTitle');
+    const overlayText = document.getElementById('overlayText');
+    const overlayButton = document.getElementById('overlayButton');
+
+    const audioKey = 'arcade-muted';
+    const bestKey = 'chads-gallery-best-score';
+    let isMuted = localStorage.getItem(audioKey) === 'true';
+    let bestScore = Number(localStorage.getItem(bestKey) || 0);
+    let audioCtx = null;
+    bestEl.textContent = bestScore;
+
+    let score = 0;
+    let round = 1;
+    let ammo = 6;
+    let timeLeft = 45;
+    let running = false;
+    let paused = false;
+    let gameLoop = null;
+    let timerLoop = null;
+    let targets = [];
+    let crosshair = { x: canvas.width / 2, y: canvas.height / 2 };
+    let flash = 0;
+
+    function ensureAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    function tone(freq, duration = 0.05, type = 'square', volume = 0.04) {
+      if (isMuted) return;
+      ensureAudio();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.value = volume;
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime + duration);
+    }
+    function sShoot() { tone(240, 0.03, 'square', 0.04); }
+    function sHit() { tone(720, 0.05, 'triangle', 0.03); }
+    function sReload() { tone(420, 0.05, 'square', 0.025); setTimeout(() => tone(520, 0.05, 'square', 0.02), 40); }
+    function sBad() { tone(150, 0.16, 'sawtooth', 0.05); }
+    function sUi() { tone(480, 0.04, 'square', 0.025); }
+    function refreshMute() { muteBtn.textContent = `Sound: ${isMuted ? 'Off' : 'On'}`; }
+
+    function setOverlay(title, text, buttonText) {
+      overlayTitle.textContent = title;
+      overlayText.textContent = text;
+      overlayButton.textContent = buttonText;
+      overlay.classList.remove('hidden');
+    }
+    function hideOverlay() { overlay.classList.add('hidden'); }
+
+    function randomTarget() {
+      const roll = Math.random();
+      let type = 'normal';
+      if (roll < 0.14) type = 'bomb';
+      else if (roll < 0.34) type = 'fast';
+      else if (roll < 0.52) type = 'bonus';
+      const defs = {
+        normal: { radius: 34, color: '#22c55e', points: 10, speed: 1.4 + round * 0.15 },
+        fast: { radius: 22, color: '#38bdf8', points: 20, speed: 2.2 + round * 0.18 },
+        bonus: { radius: 28, color: '#ef4444', points: 30, speed: 1.8 + round * 0.16 },
+        bomb: { radius: 26, color: '#f59e0b', points: -20, speed: 1.7 + round * 0.14 }
+      }[type];
+      const fromLeft = Math.random() > 0.5;
+      return {
+        ...defs,
+        type,
+        x: fromLeft ? -80 : canvas.width + 80,
+        y: 150 + Math.random() * 500,
+        dx: (fromLeft ? 1 : -1) * defs.speed,
+        wobble: Math.random() * Math.PI * 2,
+        alive: true,
+        pop: 0
+      };
+    }
+
+    function populateTargets() {
+      targets = [];
+      const count = Math.min(10, 5 + round);
+      for (let i = 0; i < count; i++) targets.push(randomTarget());
+    }
+
+    function updateHud() {
+      scoreEl.textContent = score;
+      roundEl.textContent = round;
+      ammoEl.textContent = ammo;
+      timerEl.textContent = timeLeft;
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem(bestKey, String(bestScore));
+        bestEl.textContent = bestScore;
+      }
+    }
+
+    function resetGame(showOverlay = true) {
+      score = 0;
+      round = 1;
+      ammo = 6;
+      timeLeft = 45;
+      running = false;
+      paused = false;
+      pauseBtn.textContent = 'Pause';
+      populateTargets();
+      stopLoops();
+      updateHud();
+      draw();
+      if (showOverlay) setOverlay('Ready to shoot?', 'Tap targets to blast them. Reload when your chamber is empty. Red targets are worth more, tiny blue targets are harder to hit, and bombs are bad news.', 'Start Round');
+      else hideOverlay();
+    }
+
+    function stopLoops() {
+      if (gameLoop) cancelAnimationFrame(gameLoop);
+      if (timerLoop) clearInterval(timerLoop);
+      gameLoop = null;
+      timerLoop = null;
+    }
+
+    function startGame() {
+      if (running && !paused) return;
+      running = true;
+      paused = false;
+      pauseBtn.textContent = 'Pause';
+      hideOverlay();
+      sUi();
+      if (!timerLoop) {
+        timerLoop = setInterval(() => {
+          if (!running || paused) return;
+          timeLeft -= 1;
+          if (timeLeft <= 0) {
+            timeLeft = 0;
+            endGame();
+          }
+          updateHud();
+        }, 1000);
+      }
+      loop();
+    }
+
+    function endGame() {
+      running = false;
+      paused = false;
+      stopLoops();
+      updateHud();
+      sBad();
+      setOverlay('Round over', `You finished with ${score} points. ${score >= bestScore && score > 0 ? 'That is your best so far.' : 'Chad is pretending he expected more.'}`, 'Play Again');
+    }
+
+    function nextRound() {
+      round += 1;
+      ammo = 6;
+      timeLeft += 8;
+      populateTargets();
+      updateHud();
+      setOverlay(`Round ${round}`, 'More targets, more nonsense, and somehow even less dignity.', 'Continue');
+      running = false;
+      paused = false;
+      stopLoops();
+    }
+
+    function togglePause() {
+      if (!running && !paused) return;
+      paused = !paused;
+      pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+      sUi();
+      if (paused) setOverlay('Paused', 'The gallery has agreed to stop moving for a second.', 'Resume');
+      else { hideOverlay(); loop(); }
+    }
+
+    function reload() {
+      if (!running || paused || ammo === 6) return;
+      ammo = 6;
+      updateHud();
+      sReload();
+    }
+
+    function shootAt(x, y) {
+      if (!running || paused) return;
+      crosshair.x = x;
+      crosshair.y = y;
+      if (ammo <= 0) { sBad(); return; }
+      ammo -= 1;
+      flash = 4;
+      sShoot();
+      let hitAnything = false;
+      targets.forEach(t => {
+        if (!t.alive) return;
+        const dist = Math.hypot(t.x - x, t.y - y);
+        if (dist <= t.radius) {
+          hitAnything = true;
+          t.alive = false;
+          t.pop = 10;
+          score += t.points;
+          if (t.type === 'bomb') sBad(); else sHit();
+        }
+      });
+      if (!hitAnything && ammo === 0) sBad();
+      updateHud();
+      if (targets.every(t => !t.alive || t.pop > 0)) nextRound();
+    }
+
+    function drawBackground() {
+      const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      sky.addColorStop(0, '#0b1220');
+      sky.addColorStop(0.55, '#111827');
+      sky.addColorStop(1, '#1f2937');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#334155';
+      for (let i = 0; i < 5; i++) ctx.fillRect(0, 120 + i * 110, canvas.width, 2);
+      ctx.fillStyle = '#3f2d1f';
+      ctx.fillRect(0, canvas.height - 90, canvas.width, 90);
+    }
+
+    function drawTarget(t) {
+      if (t.pop > 0) {
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, t.radius + (12 - t.pop), 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.lineWidth = 4;
+        ctx.stroke();
+        return;
+      }
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, t.radius, 0, Math.PI * 2);
+      ctx.fillStyle = t.color;
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, t.radius * 0.58, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, t.radius * 0.2, 0, Math.PI * 2);
+      ctx.fillStyle = '#f8fafc';
+      ctx.fill();
+      if (t.type === 'bomb') {
+        ctx.fillStyle = '#111827';
+        ctx.font = `bold ${Math.max(16, t.radius)}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('!', t.x, t.y + 1);
+      }
+    }
+
+    function drawCrosshair() {
+      ctx.strokeStyle = flash > 0 ? '#f8fafc' : 'rgba(255,255,255,0.7)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(crosshair.x, crosshair.y, 22, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(crosshair.x - 30, crosshair.y);
+      ctx.lineTo(crosshair.x - 10, crosshair.y);
+      ctx.moveTo(crosshair.x + 10, crosshair.y);
+      ctx.lineTo(crosshair.x + 30, crosshair.y);
+      ctx.moveTo(crosshair.x, crosshair.y - 30);
+      ctx.lineTo(crosshair.x, crosshair.y - 10);
+      ctx.moveTo(crosshair.x, crosshair.y + 10);
+      ctx.lineTo(crosshair.x, crosshair.y + 30);
+      ctx.stroke();
+    }
+
+    function drawAmmo() {
+      for (let i = 0; i < 6; i++) {
+        ctx.fillStyle = i < ammo ? '#f59e0b' : 'rgba(255,255,255,0.15)';
+        ctx.fillRect(20 + i * 18, canvas.height - 42, 10, 24);
+      }
+    }
+
+    function draw() {
+      drawBackground();
+      targets.forEach(drawTarget);
+      drawCrosshair();
+      drawAmmo();
+      ctx.fillStyle = '#e2e8f0';
+      ctx.font = 'bold 18px Arial';
+      ctx.textAlign = 'left';
+      ctx.fillText(`Round ${round}`, 18, 34);
+    }
+
+    function loop() {
+      if (!running || paused) return;
+      targets.forEach(t => {
+        if (t.pop > 0) { t.pop -= 1; return; }
+        if (!t.alive) return;
+        t.x += t.dx;
+        t.y += Math.sin((Date.now() / 250) + t.wobble) * 0.9;
+        if (t.x < -90 || t.x > canvas.width + 90) Object.assign(t, randomTarget());
+      });
+      if (flash > 0) flash -= 1;
+      draw();
+      gameLoop = requestAnimationFrame(loop);
+    }
+
+    canvas.addEventListener('mousemove', e => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      crosshair.x = (e.clientX - rect.left) * scaleX;
+      crosshair.y = (e.clientY - rect.top) * scaleY;
+    });
+    canvas.addEventListener('click', e => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      shootAt((e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY);
+    });
+    canvas.addEventListener('touchstart', e => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const x = (e.touches[0].clientX - rect.left) * scaleX;
+      const y = (e.touches[0].clientY - rect.top) * scaleY;
+      shootAt(x, y);
+    }, { passive: true });
+
+    document.addEventListener('keydown', e => {
+      const key = e.key.toLowerCase();
+      if (key === ' ') { e.preventDefault(); shootAt(crosshair.x, crosshair.y); }
+      else if (key === 'r') reload();
+    });
+
+    muteBtn.addEventListener('click', () => {
+      isMuted = !isMuted;
+      localStorage.setItem(audioKey, String(isMuted));
+      refreshMute();
+      if (!isMuted) sUi();
+    });
+    pauseBtn.addEventListener('click', togglePause);
+    reloadBtn.addEventListener('click', reload);
+    reloadBtn2.addEventListener('click', reload);
+    restartBtn.addEventListener('click', () => { sUi(); resetGame(false); startGame(); });
+    shootBtn.addEventListener('click', () => shootAt(crosshair.x, crosshair.y));
+    overlayButton.addEventListener('click', () => {
+      if (timeLeft <= 0) resetGame(false);
+      startGame();
+    });
+
+    refreshMute();
+    updateHud();
+    resetGame(true);
+  </script>
+</body>
+</html>
