@@ -222,7 +222,7 @@
       <button id="right" aria-label="Move right">→</button>
     </div>
 
-    <p class="hint">Food makes you longer. Each few points makes the game faster.</p>
+    <p class="hint">Food makes you longer. The game still speeds up, just less aggressively now.</p>
   </div>
 
   <script>
@@ -240,8 +240,8 @@
 
     const gridSize = 20;
     const tileCount = canvas.width / gridSize;
-    const baseTick = 145;
-    const minTick = 70;
+    const baseTick = 190;
+    const minTick = 110;
 
     let snake, dx, dy, food, score, gameOver, isPaused, hasStarted, loopId, currentTick;
     let touchStartX = 0;
@@ -350,7 +350,7 @@
     }
 
     function maybeIncreaseSpeed() {
-      const nextTick = Math.max(minTick, baseTick - score * 4);
+      const nextTick = Math.max(minTick, baseTick - score * 3);
       if (nextTick !== currentTick) {
         currentTick = nextTick;
         startLoop();
