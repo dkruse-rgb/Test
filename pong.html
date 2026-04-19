@@ -32,14 +32,18 @@
       <div id="overlay" class="overlay"><div class="overlay-card"><h2 id="overlay-title">Ready?</h2><p id="overlay-text">Move your paddle up and down. Beat the CPU to 7 and enjoy a deeply unnecessary sense of accomplishment.</p><button id="overlay-button">Start Game</button></div></div>
     </div>
     <div class="touch-row"><button id="up">↑</button><button id="down">↓</button></div>
-    <div class="announcer"><strong id="pongMood">Commentator booth:</strong><span id="pongLine">A classic contest begins: one human, one machine, zero excuses.</span></div>
+    <div class="announcer" id="pongBox"><strong id="pongMood">Commentator booth:</strong><span id="pongLine">A classic contest begins: one human, one machine, zero excuses.</span></div>
     <p class="hint">Desktop: mouse or W/S or arrow keys. Mobile: drag on the board or use the arrows.</p>
   </div>
   <script>
-    const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),playerScoreEl=document.getElementById('playerScore'),cpuScoreEl=document.getElementById('cpuScore'),bestEl=document.getElementById('best'),pauseBtn=document.getElementById('pause'),restartBtn=document.getElementById('restart'),muteBtn=document.getElementById('mute'),overlay=document.getElementById('overlay'),overlayTitle=document.getElementById('overlay-title'),overlayText=document.getElementById('overlay-text'),overlayButton=document.getElementById('overlay-button'),pongMoodEl=document.getElementById('pongMood'),pongLineEl=document.getElementById('pongLine');
-    const WIN_SCORE=7, bestKey='pong-best-wins', audioKey='arcade-muted';
+    const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),playerScoreEl=document.getElementById('playerScore'),cpuScoreEl=document.getElementById('cpuScore'),bestEl=document.getElementById('best'),pauseBtn=document.getElementById('pause'),restartBtn=document.getElementById('restart'),muteBtn=document.getElementById('mute'),overlay=document.getElementById('overlay'),overlayTitle=document.getElementById('overlay-title'),overlayText=document.getElementById('overlay-text'),overlayButton=document.getElementById('overlay-button'),pongBox=document.getElementById('pongBox'),pongMoodEl=document.getElementById('pongMood'),pongLineEl=document.getElementById('pongLine');
+    const WIN_SCORE=7, bestKey='pong-best-wins', audioKey='arcade-muted', PERSONALITY_KEY='arcade-personality-mode';
     const pongLines={start:['A classic contest begins: one human, one machine, zero excuses.','Welcome back to the cleanest rivalry in the building.','Paddles ready. The booth expects drama and poor emotional regulation.'],player:['Point to the human! The crowd is mostly impressed.','A lovely bit of work there. The CPU looked briefly mortal.','Score for you. The machine will remember this with pettiness.'],cpu:['Point to the CPU. It is trying to make eye contact about it.','The robot answers back. This match has teeth now.','CPU scores. An irritatingly clinical finish.'],rally:['Outstanding rally. Both sides are becoming unreasonable.','The ball is moving like it has rent due.','This is old-school chaos at a very professional speed.'],win:['Victory for the human! Somewhere, a smug processor just dimmed a little.','You take the match! The booth is losing composure in your favor.','Match point complete. The machine has been publicly inconvenienced.'],lose:['CPU wins the match. It will be unbearable about this.','The machine takes it. A rematch is now morally necessary.','Final point to the CPU. Frankly, that feels temporary.'],pause:['We pause for strategy, hydration, or emotional recovery.','Timeout in the booth. The paddles are collecting themselves.']};
-    function pick(arr){return arr[Math.floor(Math.random()*arr.length)]} function setPong(line,mood='Commentator booth:'){pongMoodEl.textContent=mood; pongLineEl.textContent=line}
+    function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+    function getPersonalityMode(){return localStorage.getItem(PERSONALITY_KEY)||'extra'}
+    function applyPersonalityVisibility(){pongBox.style.display=getPersonalityMode()==='off'?'none':'block'}
+    function softenLine(line){const short=line.split('. ')[0]; return short.endsWith('.')?short:short+'.'}
+    function setPong(line,mood='Commentator booth:'){const mode=getPersonalityMode(); applyPersonalityVisibility(); if(mode==='off') return; pongMoodEl.textContent=mode==='standard'?'Commentator note:':mood; pongLineEl.textContent=mode==='standard'?softenLine(line):line}
     let bestWins=Number(localStorage.getItem(bestKey)||0), isMuted=localStorage.getItem(audioKey)==='true', audioCtx=null; bestEl.textContent=bestWins;
     const player={x:22,y:260,w:14,h:110,speed:7,dy:0}, cpu={x:504,y:260,w:14,h:110,speed:4.4}, ball={x:270,y:320,r:10,dx:5,dy:3,baseSpeed:5};
     let playerScore=0,cpuScore=0,running=false,paused=false,animationId=null,touchUpHeld=false,touchDownHeld=false, rallyCount=0;
@@ -50,7 +54,7 @@
     function updateBest(){if(playerScore>bestWins){bestWins=playerScore; localStorage.setItem(bestKey,String(bestWins)); bestEl.textContent=bestWins}}
     function resetBall(direction=1){ball.x=canvas.width/2; ball.y=canvas.height/2; ball.dx=direction*ball.baseSpeed; ball.dy=(Math.random()*4-2)||2; rallyCount=0}
     function resetPositions(){player.y=(canvas.height-player.h)/2; cpu.y=(canvas.height-cpu.h)/2; player.dy=0}
-    function resetGame(showOverlay=true){playerScore=0; cpuScore=0; playerScoreEl.textContent=playerScore; cpuScoreEl.textContent=cpuScore; paused=false; running=false; pauseBtn.textContent='Pause'; resetPositions(); resetBall(Math.random()>0.5?1:-1); drawBoard(); setPong(pick(pongLines.start)); if(animationId) cancelAnimationFrame(animationId); if(showOverlay) setOverlay('Ready?','First to 7 wins. The CPU is beatable, but it is not exactly polite about it.','Start Game'); else hideOverlay()}
+    function resetGame(showOverlay=true){playerScore=0; cpuScore=0; playerScoreEl.textContent=playerScore; cpuScoreEl.textContent=cpuScore; paused=false; running=false; pauseBtn.textContent='Pause'; resetPositions(); resetBall(Math.random()>0.5?1:-1); drawBoard(); setPong(pick(pongLines.start)); if(showOverlay) setOverlay('Ready?','First to 7 wins. The CPU is beatable, but it is not exactly polite about it.','Start Game'); else hideOverlay()}
     function drawNet(){ctx.fillStyle='rgba(255,255,255,0.18)'; for(let y=12;y<canvas.height;y+=28) ctx.fillRect(canvas.width/2-2,y,4,16)}
     function drawBoard(){ctx.fillStyle='#020617'; ctx.fillRect(0,0,canvas.width,canvas.height); drawNet(); ctx.fillStyle='#38bdf8'; ctx.fillRect(player.x,player.y,player.w,player.h); ctx.fillStyle='#22c55e'; ctx.fillRect(cpu.x,cpu.y,cpu.w,cpu.h); ctx.beginPath(); ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2); ctx.fillStyle='#e2e8f0'; ctx.fill(); ctx.closePath()}
     function clampPaddles(){player.y=Math.max(0,Math.min(canvas.height-player.h,player.y)); cpu.y=Math.max(0,Math.min(canvas.height-cpu.h,cpu.y))}
@@ -68,7 +72,8 @@
     function setHeld(dir,held){if(dir==='up') touchUpHeld=held; if(dir==='down') touchDownHeld=held}
     holdButton(document.getElementById('up'),setHeld,'up'); holdButton(document.getElementById('down'),setHeld,'down');
     pauseBtn.addEventListener('click',togglePause); restartBtn.addEventListener('click',()=>{sUi(); resetGame(false); startGame()}); muteBtn.addEventListener('click',()=>{isMuted=!isMuted; localStorage.setItem(audioKey,String(isMuted)); refreshMuteUi(); if(!isMuted) sUi()}); overlayButton.addEventListener('click',()=>{if(!running||paused) startGame()});
-    refreshMuteUi(); drawBoard(); resetGame(true);
+    window.addEventListener('focus',applyPersonalityVisibility);
+    refreshMuteUi(); applyPersonalityVisibility(); drawBoard(); resetGame(true);
   </script>
 </body>
 </html>
