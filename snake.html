@@ -13,9 +13,6 @@
       --muted: #94a3b8;
       --accent: #38bdf8;
       --accent-dark: #001018;
-      --food: #ef4444;
-      --body: #22c55e;
-      --head: #38bdf8;
     }
     * { box-sizing: border-box; }
     body {
@@ -48,7 +45,7 @@
     .subtext { margin: 0 0 1rem; }
     .topbar {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 0.75rem;
       margin: 1rem 0;
     }
@@ -67,10 +64,10 @@
       letter-spacing: 0.08em;
     }
     .stat-value {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       font-weight: 700;
     }
-    .action-row {
+    .action-row, .difficulty-row {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -87,12 +84,18 @@
       text-decoration: none;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.15s ease;
+      transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+      font-family: inherit;
     }
     button.secondary, a.secondary {
       background: transparent;
       color: var(--text);
       border: 1px solid var(--border);
+    }
+    .difficulty-btn.active {
+      background: var(--accent);
+      color: var(--accent-dark);
+      border: 0;
     }
     a:hover, button:hover {
       transform: translateY(-1px);
@@ -162,6 +165,9 @@
       font-size: 0.95rem;
       margin-top: 1rem;
     }
+    @media (max-width: 520px) {
+      .topbar { grid-template-columns: repeat(2, 1fr); }
+    }
     @media (max-width: 430px) {
       .topbar {
         grid-template-columns: 1fr;
@@ -194,6 +200,16 @@
         <span class="stat-label">Speed</span>
         <span class="stat-value" id="speed">1x</span>
       </div>
+      <div class="stat">
+        <span class="stat-label">Mode</span>
+        <span class="stat-value" id="modeLabel">Normal</span>
+      </div>
+    </div>
+
+    <div class="difficulty-row">
+      <button class="difficulty-btn secondary" data-mode="chill">Chill</button>
+      <button class="difficulty-btn secondary" data-mode="normal">Normal</button>
+      <button class="difficulty-btn secondary" data-mode="fast">Fast</button>
     </div>
 
     <div class="action-row">
@@ -207,7 +223,7 @@
       <div id="overlay" class="overlay">
         <div class="overlay-card">
           <h2 id="overlay-title">Ready?</h2>
-          <p id="overlay-text">Tap start, then eat the red food and try not to fold yourself like cheap lawn furniture.</p>
+          <p id="overlay-text">Tap start, then eat the red food and avoid walls and your own tail.</p>
           <button id="overlay-button">Start Game</button>
         </div>
       </div>
@@ -222,7 +238,7 @@
       <button id="right" aria-label="Move right">→</button>
     </div>
 
-    <p class="hint">Food makes you longer. The game still speeds up, just less aggressively now.</p>
+    <p class="hint">Food makes you longer. Chill is easier, Fast is meaner.</p>
   </div>
 
   <script>
@@ -231,24 +247,43 @@
     const scoreEl = document.getElementById('score');
     const bestEl = document.getElementById('best');
     const speedEl = document.getElementById('speed');
+    const modeLabelEl = document.getElementById('modeLabel');
     const restartBtn = document.getElementById('restart');
     const pauseBtn = document.getElementById('pause');
     const overlay = document.getElementById('overlay');
     const overlayTitle = document.getElementById('overlay-title');
     const overlayText = document.getElementById('overlay-text');
     const overlayButton = document.getElementById('overlay-button');
+    const difficultyButtons = [...document.querySelectorAll('.difficulty-btn')];
 
     const gridSize = 20;
     const tileCount = canvas.width / gridSize;
-    const baseTick = 190;
-    const minTick = 110;
+    const speedModes = {
+      chill: { label: 'Chill', baseTick: 230, minTick: 150, step: 2 },
+      normal: { label: 'Normal', baseTick: 190, minTick: 110, step: 3 },
+      fast: { label: 'Fast', baseTick: 145, minTick: 75, step: 4 }
+    };
+    let currentMode = localStorage.getItem('snake-speed-mode') || 'normal';
+    let bestScore = Number(localStorage.getItem('snake-best-score') || 0);
 
     let snake, dx, dy, food, score, gameOver, isPaused, hasStarted, loopId, currentTick;
     let touchStartX = 0;
     let touchStartY = 0;
-    let bestScore = Number(localStorage.getItem('snake-best-score') || 0);
 
     bestEl.textContent = bestScore;
+
+    function getModeConfig() {
+      return speedModes[currentMode] || speedModes.normal;
+    }
+
+    function refreshModeUi() {
+      const mode = getModeConfig();
+      modeLabelEl.textContent = mode.label;
+      difficultyButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.mode === currentMode);
+        btn.classList.toggle('secondary', btn.dataset.mode !== currentMode);
+      });
+    }
 
     function setDirection(nextDx, nextDy) {
       if (!hasStarted) startGame();
@@ -265,7 +300,8 @@
     }
 
     function updateSpeedDisplay() {
-      const speedMultiplier = (baseTick / currentTick).toFixed(1);
+      const mode = getModeConfig();
+      const speedMultiplier = (mode.baseTick / currentTick).toFixed(1);
       speedEl.textContent = `${speedMultiplier}x`;
     }
 
@@ -300,6 +336,7 @@
     }
 
     function resetGame(showStartOverlay = true) {
+      const mode = getModeConfig();
       snake = [{ x: 10, y: 10 }, { x: 9, y: 10 }, { x: 8, y: 10 }];
       dx = 1;
       dy = 0;
@@ -308,15 +345,16 @@
       gameOver = false;
       isPaused = false;
       hasStarted = false;
-      currentTick = baseTick;
+      currentTick = mode.baseTick;
       scoreEl.textContent = score;
+      refreshModeUi();
       updateSpeedDisplay();
       pauseBtn.textContent = 'Pause';
       if (loopId) clearInterval(loopId);
       loopId = null;
       draw();
       if (showStartOverlay) {
-        setOverlay('Ready?', 'Tap start, then eat the red food and avoid walls and your own tail.', 'Start Game');
+        setOverlay('Ready?', `Mode: ${mode.label}. Eat the red food and avoid walls and your own tail.`, 'Start Game');
       } else {
         hideOverlay();
       }
@@ -350,7 +388,8 @@
     }
 
     function maybeIncreaseSpeed() {
-      const nextTick = Math.max(minTick, baseTick - score * 3);
+      const mode = getModeConfig();
+      const nextTick = Math.max(mode.minTick, mode.baseTick - score * mode.step);
       if (nextTick !== currentTick) {
         currentTick = nextTick;
         startLoop();
@@ -443,6 +482,14 @@
       else if (key === 'arrowright' || key === 'd') setDirection(1, 0);
     });
 
+    difficultyButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentMode = btn.dataset.mode;
+        localStorage.setItem('snake-speed-mode', currentMode);
+        resetGame(true);
+      });
+    });
+
     document.getElementById('up').addEventListener('click', () => setDirection(0, -1));
     document.getElementById('down').addEventListener('click', () => setDirection(0, 1));
     document.getElementById('left').addEventListener('click', () => setDirection(-1, 0));
@@ -488,6 +535,7 @@
       }
     });
 
+    refreshModeUi();
     resetGame(true);
   </script>
 </body>
