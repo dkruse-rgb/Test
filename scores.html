@@ -54,6 +54,17 @@
       color: var(--text);
       border: 1px solid var(--border);
     }
+    .gear-link {
+      width: 46px;
+      height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      font-size: 1.2rem;
+      line-height: 1;
+      padding: 0;
+    }
     .grid {
       display: grid;
       grid-template-columns: 1.05fr 0.95fr;
@@ -81,9 +92,7 @@
     .score-name, .achievement-name { font-weight: 800; }
     .score-label, .achievement-copy { color: var(--muted); font-size: 0.9rem; }
     .score-value { font-size: 1.3rem; font-weight: 800; }
-    .achievement {
-      align-items: flex-start;
-    }
+    .achievement { align-items: flex-start; }
     .achievement-icon {
       width: 46px;
       height: 46px;
@@ -97,18 +106,9 @@
       flex: 0 0 auto;
     }
     .achievement-body { flex: 1; }
-    .achievement.locked {
-      opacity: 0.62;
-      filter: grayscale(0.25);
-    }
-    .achievement.unlocked {
-      border-color: rgba(34,197,94,0.28);
-      background: rgba(34,197,94,0.08);
-    }
-    .achievement-status {
-      font-weight: 800;
-      white-space: nowrap;
-    }
+    .achievement.locked { opacity: 0.62; filter: grayscale(0.25); }
+    .achievement.unlocked { border-color: rgba(34,197,94,0.28); background: rgba(34,197,94,0.08); }
+    .achievement-status { font-weight: 800; white-space: nowrap; }
     .achievement.unlocked .achievement-status { color: var(--good); }
     .achievement.locked .achievement-status { color: var(--muted); }
     .summary-card {
@@ -122,23 +122,13 @@
       background: linear-gradient(135deg, rgba(245,158,11,0.14), rgba(56,189,248,0.08));
       border: 1px solid rgba(245,158,11,0.22);
     }
-    .summary-big {
-      font-size: 2rem;
-      font-weight: 900;
-      color: var(--gold);
-    }
-    .games {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-    }
+    .summary-big { font-size: 2rem; font-weight: 900; color: var(--gold); }
+    .games { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
     .game-card h3 { margin-top: 0; margin-bottom: 0.5rem; }
     .game-card p { color: var(--muted); line-height: 1.6; }
     .actions { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
     .tiny { color: var(--muted); font-size: 0.92rem; margin-top: 1rem; }
-    @media (max-width: 900px) {
-      .grid, .games { grid-template-columns: 1fr; }
-    }
+    @media (max-width: 900px) { .grid, .games { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -150,6 +140,7 @@
       </div>
       <div class="actions">
         <a class="alt" href="index.html">Back Home</a>
+        <a class="alt gear-link" href="settings.html" aria-label="Settings" title="Settings">⚙️</a>
         <button id="refresh">Refresh Scores</button>
         <button id="clear" class="alt">Clear Saved Scores</button>
       </div>
