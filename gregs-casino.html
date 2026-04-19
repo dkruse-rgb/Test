@@ -143,13 +143,6 @@
     }
     .corner { font-size: 1rem; line-height: 1; }
     .suit-big { font-size: 2rem; text-align: center; }
-    .controls {
-      display: flex;
-      justify-content: center;
-      gap: .75rem;
-      flex-wrap: wrap;
-      margin-top: 1rem;
-    }
     .message {
       margin-top: 1rem;
       min-height: 1.6rem;
@@ -248,7 +241,7 @@
       </div>
 
       <div id="message" class="message">Place a bet and deal a hand.</div>
-      <div class="greg-meter">
+      <div class="greg-meter" id="gregBox">
         <span class="greg-pill" id="gregMood">Greg mood: Mildly greasy</span>
         <span id="gregLine">Greg is sizing you up like you just insulted his carpet.</span>
       </div>
@@ -262,6 +255,7 @@
     const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
     const bestKey = 'gregs-casino-best-bankroll';
     const audioKey = 'arcade-muted';
+    const PERSONALITY_KEY = 'arcade-personality-mode';
 
     const bankrollEl = document.getElementById('bankroll');
     const betEl = document.getElementById('bet');
@@ -273,6 +267,7 @@
     const dealerHandEl = document.getElementById('dealerHand');
     const playerHandEl = document.getElementById('playerHand');
     const messageEl = document.getElementById('message');
+    const gregBox = document.getElementById('gregBox');
     const gregMoodEl = document.getElementById('gregMood');
     const gregLineEl = document.getElementById('gregLine');
     const dealBtn = document.getElementById('deal');
@@ -296,6 +291,19 @@
     let gregScore = 0;
 
     bestEl.textContent = bestBankroll;
+
+    function getPersonalityMode() {
+      return localStorage.getItem(PERSONALITY_KEY) || 'extra';
+    }
+
+    function applyPersonalityVisibility() {
+      gregBox.style.display = getPersonalityMode() === 'off' ? 'none' : 'flex';
+    }
+
+    function softenLine(line) {
+      const short = line.split('. ')[0];
+      return short.endsWith('.') ? short : short + '.';
+    }
 
     function ensureAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -414,15 +422,15 @@
       const bragLinesMid = [
         'Greg is getting loud enough to be banned from his own carpet.',
         'Greg keeps tapping the table like the casino is named after him.',
-        'Greg is now speaking in the tone of a man who thinks probability is his son.'
+        'Greg is sounding very sure of himself right now.'
       ];
       const bragLinesHigh = [
-        'Greg is unbearably smug. This has become a public health issue.',
-        'Greg is doing victory nods after every shuffle like he conquered mathematics.',
+        'Greg is unbearably smug right now.',
+        'Greg is doing victory nods after every shuffle.',
         'Greg now looks at the deck like it personally loves him back.'
       ];
       const annoyedLinesLow = [
-        'Greg is annoyed in the specific way cheap sunglasses get annoyed.',
+        'Greg is annoyed in a very specific, very petty way.',
         'Greg just squinted at you like the cards are somehow your fault.',
         'Greg is pretending this result is statistically rude.'
       ];
@@ -432,9 +440,9 @@
         'Greg is smiling with all the warmth of a parking ticket.'
       ];
       const annoyedLinesHigh = [
-        'Greg is furious now. The man looks one hand away from arguing with the wallpaper.',
-        'Greg is so annoyed he might accuse the deck of union activity.',
-        'Greg has gone fully petty and is dealing like you insulted his bloodline.'
+        'Greg is furious now and trying not to show it.',
+        'Greg is so annoyed he is blaming the deck again.',
+        'Greg has gone fully petty and is dealing with extra attitude.'
       ];
       const neutralLines = [
         'Greg is sizing you up like you just insulted his carpet.',
@@ -467,8 +475,12 @@
       if (result === 'win' && gregScore < 0) linePool = annoyedLinesLow.concat(annoyedLinesMid, annoyedLinesHigh);
       if (result === 'loss' && gregScore > 0) linePool = bragLinesLow.concat(bragLinesMid, bragLinesHigh);
 
-      gregMoodEl.textContent = mood;
-      gregLineEl.textContent = linePool[Math.floor(Math.random() * linePool.length)];
+      const line = linePool[Math.floor(Math.random() * linePool.length)];
+      const mode = getPersonalityMode();
+      applyPersonalityVisibility();
+      if (mode === 'off') return;
+      gregMoodEl.textContent = mode === 'standard' ? 'Greg note:' : mood;
+      gregLineEl.textContent = mode === 'standard' ? softenLine(line) : line;
     }
 
     function setBet(value) {
@@ -559,7 +571,7 @@
       if (bankroll <= 0) {
         bankroll = 0;
         gregScore += 2;
-        setMessage('Bankroll wiped out. Greg thanks you for your donation with revolting confidence.');
+        setMessage('Bankroll wiped out. Greg thanks you for your donation with confidence.');
         updateGregPersona('loss');
       }
       updateStats();
@@ -600,8 +612,11 @@
       else if (key === 's') resolveDealer();
     });
 
+    window.addEventListener('focus', applyPersonalityVisibility);
+
     deck = makeDeck();
     refreshMute();
+    applyPersonalityVisibility();
     renderHands();
     setBet(25);
     updateStats();
