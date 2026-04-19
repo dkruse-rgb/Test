@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arcade Settings</title>
+  <style>
+    :root {
+      --bg: #020617;
+      --panel: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.12);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-dark: #001018;
+      --warn: #f59e0b;
+      --danger: #ef4444;
+      --good: #22c55e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(56,189,248,0.12), transparent 35%),
+        linear-gradient(180deg, #020617, #0f172a);
+    }
+    .wrap { width: min(980px, calc(100% - 2rem)); margin: 0 auto; padding: 1.5rem 0 3rem; }
+    .top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); }
+    .sub { margin: 0.4rem 0 0; color: var(--muted); }
+    a, button {
+      background: var(--accent);
+      color: var(--accent-dark);
+      border: 0;
+      border-radius: 999px;
+      padding: 0.85rem 1rem;
+      text-decoration: none;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .alt {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .danger {
+      background: rgba(239,68,68,0.14);
+      color: #fecaca;
+      border: 1px solid rgba(239,68,68,0.28);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.25rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.22);
+    }
+    .panel h2 { margin-top: 0; }
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      margin-bottom: 0.85rem;
+    }
+    .setting-row:last-child { margin-bottom: 0; }
+    .setting-name { font-weight: 800; }
+    .setting-copy { color: var(--muted); font-size: 0.92rem; margin-top: 0.25rem; }
+    .status {
+      min-width: 84px;
+      text-align: center;
+      padding: 0.55rem 0.8rem;
+      border-radius: 999px;
+      font-weight: 800;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+    }
+    .status.on { color: #bbf7d0; border-color: rgba(34,197,94,0.28); background: rgba(34,197,94,0.12); }
+    .status.off { color: #fecaca; border-color: rgba(239,68,68,0.24); background: rgba(239,68,68,0.1); }
+    .button-stack { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
+    .note {
+      margin-top: 1rem;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+    .toast {
+      position: fixed;
+      right: 1rem;
+      bottom: 1rem;
+      background: rgba(15,23,42,0.92);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 0.85rem 1rem;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.25);
+      opacity: 0;
+      transform: translateY(8px);
+      pointer-events: none;
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Arcade Settings</h1>
+        <p class="sub">Control panel for the whole little nonsense machine.</p>
+      </div>
+      <div class="button-stack">
+        <a class="alt" href="index.html">Back Home</a>
+        <a class="alt" href="scores.html">Open Hub</a>
+      </div>
+    </div>
+
+    <div class="grid">
+      <section class="panel">
+        <h2>Preferences</h2>
+        <div class="setting-row">
+          <div>
+            <div class="setting-name">Sound</div>
+            <div class="setting-copy">Shared across the arcade cabinets.</div>
+          </div>
+          <button id="soundToggle" class="status">On</button>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-name">Reduced motion</div>
+            <div class="setting-copy">Turns down homepage attract-mode animation.</div>
+          </div>
+          <button id="motionToggle" class="status">Off</button>
+        </div>
+        <p class="note">These settings live in your browser on this device, so the arcade can remember how dramatic you want it to be.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Arcade data</h2>
+        <div class="setting-row">
+          <div>
+            <div class="setting-name">Clear saved scores</div>
+            <div class="setting-copy">Wipes local best scores, best times, and bankrolls.</div>
+          </div>
+          <button id="clearScores" class="danger">Clear Scores</button>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-name">Clear everything</div>
+            <div class="setting-copy">Resets scores plus all arcade settings on this device.</div>
+          </div>
+          <button id="clearAll" class="danger">Factory Reset</button>
+        </div>
+        <p class="note">Achievements in the hub are score-based, so clearing scores also clears achievement progress automatically.</p>
+      </section>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Saved.</div>
+
+  <script>
+    const SOUND_KEY = 'arcade-muted';
+    const MOTION_KEY = 'arcade-reduced-motion';
+    const scoreKeys = [
+      'snake-best-score',
+      'breakout-best-score',
+      'pong-best-wins',
+      'minesweeper-best-easy',
+      'minesweeper-best-medium',
+      'minesweeper-best-hard',
+      'fishing-best-score',
+      'gregs-casino-best-bankroll',
+      'chads-gallery-best-score'
+    ];
+
+    const soundToggle = document.getElementById('soundToggle');
+    const motionToggle = document.getElementById('motionToggle');
+    const clearScoresBtn = document.getElementById('clearScores');
+    const clearAllBtn = document.getElementById('clearAll');
+    const toast = document.getElementById('toast');
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    function readBool(key, defaultValue = false) {
+      const value = localStorage.getItem(key);
+      return value === null ? defaultValue : value === 'true';
+    }
+
+    function render() {
+      const muted = readBool(SOUND_KEY, false);
+      const reducedMotion = readBool(MOTION_KEY, false);
+
+      soundToggle.textContent = muted ? 'Off' : 'On';
+      soundToggle.className = `status ${muted ? 'off' : 'on'}`;
+
+      motionToggle.textContent = reducedMotion ? 'On' : 'Off';
+      motionToggle.className = `status ${reducedMotion ? 'on' : 'off'}`;
+    }
+
+    soundToggle.addEventListener('click', () => {
+      const nextMuted = !readBool(SOUND_KEY, false);
+      localStorage.setItem(SOUND_KEY, String(nextMuted));
+      render();
+      showToast(`Sound ${nextMuted ? 'off' : 'on'}.`);
+    });
+
+    motionToggle.addEventListener('click', () => {
+      const nextReduced = !readBool(MOTION_KEY, false);
+      localStorage.setItem(MOTION_KEY, String(nextReduced));
+      render();
+      showToast(`Reduced motion ${nextReduced ? 'enabled' : 'disabled'}.`);
+    });
+
+    clearScoresBtn.addEventListener('click', () => {
+      scoreKeys.forEach(key => localStorage.removeItem(key));
+      showToast('Local scores cleared.');
+    });
+
+    clearAllBtn.addEventListener('click', () => {
+      scoreKeys.forEach(key => localStorage.removeItem(key));
+      localStorage.removeItem(SOUND_KEY);
+      localStorage.removeItem(MOTION_KEY);
+      render();
+      showToast('Arcade reset on this device.');
+    });
+
+    render();
+  </script>
+</body>
+</html>
