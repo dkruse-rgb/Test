@@ -38,7 +38,7 @@
     }
     h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); }
     .sub { margin: 0.4rem 0 0; color: var(--muted); }
-    a, button {
+    a, button, select {
       background: var(--accent);
       color: var(--accent-dark);
       border: 0;
@@ -61,6 +61,12 @@
     .status { min-width: 84px; text-align: center; padding: 0.55rem 0.8rem; border-radius: 999px; font-weight: 800; border: 1px solid var(--border); background: rgba(255,255,255,0.05); }
     .status.on { color: #bbf7d0; border-color: rgba(34,197,94,0.28); background: rgba(34,197,94,0.12); }
     .status.off { color: #fecaca; border-color: rgba(239,68,68,0.24); background: rgba(239,68,68,0.1); }
+    .pill-select {
+      min-width: 170px;
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
     .button-stack { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1rem; }
     .note { margin-top: 1rem; color: var(--muted); line-height: 1.7; font-size: 0.95rem; }
     .toast { position: fixed; right: 1rem; bottom: 1rem; background: rgba(15,23,42,0.92); color: var(--text); border: 1px solid var(--border); border-radius: 16px; padding: 0.85rem 1rem; box-shadow: 0 16px 40px rgba(0,0,0,0.25); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .2s ease, transform .2s ease; }
@@ -98,6 +104,17 @@
           </div>
           <button id="motionToggle" class="status">Off</button>
         </div>
+        <div class="setting-row">
+          <div>
+            <div class="setting-name">Cabinet personality</div>
+            <div class="setting-copy">Choose whether the announcers are off, toned down, or fully ridiculous.</div>
+          </div>
+          <select id="personalityMode" class="pill-select" aria-label="Cabinet personality mode">
+            <option value="off">Off</option>
+            <option value="standard">Standard</option>
+            <option value="extra">Extra ridiculous</option>
+          </select>
+        </div>
         <p class="note">These settings live in your browser on this device, so the arcade can remember how dramatic you want it to be.</p>
       </section>
 
@@ -127,6 +144,7 @@
   <script>
     const SOUND_KEY = 'arcade-muted';
     const MOTION_KEY = 'arcade-reduced-motion';
+    const PERSONALITY_KEY = 'arcade-personality-mode';
     const scoreKeys = [
       'snake-best-score',
       'breakout-best-score',
@@ -142,6 +160,7 @@
 
     const soundToggle = document.getElementById('soundToggle');
     const motionToggle = document.getElementById('motionToggle');
+    const personalityMode = document.getElementById('personalityMode');
     const clearScoresBtn = document.getElementById('clearScores');
     const clearAllBtn = document.getElementById('clearAll');
     const toast = document.getElementById('toast');
@@ -161,10 +180,12 @@
     function render() {
       const muted = readBool(SOUND_KEY, false);
       const reducedMotion = readBool(MOTION_KEY, false);
+      const mode = localStorage.getItem(PERSONALITY_KEY) || 'extra';
       soundToggle.textContent = muted ? 'Off' : 'On';
       soundToggle.className = `status ${muted ? 'off' : 'on'}`;
       motionToggle.textContent = reducedMotion ? 'On' : 'Off';
       motionToggle.className = `status ${reducedMotion ? 'on' : 'off'}`;
+      personalityMode.value = mode;
     }
 
     soundToggle.addEventListener('click', () => {
@@ -181,6 +202,12 @@
       showToast(`Reduced motion ${nextReduced ? 'enabled' : 'disabled'}.`);
     });
 
+    personalityMode.addEventListener('change', () => {
+      localStorage.setItem(PERSONALITY_KEY, personalityMode.value);
+      const label = personalityMode.value === 'off' ? 'Personality off.' : personalityMode.value === 'standard' ? 'Personality set to standard.' : 'Personality set to extra ridiculous.';
+      showToast(label);
+    });
+
     clearScoresBtn.addEventListener('click', () => {
       scoreKeys.forEach(key => localStorage.removeItem(key));
       showToast('Local scores cleared.');
@@ -190,6 +217,7 @@
       scoreKeys.forEach(key => localStorage.removeItem(key));
       localStorage.removeItem(SOUND_KEY);
       localStorage.removeItem(MOTION_KEY);
+      localStorage.removeItem(PERSONALITY_KEY);
       render();
       showToast('Arcade reset on this device.');
     });
