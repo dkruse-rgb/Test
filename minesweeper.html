@@ -13,7 +13,7 @@
 <body>
   <div class="wrap">
     <h1>Minesweeper</h1>
-    <p class="subtext">Tap to reveal. Flag suspicious tiles. Try not to discover explosives with your face.</p>
+    <p class="subtext">Tap to reveal. Flag suspicious tiles. Try not to hit a hidden mine.</p>
     <div class="topbar">
       <div class="stat"><span class="stat-label">Difficulty</span><span id="difficultyLabel" class="stat-value">Medium</span></div>
       <div class="stat"><span class="stat-label">Mines Left</span><span id="minesLeft" class="stat-value">10</span></div>
@@ -33,15 +33,19 @@
       <button id="restart">New Board</button>
     </div>
     <div class="board-wrap"><div id="board" class="board"></div></div>
-    <div class="announcer"><strong id="mineMood">Bomb squad whisper:</strong><span id="mineLine">Nobody breathe weird. This field looks innocent, which is exactly how it gets you.</span></div>
+    <div class="announcer" id="mineBox"><strong id="mineMood">Board note:</strong><span id="mineLine">Careful now. This board looks simple until it starts arguing back.</span></div>
     <p class="hint">Desktop: left click reveals, right click flags. Mobile: use Flag Mode to place flags, then turn it off to reveal tiles.</p>
   </div>
   <script>
     const settings={easy:{rows:8,cols:8,mines:10,label:'Easy'},medium:{rows:10,cols:10,mines:16,label:'Medium'},hard:{rows:12,cols:12,mines:26,label:'Hard'}};
-    const boardEl=document.getElementById('board'), difficultyEl=document.getElementById('difficulty'), difficultyLabelEl=document.getElementById('difficultyLabel'), minesLeftEl=document.getElementById('minesLeft'), timerEl=document.getElementById('timer'), bestEl=document.getElementById('best'), modeToggle=document.getElementById('modeToggle'), restartBtn=document.getElementById('restart'), muteBtn=document.getElementById('mute'), mineMoodEl=document.getElementById('mineMood'), mineLineEl=document.getElementById('mineLine');
-    const audioKey='arcade-muted';
-    const mineLines={start:['Nobody breathe weird. This field looks innocent, which is exactly how it gets you.','All right team, eyes open. The squares are lying already.','Fresh board. Fresh paranoia. Excellent.'],flag:['Flag placed. Suspicion remains our most valuable currency.','Marked one. I do not trust that square and neither should you.','Good. We are now officially blaming that tile.'],reveal:['Clear tile. One less mystery, several more still smirking.','Good reveal. The board hates being understood.','Safe for now. Keep distrusting everything anyway.'],number:['A number! Evidence at last. Thin, judgmental evidence.','The clues are talking. Finally, a witness with a spine.','Useful information. The squares hate that for us.'],empty:['Wide open space. Suspiciously generous, frankly.','A clean patch! Do not let it lull you into optimism.','That opened up nicely. I still do not trust the area.'],boom:['That was a mine. Tremendous investigative failure there.','Boom. The board has made its feelings very clear.','We found the explosive the theatrical way.'],win:['Field cleared. Magnificent paranoia.','You did it. Every suspicious square has been professionally humbled.','Bomb squad approves. The board has been thoroughly outlasted.'],pause:['Not actually paused, but emotionally I support it.','Take a second. Suspicion is a stamina sport.']};
-    function pick(arr){return arr[Math.floor(Math.random()*arr.length)]} function setMineLine(line,mood='Bomb squad whisper:'){mineMoodEl.textContent=mood; mineLineEl.textContent=line}
+    const boardEl=document.getElementById('board'), difficultyEl=document.getElementById('difficulty'), difficultyLabelEl=document.getElementById('difficultyLabel'), minesLeftEl=document.getElementById('minesLeft'), timerEl=document.getElementById('timer'), bestEl=document.getElementById('best'), modeToggle=document.getElementById('modeToggle'), restartBtn=document.getElementById('restart'), muteBtn=document.getElementById('mute'), mineBox=document.getElementById('mineBox'), mineMoodEl=document.getElementById('mineMood'), mineLineEl=document.getElementById('mineLine');
+    const audioKey='arcade-muted', PERSONALITY_KEY='arcade-personality-mode';
+    const mineLines={start:['Careful now. This board looks simple until it starts arguing back.','Fresh board. Fresh guesses. Try to make them good ones.','All right, new layout. Time to stop trusting random squares.'],flag:['Flag placed. That square has officially been put on notice.','Marked one. Sensible caution never hurts here.','Good call. That tile was looking suspicious anyway.'],reveal:['Clear tile. One less mystery to worry about.','Good reveal. The board gave you something useful.','Safe for now. Keep following the clues.'],number:['A number. Finally, some evidence to work with.','Useful clue. The board is being slightly cooperative.','That number helps more than it looks.'],empty:['Nice opening. Plenty of room to work with now.','That cleared out well. Momentum is on your side.','A clean patch. Good time to slow down and read it.'],boom:['That was a mine. The board won that round.','Mine found the hard way. Time for a reset.','That tile was not the one. New board time.'],win:['Board cleared. Nicely done.','You solved it cleanly. Very solid run.','Win secured. The board is out of excuses.']};
+    function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+    function getPersonalityMode(){return localStorage.getItem(PERSONALITY_KEY)||'extra'}
+    function applyPersonalityVisibility(){mineBox.style.display=getPersonalityMode()==='off'?'none':'block'}
+    function softenLine(line){const short=line.split('. ')[0]; return short.endsWith('.')?short:short+'.'}
+    function setMineLine(line,mood='Board note:'){const mode=getPersonalityMode(); applyPersonalityVisibility(); if(mode==='off') return; mineMoodEl.textContent=mode==='standard'?'Board note:':mood; mineLineEl.textContent=mode==='standard'?softenLine(line):line}
     let current=settings.medium, board=[], firstClick=true, gameOver=false, revealedCount=0, flagsPlaced=0, timer=0, timerId=null, flagMode=false;
     let isMuted=localStorage.getItem(audioKey)==='true', audioCtx=null;
     function ensureAudio(){if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume()}
@@ -60,12 +64,13 @@
     function renderCell(cell){const el=cell.el; el.className='cell'; el.textContent=''; if(cell.flagged){el.classList.add('flagged'); el.textContent='🚩';} if(cell.revealed){el.classList.add('revealed'); if(cell.mine){el.classList.add('mine'); el.textContent='💣';} else if(cell.count>0){el.textContent=cell.count; el.classList.add(`n${cell.count}`);}}}
     function revealAllMines(){board.flat().forEach(cell=>{if(cell.mine){cell.revealed=true; renderCell(cell);}})}
     function checkWin(){const safeTiles=current.rows*current.cols-current.mines; if(revealedCount>=safeTiles) endGame(true)}
-    function endGame(won){gameOver=true; stopTimer(); if(!won){revealAllMines(); restartBtn.textContent='Boom. New Board'; setMineLine(pick(mineLines.boom)); sBoom();} else {restartBtn.textContent='You Win. New Board'; const existing=Number(localStorage.getItem(bestKey())||0); if(!existing||timer<existing) localStorage.setItem(bestKey(),String(timer)); updateBestDisplay(); setMineLine(pick(mineLines.win)); sWin();}}
+    function endGame(won){gameOver=true; stopTimer(); if(!won){revealAllMines(); restartBtn.textContent='New Board'; setMineLine(pick(mineLines.boom)); sBoom();} else {restartBtn.textContent='You Win. New Board'; const existing=Number(localStorage.getItem(bestKey())||0); if(!existing||timer<existing) localStorage.setItem(bestKey(),String(timer)); updateBestDisplay(); setMineLine(pick(mineLines.win)); sWin();}}
     difficultyEl.addEventListener('change',()=>{current=settings[difficultyEl.value]; createBoard()});
-    modeToggle.addEventListener('click',()=>{flagMode=!flagMode; modeToggle.textContent=`Flag Mode: ${flagMode?'On':'Off'}`; setMineLine(flagMode?'Flag mode armed. Trust nobody.':'Reveal mode restored. Courage is now required.'); sFlag()});
+    modeToggle.addEventListener('click',()=>{flagMode=!flagMode; modeToggle.textContent=`Flag Mode: ${flagMode?'On':'Off'}`; setMineLine(flagMode?'Flag mode on. Mark carefully.':'Reveal mode on. Read the board closely.'); sFlag()});
     restartBtn.addEventListener('click',()=>{sFlag(); createBoard()});
     muteBtn.addEventListener('click',()=>{isMuted=!isMuted; localStorage.setItem(audioKey,String(isMuted)); refreshMuteUi(); if(!isMuted) sFlag()});
-    refreshMuteUi(); current=settings[difficultyEl.value]; createBoard();
+    window.addEventListener('focus',applyPersonalityVisibility);
+    refreshMuteUi(); applyPersonalityVisibility(); current=settings[difficultyEl.value]; createBoard();
   </script>
 </body>
 </html>
