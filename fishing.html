@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Fishing</title>
+  <title>Jimmy's Big Catch</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -114,7 +114,7 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>Fishing</h1>
+    <h1>Jimmy's Big Catch</h1>
     <p class="subtext">Cast your line, hook fish, and reel them in before time runs out.</p>
 
     <div class="topbar">
@@ -136,7 +136,7 @@
       <canvas id="game" width="620" height="720"></canvas>
       <div id="overlay" class="overlay">
         <div class="overlay-card">
-          <h2 id="overlayTitle">Ready to fish?</h2>
+          <h2 id="overlayTitle">Ready for Jimmy's Big Catch?</h2>
           <p id="overlayText">Press Start, cast the hook, and reel fish back to the boat. Bigger fish pay better.</p>
           <button id="overlayButton">Start Game</button>
         </div>
@@ -262,7 +262,7 @@
       populateFish();
       stopLoops();
       draw();
-      if (showOverlay) setOverlay('Ready to fish?', 'Press Start, cast the hook, and reel fish back to the boat. Bigger fish pay better.', 'Start Game');
+      if (showOverlay) setOverlay("Ready for Jimmy's Big Catch?", 'Press Start, cast the hook, and reel fish back to the boat. Bigger fish pay better.', 'Start Game');
       else hideOverlay();
     }
 
