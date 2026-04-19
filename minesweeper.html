@@ -13,9 +13,6 @@
       --muted: #94a3b8;
       --accent: #38bdf8;
       --accent-dark: #001018;
-      --danger: #ef4444;
-      --good: #22c55e;
-      --gold: #f59e0b;
       --tile: #1e293b;
       --tile-open: #0b1220;
     }
@@ -29,101 +26,23 @@
       padding: 1rem;
       font-family: Arial, Helvetica, sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(circle at top, rgba(245,158,11,0.14), transparent 35%),
-        linear-gradient(180deg, #020617, #0f172a);
+      background: radial-gradient(circle at top, rgba(245,158,11,0.14), transparent 35%), linear-gradient(180deg, #020617, #0f172a);
     }
-    .wrap {
-      width: min(94vw, 720px);
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 1.25rem;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-      text-align: center;
-    }
+    .wrap { width: min(94vw, 720px); background: var(--panel); border: 1px solid var(--border); border-radius: 24px; padding: 1.25rem; box-shadow: 0 20px 50px rgba(0,0,0,0.35); text-align: center; }
     h1 { margin: 0 0 0.35rem; font-size: clamp(2rem, 5vw, 2.6rem); }
     .subtext { margin: 0 0 1rem; color: var(--muted); }
-    .topbar {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 0.75rem;
-      margin: 1rem 0;
-    }
-    .stat {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 0.8rem;
-    }
-    .stat-label {
-      display: block;
-      color: var(--muted);
-      font-size: 0.8rem;
-      margin-bottom: 0.25rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
+    .topbar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin: 1rem 0; }
+    .stat { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 16px; padding: 0.8rem; }
+    .stat-label { display: block; color: var(--muted); font-size: 0.8rem; margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.08em; }
     .stat-value { font-size: 1.15rem; font-weight: 800; }
-    .action-row {
-      display: flex;
-      justify-content: center;
-      gap: 0.75rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-    }
-    a, button, select {
-      background: var(--accent);
-      color: var(--accent-dark);
-      border: 0;
-      border-radius: 999px;
-      padding: 0.8rem 1rem;
-      text-decoration: none;
-      font-weight: 800;
-      cursor: pointer;
-      font-family: inherit;
-    }
+    .action-row { display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+    a, button, select { background: var(--accent); color: var(--accent-dark); border: 0; border-radius: 999px; padding: 0.8rem 1rem; text-decoration: none; font-weight: 800; cursor: pointer; font-family: inherit; }
     a:hover, button:hover, select:hover { opacity: 0.96; }
-    .secondary {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .board-wrap {
-      display: inline-block;
-      padding: 0.9rem;
-      border-radius: 20px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      max-width: 100%;
-      overflow: auto;
-    }
-    .board {
-      display: grid;
-      gap: 4px;
-      justify-content: center;
-      touch-action: manipulation;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-    .cell {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: var(--tile);
-      border: 1px solid rgba(255,255,255,0.08);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: 1rem;
-      color: var(--text);
-      cursor: pointer;
-    }
-    .cell.revealed {
-      background: var(--tile-open);
-      cursor: default;
-    }
+    .secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .board-wrap { display: inline-block; padding: 0.9rem; border-radius: 20px; background: rgba(255,255,255,0.04); border: 1px solid var(--border); max-width: 100%; overflow: auto; }
+    .board { display: grid; gap: 4px; justify-content: center; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+    .cell { width: 38px; height: 38px; border-radius: 10px; background: var(--tile); border: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1rem; color: var(--text); cursor: pointer; }
+    .cell.revealed { background: var(--tile-open); cursor: default; }
     .cell.mine.revealed { background: rgba(239,68,68,0.18); }
     .cell.flagged { background: rgba(245,158,11,0.18); }
     .n1 { color: #60a5fa; }
@@ -135,26 +54,22 @@
     .n7 { color: #facc15; }
     .n8 { color: #e2e8f0; }
     .hint { color: var(--muted); margin-top: 1rem; line-height: 1.6; }
-    @media (max-width: 600px) {
-      .topbar { grid-template-columns: repeat(2, 1fr); }
-      .cell { width: 34px; height: 34px; font-size: 0.95rem; }
-    }
+    @media (max-width: 600px) { .topbar { grid-template-columns: repeat(2, 1fr); } .cell { width: 34px; height: 34px; font-size: 0.95rem; } }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Minesweeper</h1>
     <p class="subtext">Tap to reveal. Flag suspicious tiles. Try not to discover explosives with your face.</p>
-
     <div class="topbar">
       <div class="stat"><span class="stat-label">Difficulty</span><span id="difficultyLabel" class="stat-value">Medium</span></div>
       <div class="stat"><span class="stat-label">Mines Left</span><span id="minesLeft" class="stat-value">10</span></div>
       <div class="stat"><span class="stat-label">Time</span><span id="timer" class="stat-value">0</span></div>
       <div class="stat"><span class="stat-label">Best</span><span id="best" class="stat-value">—</span></div>
     </div>
-
     <div class="action-row">
       <a class="secondary" href="index.html">Back Home</a>
+      <button id="mute" class="secondary">Sound: On</button>
       <select id="difficulty" class="secondary" aria-label="Difficulty">
         <option value="easy">Easy</option>
         <option value="medium" selected>Medium</option>
@@ -163,21 +78,11 @@
       <button id="modeToggle" class="secondary">Flag Mode: Off</button>
       <button id="restart">New Board</button>
     </div>
-
-    <div class="board-wrap">
-      <div id="board" class="board"></div>
-    </div>
-
+    <div class="board-wrap"><div id="board" class="board"></div></div>
     <p class="hint">Desktop: left click reveals, right click flags. Mobile: use Flag Mode to place flags, then turn it off to reveal tiles.</p>
   </div>
-
   <script>
-    const settings = {
-      easy: { rows: 8, cols: 8, mines: 10, label: 'Easy' },
-      medium: { rows: 10, cols: 10, mines: 16, label: 'Medium' },
-      hard: { rows: 12, cols: 12, mines: 26, label: 'Hard' }
-    };
-
+    const settings = { easy: { rows: 8, cols: 8, mines: 10, label: 'Easy' }, medium: { rows: 10, cols: 10, mines: 16, label: 'Medium' }, hard: { rows: 12, cols: 12, mines: 26, label: 'Hard' } };
     const boardEl = document.getElementById('board');
     const difficultyEl = document.getElementById('difficulty');
     const difficultyLabelEl = document.getElementById('difficultyLabel');
@@ -186,228 +91,108 @@
     const bestEl = document.getElementById('best');
     const modeToggle = document.getElementById('modeToggle');
     const restartBtn = document.getElementById('restart');
+    const muteBtn = document.getElementById('mute');
+    const audioKey = 'arcade-muted';
+    let current = settings.medium, board = [], firstClick = true, gameOver = false, revealedCount = 0, flagsPlaced = 0, timer = 0, timerId = null, flagMode = false;
+    let isMuted = localStorage.getItem(audioKey) === 'true';
+    let audioCtx = null;
 
-    let current = settings.medium;
-    let board = [];
-    let firstClick = true;
-    let gameOver = false;
-    let revealedCount = 0;
-    let flagsPlaced = 0;
-    let timer = 0;
-    let timerId = null;
-    let flagMode = false;
-
-    function bestKey() {
-      return `minesweeper-best-${difficultyEl.value}`;
+    function ensureAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
-
-    function updateBestDisplay() {
-      const best = localStorage.getItem(bestKey());
-      bestEl.textContent = best ? `${best}s` : '—';
+    function tone(freq, duration = 0.07, type = 'triangle', volume = 0.04) {
+      if (isMuted) return;
+      ensureAudio();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type; osc.frequency.value = freq; gain.gain.value = volume;
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration);
     }
+    function sReveal() { tone(520, 0.03, 'triangle', 0.025); }
+    function sFlag() { tone(340, 0.05, 'square', 0.03); }
+    function sBoom() { tone(140, 0.18, 'sawtooth', 0.05); }
+    function sWin() { tone(660, 0.05, 'square', 0.03); setTimeout(() => tone(880, 0.07, 'square', 0.03), 40); }
+    function refreshMuteUi() { muteBtn.textContent = `Sound: ${isMuted ? 'Off' : 'On'}`; }
 
-    function startTimer() {
-      if (timerId) return;
-      timerId = setInterval(() => {
-        timer += 1;
-        timerEl.textContent = timer;
-      }, 1000);
-    }
-
-    function stopTimer() {
-      clearInterval(timerId);
-      timerId = null;
-    }
-
+    function bestKey() { return `minesweeper-best-${difficultyEl.value}`; }
+    function updateBestDisplay() { const best = localStorage.getItem(bestKey()); bestEl.textContent = best ? `${best}s` : '—'; }
+    function startTimer() { if (timerId) return; timerId = setInterval(() => { timer += 1; timerEl.textContent = timer; }, 1000); }
+    function stopTimer() { clearInterval(timerId); timerId = null; }
     function createBoard() {
-      board = [];
-      firstClick = true;
-      gameOver = false;
-      revealedCount = 0;
-      flagsPlaced = 0;
-      timer = 0;
-      timerEl.textContent = timer;
-      stopTimer();
-      difficultyLabelEl.textContent = current.label;
-      minesLeftEl.textContent = current.mines;
-      updateBestDisplay();
-
-      boardEl.style.gridTemplateColumns = `repeat(${current.cols}, 1fr)`;
-      boardEl.innerHTML = '';
-
+      board = []; firstClick = true; gameOver = false; revealedCount = 0; flagsPlaced = 0; timer = 0; timerEl.textContent = timer; stopTimer();
+      difficultyLabelEl.textContent = current.label; minesLeftEl.textContent = current.mines; updateBestDisplay(); restartBtn.textContent = 'New Board';
+      boardEl.style.gridTemplateColumns = `repeat(${current.cols}, 1fr)`; boardEl.innerHTML = '';
       for (let r = 0; r < current.rows; r++) {
         const row = [];
-        for (let c = 0; c < current.cols; c++) {
-          row.push({
-            row: r,
-            col: c,
-            mine: false,
-            revealed: false,
-            flagged: false,
-            count: 0,
-            el: null
-          });
-        }
+        for (let c = 0; c < current.cols; c++) row.push({ row: r, col: c, mine: false, revealed: false, flagged: false, count: 0, el: null });
         board.push(row);
       }
-
       board.flat().forEach(cell => {
         const div = document.createElement('button');
-        div.className = 'cell';
-        div.setAttribute('aria-label', `Cell ${cell.row + 1}, ${cell.col + 1}`);
+        div.className = 'cell'; div.setAttribute('aria-label', `Cell ${cell.row + 1}, ${cell.col + 1}`);
         div.addEventListener('click', () => handleCellAction(cell));
-        div.addEventListener('contextmenu', (e) => {
-          e.preventDefault();
-          toggleFlag(cell);
-        });
-        cell.el = div;
-        boardEl.appendChild(div);
+        div.addEventListener('contextmenu', (e) => { e.preventDefault(); toggleFlag(cell); });
+        cell.el = div; boardEl.appendChild(div);
       });
     }
-
     function plantMines(safeRow, safeCol) {
       let planted = 0;
       while (planted < current.mines) {
-        const r = Math.floor(Math.random() * current.rows);
-        const c = Math.floor(Math.random() * current.cols);
+        const r = Math.floor(Math.random() * current.rows), c = Math.floor(Math.random() * current.cols);
         if ((r === safeRow && c === safeCol) || board[r][c].mine) continue;
-        board[r][c].mine = true;
-        planted += 1;
+        board[r][c].mine = true; planted += 1;
       }
-
-      board.flat().forEach(cell => {
-        if (cell.mine) return;
-        cell.count = neighbors(cell.row, cell.col).filter(n => n.mine).length;
-      });
+      board.flat().forEach(cell => { if (!cell.mine) cell.count = neighbors(cell.row, cell.col).filter(n => n.mine).length; });
     }
-
     function neighbors(row, col) {
       const cells = [];
-      for (let dr = -1; dr <= 1; dr++) {
-        for (let dc = -1; dc <= 1; dc++) {
-          if (dr === 0 && dc === 0) continue;
-          const nr = row + dr;
-          const nc = col + dc;
-          if (nr >= 0 && nr < current.rows && nc >= 0 && nc < current.cols) {
-            cells.push(board[nr][nc]);
-          }
-        }
+      for (let dr = -1; dr <= 1; dr++) for (let dc = -1; dc <= 1; dc++) {
+        if (dr === 0 && dc === 0) continue;
+        const nr = row + dr, nc = col + dc;
+        if (nr >= 0 && nr < current.rows && nc >= 0 && nc < current.cols) cells.push(board[nr][nc]);
       }
       return cells;
     }
-
-    function handleCellAction(cell) {
-      if (gameOver) return;
-      if (flagMode) {
-        toggleFlag(cell);
-        return;
-      }
-      reveal(cell);
-    }
-
+    function handleCellAction(cell) { if (gameOver) return; if (flagMode) { toggleFlag(cell); return; } reveal(cell); }
     function toggleFlag(cell) {
       if (gameOver || cell.revealed) return;
-      cell.flagged = !cell.flagged;
-      flagsPlaced += cell.flagged ? 1 : -1;
-      renderCell(cell);
-      minesLeftEl.textContent = Math.max(0, current.mines - flagsPlaced);
+      cell.flagged = !cell.flagged; flagsPlaced += cell.flagged ? 1 : -1; renderCell(cell); minesLeftEl.textContent = Math.max(0, current.mines - flagsPlaced); sFlag();
     }
-
     function reveal(cell) {
       if (gameOver || cell.revealed || cell.flagged) return;
-
-      if (firstClick) {
-        plantMines(cell.row, cell.col);
-        firstClick = false;
-        startTimer();
-      }
-
-      cell.revealed = true;
-      revealedCount += 1;
-      renderCell(cell);
-
-      if (cell.mine) {
-        endGame(false);
-        return;
-      }
-
-      if (cell.count === 0) {
-        neighbors(cell.row, cell.col).forEach(n => {
-          if (!n.revealed && !n.flagged) reveal(n);
-        });
-      }
-
+      if (firstClick) { plantMines(cell.row, cell.col); firstClick = false; startTimer(); }
+      cell.revealed = true; revealedCount += 1; renderCell(cell);
+      if (cell.mine) { endGame(false); return; }
+      sReveal();
+      if (cell.count === 0) neighbors(cell.row, cell.col).forEach(n => { if (!n.revealed && !n.flagged) reveal(n); });
       checkWin();
     }
-
     function renderCell(cell) {
-      const el = cell.el;
-      el.className = 'cell';
-      el.textContent = '';
-
-      if (cell.flagged) {
-        el.classList.add('flagged');
-        el.textContent = '🚩';
-      }
-
+      const el = cell.el; el.className = 'cell'; el.textContent = '';
+      if (cell.flagged) { el.classList.add('flagged'); el.textContent = '🚩'; }
       if (cell.revealed) {
         el.classList.add('revealed');
-        if (cell.mine) {
-          el.classList.add('mine');
-          el.textContent = '💣';
-        } else if (cell.count > 0) {
-          el.textContent = cell.count;
-          el.classList.add(`n${cell.count}`);
-        }
+        if (cell.mine) { el.classList.add('mine'); el.textContent = '💣'; }
+        else if (cell.count > 0) { el.textContent = cell.count; el.classList.add(`n${cell.count}`); }
       }
     }
-
-    function revealAllMines() {
-      board.flat().forEach(cell => {
-        if (cell.mine) {
-          cell.revealed = true;
-          renderCell(cell);
-        }
-      });
-    }
-
-    function checkWin() {
-      const safeTiles = current.rows * current.cols - current.mines;
-      if (revealedCount >= safeTiles) {
-        endGame(true);
-      }
-    }
-
+    function revealAllMines() { board.flat().forEach(cell => { if (cell.mine) { cell.revealed = true; renderCell(cell); } }); }
+    function checkWin() { const safeTiles = current.rows * current.cols - current.mines; if (revealedCount >= safeTiles) endGame(true); }
     function endGame(won) {
-      gameOver = true;
-      stopTimer();
-      if (!won) {
-        revealAllMines();
-        restartBtn.textContent = 'Boom. New Board';
-      } else {
-        restartBtn.textContent = 'You Win. New Board';
-        const existing = Number(localStorage.getItem(bestKey()) || 0);
-        if (!existing || timer < existing) {
-          localStorage.setItem(bestKey(), String(timer));
-        }
-        updateBestDisplay();
+      gameOver = true; stopTimer();
+      if (!won) { revealAllMines(); restartBtn.textContent = 'Boom. New Board'; sBoom(); }
+      else {
+        restartBtn.textContent = 'You Win. New Board'; const existing = Number(localStorage.getItem(bestKey()) || 0); if (!existing || timer < existing) localStorage.setItem(bestKey(), String(timer)); updateBestDisplay(); sWin();
       }
     }
-
-    difficultyEl.addEventListener('change', () => {
-      current = settings[difficultyEl.value];
-      createBoard();
-    });
-
-    modeToggle.addEventListener('click', () => {
-      flagMode = !flagMode;
-      modeToggle.textContent = `Flag Mode: ${flagMode ? 'On' : 'Off'}`;
-    });
-
-    restartBtn.addEventListener('click', createBoard);
-
-    current = settings[difficultyEl.value];
-    createBoard();
+    difficultyEl.addEventListener('change', () => { current = settings[difficultyEl.value]; createBoard(); });
+    modeToggle.addEventListener('click', () => { flagMode = !flagMode; modeToggle.textContent = `Flag Mode: ${flagMode ? 'On' : 'Off'}`; sFlag(); });
+    restartBtn.addEventListener('click', () => { sFlag(); createBoard(); });
+    muteBtn.addEventListener('click', () => { isMuted = !isMuted; localStorage.setItem(audioKey, String(isMuted)); refreshMuteUi(); if (!isMuted) sFlag(); });
+    refreshMuteUi();
+    current = settings[difficultyEl.value]; createBoard();
   </script>
 </body>
 </html>
