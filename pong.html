@@ -5,50 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pong</title>
   <style>
-    :root {
-      --bg: #0f172a;
-      --panel: rgba(255,255,255,0.07);
-      --border: rgba(255,255,255,0.12);
-      --text: #e2e8f0;
-      --muted: #94a3b8;
-      --accent: #38bdf8;
-      --accent-dark: #001018;
-      --good: #22c55e;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      font-family: Arial, Helvetica, sans-serif;
-      color: var(--text);
-      background: radial-gradient(circle at top, rgba(34,197,94,0.14), transparent 35%), linear-gradient(180deg, #020617, #0f172a);
-    }
-    .wrap { width: min(94vw, 620px); background: var(--panel); border: 1px solid var(--border); border-radius: 24px; padding: 1.25rem; box-shadow: 0 20px 50px rgba(0,0,0,0.35); text-align: center; }
-    h1 { margin: 0 0 0.35rem; font-size: clamp(2rem, 5vw, 2.6rem); }
-    .subtext { margin: 0 0 1rem; color: var(--muted); }
-    .topbar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin: 1rem 0; }
-    .stat { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 16px; padding: 0.8rem; }
-    .stat-label { display: block; color: var(--muted); font-size: 0.8rem; margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.08em; }
-    .stat-value { font-size: 1.15rem; font-weight: 800; }
-    .action-row { display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
-    a, button { background: var(--accent); color: var(--accent-dark); border: 0; border-radius: 999px; padding: 0.8rem 1rem; text-decoration: none; font-weight: 800; cursor: pointer; transition: transform 0.15s ease, opacity 0.15s ease; font-family: inherit; }
-    a:hover, button:hover { transform: translateY(-1px); opacity: 0.96; }
-    .secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
-    .board-wrap { position: relative; width: min(100%, 540px); margin: 0 auto; }
-    canvas { display: block; width: 100%; height: auto; background: #020617; border: 2px solid var(--good); border-radius: 16px; touch-action: none; }
-    .overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(2,6,23,0.76); border-radius: 16px; padding: 1rem; }
-    .overlay.hidden { opacity: 0; pointer-events: none; }
-    .overlay-card { max-width: 300px; }
-    .overlay h2 { margin: 0 0 0.5rem; font-size: 1.8rem; }
-    .overlay p { color: var(--muted); line-height: 1.55; }
-    .touch-row { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; }
-    .touch-row button { width: 88px; height: 64px; border-radius: 18px; font-size: 1.25rem; padding: 0; }
-    .hint { color: var(--muted); margin-top: 1rem; }
-    @media (max-width: 560px) { .topbar { grid-template-columns: repeat(2, 1fr); } }
+    :root { --bg:#0f172a; --panel:rgba(255,255,255,0.07); --border:rgba(255,255,255,0.12); --text:#e2e8f0; --muted:#94a3b8; --accent:#38bdf8; --accent-dark:#001018; --good:#22c55e; }
+    *{box-sizing:border-box} body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:radial-gradient(circle at top, rgba(34,197,94,0.14), transparent 35%), linear-gradient(180deg, #020617, #0f172a)}
+    .wrap{width:min(94vw,620px);background:var(--panel);border:1px solid var(--border);border-radius:24px;padding:1.25rem;box-shadow:0 20px 50px rgba(0,0,0,0.35);text-align:center}h1{margin:0 0 0.35rem;font-size:clamp(2rem,5vw,2.6rem)}.subtext{margin:0 0 1rem;color:var(--muted)}.topbar{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin:1rem 0}.stat{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:16px;padding:0.8rem}.stat-label{display:block;color:var(--muted);font-size:0.8rem;margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.08em}.stat-value{font-size:1.15rem;font-weight:800}.action-row{display:flex;justify-content:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem}a,button{background:var(--accent);color:var(--accent-dark);border:0;border-radius:999px;padding:0.8rem 1rem;text-decoration:none;font-weight:800;cursor:pointer;transition:transform 0.15s ease, opacity 0.15s ease;font-family:inherit}a:hover,button:hover{transform:translateY(-1px);opacity:0.96}.secondary{background:transparent;color:var(--text);border:1px solid var(--border)}.board-wrap{position:relative;width:min(100%,540px);margin:0 auto}canvas{display:block;width:100%;height:auto;background:#020617;border:2px solid var(--good);border-radius:16px;touch-action:none}.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.76);border-radius:16px;padding:1rem}.overlay.hidden{opacity:0;pointer-events:none}.overlay-card{max-width:300px}.overlay h2{margin:0 0 0.5rem;font-size:1.8rem}.overlay p{color:var(--muted);line-height:1.55}.touch-row{display:flex;justify-content:center;gap:1rem;margin-top:1rem}.touch-row button{width:88px;height:64px;border-radius:18px;font-size:1.25rem;padding:0}.announcer{margin-top:1rem;padding:.85rem 1rem;border-radius:18px;background:rgba(255,255,255,0.05);border:1px solid var(--border);text-align:left}.announcer strong{display:block;color:var(--text);margin-bottom:.2rem}.hint{color:var(--muted);margin-top:1rem}@media (max-width:560px){.topbar{grid-template-columns:repeat(2,1fr)}}
   </style>
 </head>
 <body>
@@ -70,215 +29,46 @@
     </div>
     <div class="board-wrap">
       <canvas id="game" width="540" height="640"></canvas>
-      <div id="overlay" class="overlay">
-        <div class="overlay-card">
-          <h2 id="overlay-title">Ready?</h2>
-          <p id="overlay-text">Move your paddle up and down. Beat the CPU to 7 and enjoy a deeply unnecessary sense of accomplishment.</p>
-          <button id="overlay-button">Start Game</button>
-        </div>
-      </div>
+      <div id="overlay" class="overlay"><div class="overlay-card"><h2 id="overlay-title">Ready?</h2><p id="overlay-text">Move your paddle up and down. Beat the CPU to 7 and enjoy a deeply unnecessary sense of accomplishment.</p><button id="overlay-button">Start Game</button></div></div>
     </div>
-    <div class="touch-row">
-      <button id="up">↑</button>
-      <button id="down">↓</button>
-    </div>
+    <div class="touch-row"><button id="up">↑</button><button id="down">↓</button></div>
+    <div class="announcer"><strong id="pongMood">Commentator booth:</strong><span id="pongLine">A classic contest begins: one human, one machine, zero excuses.</span></div>
     <p class="hint">Desktop: mouse or W/S or arrow keys. Mobile: drag on the board or use the arrows.</p>
   </div>
   <script>
-    const canvas = document.getElementById('game');
-    const ctx = canvas.getContext('2d');
-    const playerScoreEl = document.getElementById('playerScore');
-    const cpuScoreEl = document.getElementById('cpuScore');
-    const bestEl = document.getElementById('best');
-    const pauseBtn = document.getElementById('pause');
-    const restartBtn = document.getElementById('restart');
-    const muteBtn = document.getElementById('mute');
-    const overlay = document.getElementById('overlay');
-    const overlayTitle = document.getElementById('overlay-title');
-    const overlayText = document.getElementById('overlay-text');
-    const overlayButton = document.getElementById('overlay-button');
-    const WIN_SCORE = 7;
-    const bestKey = 'pong-best-wins';
-    const audioKey = 'arcade-muted';
-    let bestWins = Number(localStorage.getItem(bestKey) || 0);
-    let isMuted = localStorage.getItem(audioKey) === 'true';
-    let audioCtx = null;
-    bestEl.textContent = bestWins;
-
-    const player = { x: 22, y: 260, w: 14, h: 110, speed: 7, dy: 0 };
-    const cpu = { x: 504, y: 260, w: 14, h: 110, speed: 4.4 };
-    const ball = { x: 270, y: 320, r: 10, dx: 5, dy: 3, baseSpeed: 5 };
-    let playerScore = 0, cpuScore = 0, running = false, paused = false, animationId = null, touchUpHeld = false, touchDownHeld = false;
-
-    function ensureAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-    function tone(freq, duration = 0.07, type = 'square', volume = 0.04) {
-      if (isMuted) return;
-      ensureAudio();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.value = freq;
-      gain.gain.value = volume;
-      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
-    }
-    function sHit() { tone(460, 0.035, 'square', 0.03); }
-    function sScore() { tone(240, 0.12, 'sawtooth', 0.05); }
-    function sWin() { tone(660, 0.05, 'square', 0.03); setTimeout(() => tone(880, 0.08, 'square', 0.03), 40); }
-    function sUi() { tone(520, 0.04, 'square', 0.025); }
-    function refreshMuteUi() { muteBtn.textContent = `Sound: ${isMuted ? 'Off' : 'On'}`; }
-
-    function setOverlay(title, text, buttonText) {
-      overlayTitle.textContent = title;
-      overlayText.textContent = text;
-      overlayButton.textContent = buttonText;
-      overlay.classList.remove('hidden');
-    }
-    function hideOverlay() { overlay.classList.add('hidden'); }
-    function updateBest() {
-      if (playerScore > bestWins) {
-        bestWins = playerScore;
-        localStorage.setItem(bestKey, String(bestWins));
-        bestEl.textContent = bestWins;
-      }
-    }
-    function resetBall(direction = 1) {
-      ball.x = canvas.width / 2;
-      ball.y = canvas.height / 2;
-      ball.dx = direction * ball.baseSpeed;
-      ball.dy = (Math.random() * 4 - 2) || 2;
-    }
-    function resetPositions() {
-      player.y = (canvas.height - player.h) / 2;
-      cpu.y = (canvas.height - cpu.h) / 2;
-      player.dy = 0;
-    }
-    function resetGame(showOverlay = true) {
-      playerScore = 0; cpuScore = 0;
-      playerScoreEl.textContent = playerScore; cpuScoreEl.textContent = cpuScore;
-      paused = false; running = false; pauseBtn.textContent = 'Pause';
-      resetPositions(); resetBall(Math.random() > 0.5 ? 1 : -1); drawBoard();
-      if (animationId) cancelAnimationFrame(animationId);
-      if (showOverlay) setOverlay('Ready?', 'First to 7 wins. The CPU is beatable, but it is not exactly polite about it.', 'Start Game');
-      else hideOverlay();
-    }
-    function drawNet() {
-      ctx.fillStyle = 'rgba(255,255,255,0.18)';
-      for (let y = 12; y < canvas.height; y += 28) ctx.fillRect(canvas.width / 2 - 2, y, 4, 16);
-    }
-    function drawBoard() {
-      ctx.fillStyle = '#020617'; ctx.fillRect(0, 0, canvas.width, canvas.height); drawNet();
-      ctx.fillStyle = '#38bdf8'; ctx.fillRect(player.x, player.y, player.w, player.h);
-      ctx.fillStyle = '#22c55e'; ctx.fillRect(cpu.x, cpu.y, cpu.w, cpu.h);
-      ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2); ctx.fillStyle = '#e2e8f0'; ctx.fill(); ctx.closePath();
-    }
-    function clampPaddles() {
-      player.y = Math.max(0, Math.min(canvas.height - player.h, player.y));
-      cpu.y = Math.max(0, Math.min(canvas.height - cpu.h, cpu.y));
-    }
-    function movePlayer() {
-      if (touchUpHeld && !touchDownHeld) player.dy = -player.speed;
-      else if (touchDownHeld && !touchUpHeld) player.dy = player.speed;
-      player.y += player.dy;
-    }
-    function moveCpu() {
-      const cpuCenter = cpu.y + cpu.h / 2;
-      if (ball.y < cpuCenter - 10) cpu.y -= cpu.speed;
-      else if (ball.y > cpuCenter + 10) cpu.y += cpu.speed;
-    }
-    function paddleBounce(paddle, isPlayer) {
-      const inX = ball.x - ball.r < paddle.x + paddle.w && ball.x + ball.r > paddle.x;
-      const inY = ball.y + ball.r > paddle.y && ball.y - ball.r < paddle.y + paddle.h;
-      if (inX && inY) {
-        const relativeIntersect = (ball.y - (paddle.y + paddle.h / 2)) / (paddle.h / 2);
-        ball.dy = relativeIntersect * 6;
-        ball.dx = (isPlayer ? 1 : -1) * (Math.abs(ball.dx) + 0.25);
-        sHit();
-      }
-    }
-    function scorePoint(scoredByPlayer) {
-      if (scoredByPlayer) {
-        playerScore += 1;
-        playerScoreEl.textContent = playerScore;
-        updateBest();
-      } else {
-        cpuScore += 1;
-        cpuScoreEl.textContent = cpuScore;
-      }
-      sScore();
-      if (playerScore >= WIN_SCORE || cpuScore >= WIN_SCORE) {
-        running = false; paused = false;
-        if (playerScore > cpuScore) { sWin(); setOverlay('You Win', `Final score ${playerScore} to ${cpuScore}. Very respectable paddle work.`, 'Play Again'); }
-        else setOverlay('CPU Wins', `Final score ${cpuScore} to ${playerScore}. The robot remains insufferable.`, 'Try Again');
-        return;
-      }
-      paused = true; running = false; resetPositions(); resetBall(scoredByPlayer ? -1 : 1);
-      setOverlay(scoredByPlayer ? 'Point You' : 'Point CPU', 'Tap below for the next serve.', 'Continue');
-    }
-    function update() {
-      if (!running || paused) return;
-      movePlayer(); moveCpu(); clampPaddles();
-      ball.x += ball.dx; ball.y += ball.dy;
-      if (ball.y - ball.r < 0 || ball.y + ball.r > canvas.height) { ball.dy *= -1; sHit(); }
-      paddleBounce(player, true); paddleBounce(cpu, false);
-      if (ball.x + ball.r < 0) scorePoint(false);
-      else if (ball.x - ball.r > canvas.width) scorePoint(true);
-      drawBoard(); animationId = requestAnimationFrame(update);
-    }
-    function startGame() {
-      if (running && !paused) return;
-      paused = false; running = true; hideOverlay(); pauseBtn.textContent = 'Pause'; sUi();
-      animationId = requestAnimationFrame(update);
-    }
-    function togglePause() {
-      if (!running && !paused) return;
-      paused = !paused; pauseBtn.textContent = paused ? 'Resume' : 'Pause'; sUi();
-      if (paused) setOverlay('Paused', 'The paddles are taking a union break.', 'Resume');
-      else { hideOverlay(); animationId = requestAnimationFrame(update); }
-    }
-    function movePointer(clientY) {
-      const rect = canvas.getBoundingClientRect();
-      const scaleY = canvas.height / rect.height;
-      let y = (clientY - rect.top) * scaleY - player.h / 2;
-      player.y = Math.max(0, Math.min(canvas.height - player.h, y));
-    }
-    document.addEventListener('mousemove', e => movePointer(e.clientY));
-    canvas.addEventListener('touchmove', e => movePointer(e.touches[0].clientY), { passive: true });
-    document.addEventListener('keydown', e => {
-      const key = e.key.toLowerCase();
-      if (key === 'arrowup' || key === 'w') player.dy = -player.speed;
-      else if (key === 'arrowdown' || key === 's') player.dy = player.speed;
-      else if (key === ' ') {
-        e.preventDefault();
-        if (!running || paused) startGame();
-        else togglePause();
-      }
-    });
-    document.addEventListener('keyup', e => {
-      const key = e.key.toLowerCase();
-      if (['arrowup','w','arrowdown','s'].includes(key)) player.dy = 0;
-    });
-    function holdButton(el, setter, value) {
-      const start = () => setter(value, true);
-      const end = () => setter(value, false);
-      el.addEventListener('mousedown', start); el.addEventListener('mouseup', end); el.addEventListener('mouseleave', end);
-      el.addEventListener('touchstart', start, { passive: true }); el.addEventListener('touchend', end, { passive: true }); el.addEventListener('touchcancel', end, { passive: true });
-    }
-    function setHeld(dir, held) { if (dir === 'up') touchUpHeld = held; if (dir === 'down') touchDownHeld = held; }
-    holdButton(document.getElementById('up'), setHeld, 'up');
-    holdButton(document.getElementById('down'), setHeld, 'down');
-    pauseBtn.addEventListener('click', togglePause);
-    restartBtn.addEventListener('click', () => { sUi(); resetGame(false); startGame(); });
-    muteBtn.addEventListener('click', () => { isMuted = !isMuted; localStorage.setItem(audioKey, String(isMuted)); refreshMuteUi(); if (!isMuted) sUi(); });
-    overlayButton.addEventListener('click', () => { if (!running || paused) startGame(); });
-    refreshMuteUi();
-    drawBoard(); resetGame(true);
+    const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),playerScoreEl=document.getElementById('playerScore'),cpuScoreEl=document.getElementById('cpuScore'),bestEl=document.getElementById('best'),pauseBtn=document.getElementById('pause'),restartBtn=document.getElementById('restart'),muteBtn=document.getElementById('mute'),overlay=document.getElementById('overlay'),overlayTitle=document.getElementById('overlay-title'),overlayText=document.getElementById('overlay-text'),overlayButton=document.getElementById('overlay-button'),pongMoodEl=document.getElementById('pongMood'),pongLineEl=document.getElementById('pongLine');
+    const WIN_SCORE=7, bestKey='pong-best-wins', audioKey='arcade-muted';
+    const pongLines={start:['A classic contest begins: one human, one machine, zero excuses.','Welcome back to the cleanest rivalry in the building.','Paddles ready. The booth expects drama and poor emotional regulation.'],player:['Point to the human! The crowd is mostly impressed.','A lovely bit of work there. The CPU looked briefly mortal.','Score for you. The machine will remember this with pettiness.'],cpu:['Point to the CPU. It is trying to make eye contact about it.','The robot answers back. This match has teeth now.','CPU scores. An irritatingly clinical finish.'],rally:['Outstanding rally. Both sides are becoming unreasonable.','The ball is moving like it has rent due.','This is old-school chaos at a very professional speed.'],win:['Victory for the human! Somewhere, a smug processor just dimmed a little.','You take the match! The booth is losing composure in your favor.','Match point complete. The machine has been publicly inconvenienced.'],lose:['CPU wins the match. It will be unbearable about this.','The machine takes it. A rematch is now morally necessary.','Final point to the CPU. Frankly, that feels temporary.'],pause:['We pause for strategy, hydration, or emotional recovery.','Timeout in the booth. The paddles are collecting themselves.']};
+    function pick(arr){return arr[Math.floor(Math.random()*arr.length)]} function setPong(line,mood='Commentator booth:'){pongMoodEl.textContent=mood; pongLineEl.textContent=line}
+    let bestWins=Number(localStorage.getItem(bestKey)||0), isMuted=localStorage.getItem(audioKey)==='true', audioCtx=null; bestEl.textContent=bestWins;
+    const player={x:22,y:260,w:14,h:110,speed:7,dy:0}, cpu={x:504,y:260,w:14,h:110,speed:4.4}, ball={x:270,y:320,r:10,dx:5,dy:3,baseSpeed:5};
+    let playerScore=0,cpuScore=0,running=false,paused=false,animationId=null,touchUpHeld=false,touchDownHeld=false, rallyCount=0;
+    function ensureAudio(){if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume()}
+    function tone(freq,duration=0.07,type='square',volume=0.04){if(isMuted)return; ensureAudio(); const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(); osc.type=type; osc.frequency.value=freq; gain.gain.value=volume; gain.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+duration); osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime+duration)}
+    function sHit(){tone(460,0.035,'square',0.03)} function sScore(){tone(240,0.12,'sawtooth',0.05)} function sWin(){tone(660,0.05,'square',0.03);setTimeout(()=>tone(880,0.08,'square',0.03),40)} function sUi(){tone(520,0.04,'square',0.025)} function refreshMuteUi(){muteBtn.textContent=`Sound: ${isMuted?'Off':'On'}`}
+    function setOverlay(title,text,buttonText){overlayTitle.textContent=title;overlayText.textContent=text;overlayButton.textContent=buttonText;overlay.classList.remove('hidden')} function hideOverlay(){overlay.classList.add('hidden')}
+    function updateBest(){if(playerScore>bestWins){bestWins=playerScore; localStorage.setItem(bestKey,String(bestWins)); bestEl.textContent=bestWins}}
+    function resetBall(direction=1){ball.x=canvas.width/2; ball.y=canvas.height/2; ball.dx=direction*ball.baseSpeed; ball.dy=(Math.random()*4-2)||2; rallyCount=0}
+    function resetPositions(){player.y=(canvas.height-player.h)/2; cpu.y=(canvas.height-cpu.h)/2; player.dy=0}
+    function resetGame(showOverlay=true){playerScore=0; cpuScore=0; playerScoreEl.textContent=playerScore; cpuScoreEl.textContent=cpuScore; paused=false; running=false; pauseBtn.textContent='Pause'; resetPositions(); resetBall(Math.random()>0.5?1:-1); drawBoard(); setPong(pick(pongLines.start)); if(animationId) cancelAnimationFrame(animationId); if(showOverlay) setOverlay('Ready?','First to 7 wins. The CPU is beatable, but it is not exactly polite about it.','Start Game'); else hideOverlay()}
+    function drawNet(){ctx.fillStyle='rgba(255,255,255,0.18)'; for(let y=12;y<canvas.height;y+=28) ctx.fillRect(canvas.width/2-2,y,4,16)}
+    function drawBoard(){ctx.fillStyle='#020617'; ctx.fillRect(0,0,canvas.width,canvas.height); drawNet(); ctx.fillStyle='#38bdf8'; ctx.fillRect(player.x,player.y,player.w,player.h); ctx.fillStyle='#22c55e'; ctx.fillRect(cpu.x,cpu.y,cpu.w,cpu.h); ctx.beginPath(); ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2); ctx.fillStyle='#e2e8f0'; ctx.fill(); ctx.closePath()}
+    function clampPaddles(){player.y=Math.max(0,Math.min(canvas.height-player.h,player.y)); cpu.y=Math.max(0,Math.min(canvas.height-cpu.h,cpu.y))}
+    function movePlayer(){if(touchUpHeld&&!touchDownHeld) player.dy=-player.speed; else if(touchDownHeld&&!touchUpHeld) player.dy=player.speed; player.y+=player.dy}
+    function moveCpu(){const cpuCenter=cpu.y+cpu.h/2; if(ball.y<cpuCenter-10) cpu.y-=cpu.speed; else if(ball.y>cpuCenter+10) cpu.y+=cpu.speed}
+    function paddleBounce(paddle,isPlayer){const inX=ball.x-ball.r<paddle.x+paddle.w&&ball.x+ball.r>paddle.x, inY=ball.y+ball.r>paddle.y&&ball.y-ball.r<paddle.y+paddle.h; if(inX&&inY){const relativeIntersect=(ball.y-(paddle.y+paddle.h/2))/(paddle.h/2); ball.dy=relativeIntersect*6; ball.dx=(isPlayer?1:-1)*(Math.abs(ball.dx)+0.25); rallyCount+=1; if(rallyCount>=4) setPong(pick(pongLines.rally)); sHit()}}
+    function scorePoint(scoredByPlayer){if(scoredByPlayer){playerScore+=1; playerScoreEl.textContent=playerScore; updateBest(); setPong(pick(pongLines.player));} else {cpuScore+=1; cpuScoreEl.textContent=cpuScore; setPong(pick(pongLines.cpu));} sScore(); if(playerScore>=WIN_SCORE||cpuScore>=WIN_SCORE){running=false; paused=false; if(playerScore>cpuScore){setPong(pick(pongLines.win)); sWin(); setOverlay('You Win',`Final score ${playerScore} to ${cpuScore}. Very respectable paddle work.`,'Play Again')} else {setPong(pick(pongLines.lose)); setOverlay('CPU Wins',`Final score ${cpuScore} to ${playerScore}. The robot remains insufferable.`,'Try Again')} return;} paused=true; running=false; resetPositions(); resetBall(scoredByPlayer?-1:1); setOverlay(scoredByPlayer?'Point You':'Point CPU','Tap below for the next serve.','Continue')}
+    function update(){if(!running||paused)return; movePlayer(); moveCpu(); clampPaddles(); ball.x+=ball.dx; ball.y+=ball.dy; if(ball.y-ball.r<0||ball.y+ball.r>canvas.height){ball.dy*=-1; sHit()} paddleBounce(player,true); paddleBounce(cpu,false); if(ball.x+ball.r<0) scorePoint(false); else if(ball.x-ball.r>canvas.width) scorePoint(true); drawBoard(); animationId=requestAnimationFrame(update)}
+    function startGame(){if(running&&!paused)return; paused=false; running=true; hideOverlay(); pauseBtn.textContent='Pause'; sUi(); animationId=requestAnimationFrame(update)}
+    function togglePause(){if(!running&&!paused)return; paused=!paused; pauseBtn.textContent=paused?'Resume':'Pause'; sUi(); if(paused){setPong(pick(pongLines.pause)); setOverlay('Paused','The paddles are taking a union break.','Resume')} else {hideOverlay(); animationId=requestAnimationFrame(update)}}
+    function movePointer(clientY){const rect=canvas.getBoundingClientRect(), scaleY=canvas.height/rect.height; let y=(clientY-rect.top)*scaleY-player.h/2; player.y=Math.max(0,Math.min(canvas.height-player.h,y))}
+    document.addEventListener('mousemove',e=>movePointer(e.clientY)); canvas.addEventListener('touchmove',e=>movePointer(e.touches[0].clientY),{passive:true});
+    document.addEventListener('keydown',e=>{const key=e.key.toLowerCase(); if(key==='arrowup'||key==='w') player.dy=-player.speed; else if(key==='arrowdown'||key==='s') player.dy=player.speed; else if(key===' '){e.preventDefault(); if(!running||paused) startGame(); else togglePause();}}); document.addEventListener('keyup',e=>{const key=e.key.toLowerCase(); if(['arrowup','w','arrowdown','s'].includes(key)) player.dy=0});
+    function holdButton(el,setter,value){const start=()=>setter(value,true), end=()=>setter(value,false); el.addEventListener('mousedown',start); el.addEventListener('mouseup',end); el.addEventListener('mouseleave',end); el.addEventListener('touchstart',start,{passive:true}); el.addEventListener('touchend',end,{passive:true}); el.addEventListener('touchcancel',end,{passive:true})}
+    function setHeld(dir,held){if(dir==='up') touchUpHeld=held; if(dir==='down') touchDownHeld=held}
+    holdButton(document.getElementById('up'),setHeld,'up'); holdButton(document.getElementById('down'),setHeld,'down');
+    pauseBtn.addEventListener('click',togglePause); restartBtn.addEventListener('click',()=>{sUi(); resetGame(false); startGame()}); muteBtn.addEventListener('click',()=>{isMuted=!isMuted; localStorage.setItem(audioKey,String(isMuted)); refreshMuteUi(); if(!isMuted) sUi()}); overlayButton.addEventListener('click',()=>{if(!running||paused) startGame()});
+    refreshMuteUi(); drawBoard(); resetGame(true);
   </script>
 </body>
 </html>
