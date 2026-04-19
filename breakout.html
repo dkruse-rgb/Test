@@ -32,14 +32,18 @@
       <div id="overlay" class="overlay"><div class="overlay-card"><h2 id="overlay-title">Ready?</h2><p id="overlay-text">Move the paddle, keep the ball alive, and turn those bricks into glitter and regret.</p><button id="overlay-button">Start Game</button></div></div>
     </div>
     <div class="touch-row"><button id="left">←</button><button id="right">→</button></div>
-    <div class="announcer"><strong id="breakoutMood">Brick wall announcer:</strong><span id="breakoutLine">Those bricks are acting tough, but they are extremely breakable in practice.</span></div>
+    <div class="announcer" id="breakoutBox"><strong id="breakoutMood">Brick wall announcer:</strong><span id="breakoutLine">Those bricks are acting tough, but they are extremely breakable in practice.</span></div>
     <p class="hint">Desktop: move with mouse or arrow keys. Mobile: drag on the game board or use the arrows.</p>
   </div>
   <script>
-    const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),scoreEl=document.getElementById('score'),livesEl=document.getElementById('lives'),levelEl=document.getElementById('level'),bestEl=document.getElementById('best'),pauseBtn=document.getElementById('pause'),restartBtn=document.getElementById('restart'),muteBtn=document.getElementById('mute'),overlay=document.getElementById('overlay'),overlayTitle=document.getElementById('overlay-title'),overlayText=document.getElementById('overlay-text'),overlayButton=document.getElementById('overlay-button'),breakoutMoodEl=document.getElementById('breakoutMood'),breakoutLineEl=document.getElementById('breakoutLine');
-    const bestKey='breakout-best-score', audioKey='arcade-muted';
+    const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),scoreEl=document.getElementById('score'),livesEl=document.getElementById('lives'),levelEl=document.getElementById('level'),bestEl=document.getElementById('best'),pauseBtn=document.getElementById('pause'),restartBtn=document.getElementById('restart'),muteBtn=document.getElementById('mute'),overlay=document.getElementById('overlay'),overlayTitle=document.getElementById('overlay-title'),overlayText=document.getElementById('overlay-text'),overlayButton=document.getElementById('overlay-button'),breakoutBox=document.getElementById('breakoutBox'),breakoutMoodEl=document.getElementById('breakoutMood'),breakoutLineEl=document.getElementById('breakoutLine');
+    const bestKey='breakout-best-score', audioKey='arcade-muted', PERSONALITY_KEY='arcade-personality-mode';
     const breakoutLines={start:['Those bricks are acting tough, but they are extremely breakable in practice.','The wall looks confident. That is adorable.','Paddle up. The bricks have been notified of your intentions.'],brick:['Brick down! The wall is now filing complaints.','Nice hit. That stack just lost a little dignity.','Another brick gone. Structural morale is collapsing fast.'],streak:['You are carving through that wall like it owes rent.','This is turning into organized property damage.','The bricks would like a word with whoever trained you.'],lose:['Ball lost. The wall takes this far too personally.','That one got away. The bricks are chirping now.','Tough bounce. The wall thinks it has momentum.'],level:['Level clear. The next wall has heard about you and is nervous.','You broke the whole section. Very rude, very effective.','Fresh level. More bricks, same bad future for them.'],pause:['Paused. Even the paddle deserves a union break.','Break time. The wall is using this moment to gossip.'],end:['Round over. The surviving bricks are being entirely too smug.','That wall got some shots in, but not enough to feel proud.','Game over. The bricks will celebrate this way too hard.']};
-    function pick(arr){return arr[Math.floor(Math.random()*arr.length)]} function setBreakout(line,mood='Brick wall announcer:'){breakoutMoodEl.textContent=mood; breakoutLineEl.textContent=line}
+    function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+    function getPersonalityMode(){return localStorage.getItem(PERSONALITY_KEY)||'extra'}
+    function applyPersonalityVisibility(){breakoutBox.style.display=getPersonalityMode()==='off'?'none':'block'}
+    function softenLine(line){const short=line.split('. ')[0];return short.endsWith('.')?short:short+'.'}
+    function setBreakout(line,mood='Brick wall announcer:'){const mode=getPersonalityMode();applyPersonalityVisibility();if(mode==='off')return;breakoutMoodEl.textContent=mode==='standard'?'Brick note:':mood;breakoutLineEl.textContent=mode==='standard'?softenLine(line):line}
     let bestScore=Number(localStorage.getItem(bestKey)||0), isMuted=localStorage.getItem(audioKey)==='true', audioCtx=null; bestEl.textContent=bestScore;
     const paddle={w:110,h:14,x:215,y:600,speed:8,dx:0}, ball={x:270,y:580,r:9,dx:4,dy:-4,speed:4}, brick={rows:5,cols:8,w:56,h:22,gap:8,top:70,left:18};
     let bricks=[], score=0, lives=3, level=1, running=false, paused=false, animationId=null, touchLeftHeld=false, touchRightHeld=false;
@@ -71,7 +75,8 @@
     function setHeld(dir,isHeld){if(dir==='left') touchLeftHeld=isHeld; if(dir==='right') touchRightHeld=isHeld}
     holdButton(document.getElementById('left'),setHeld,'left'); holdButton(document.getElementById('right'),setHeld,'right');
     pauseBtn.addEventListener('click',togglePause); restartBtn.addEventListener('click',()=>{sUi(); resetGame(false); startGame()}); muteBtn.addEventListener('click',()=>{isMuted=!isMuted; localStorage.setItem(audioKey,String(isMuted)); refreshMuteUi(); if(!isMuted) sUi()}); overlayButton.addEventListener('click',()=>{if(!running||paused) startGame()});
-    refreshMuteUi(); resetGame(true);
+    window.addEventListener('focus',applyPersonalityVisibility);
+    refreshMuteUi(); applyPersonalityVisibility(); resetGame(true);
   </script>
 </body>
 </html>
