@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Greg's Casino</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.12);
+      --text: #e5eef8;
+      --muted: #9fb0c3;
+      --accent: #f59e0b;
+      --accent-dark: #241300;
+      --felt: #14532d;
+      --felt-dark: #0b3b20;
+      --good: #22c55e;
+      --bad: #ef4444;
+      --card: #f8fafc;
+      --card-text: #0f172a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(245,158,11,0.14), transparent 35%),
+        linear-gradient(180deg, #020617, #0f172a);
+    }
+    .wrap {
+      width: min(96vw, 900px);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.25rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      text-align: center;
+    }
+    h1 { margin: 0 0 .35rem; font-size: clamp(2rem, 5vw, 2.8rem); }
+    .subtext { margin: 0 0 1rem; color: var(--muted); }
+    .topbar {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: .75rem;
+      margin: 1rem 0;
+    }
+    .stat {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: .8rem;
+    }
+    .stat-label {
+      display: block;
+      color: var(--muted);
+      font-size: .8rem;
+      margin-bottom: .25rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .stat-value { font-size: 1.1rem; font-weight: 800; }
+    .action-row {
+      display: flex;
+      justify-content: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    a, button {
+      background: var(--accent);
+      color: var(--accent-dark);
+      border: 0;
+      border-radius: 999px;
+      padding: .85rem 1rem;
+      text-decoration: none;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+    a:hover, button:hover { transform: translateY(-1px); opacity: .96; }
+    .secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .table {
+      background: radial-gradient(circle at center, var(--felt), var(--felt-dark));
+      border: 3px solid rgba(245,158,11,0.4);
+      border-radius: 28px;
+      padding: 1.1rem;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.05);
+    }
+    .row {
+      margin-bottom: 1rem;
+      text-align: left;
+    }
+    .row:last-child { margin-bottom: 0; }
+    .row-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: .7rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .row-title { font-size: 1.15rem; font-weight: 800; }
+    .hand {
+      display: flex;
+      gap: .7rem;
+      flex-wrap: wrap;
+      min-height: 116px;
+      align-items: center;
+    }
+    .card {
+      width: 80px;
+      height: 110px;
+      border-radius: 14px;
+      background: var(--card);
+      color: var(--card-text);
+      border: 2px solid rgba(15,23,42,0.08);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.18);
+      padding: .5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      font-weight: 900;
+    }
+    .card.red { color: #b91c1c; }
+    .card-back {
+      background: linear-gradient(135deg, #1e293b, #334155);
+      color: #e2e8f0;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+    .corner { font-size: 1rem; line-height: 1; }
+    .suit-big { font-size: 2rem; text-align: center; }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+    .message {
+      margin-top: 1rem;
+      min-height: 1.6rem;
+      font-weight: 700;
+    }
+    .chips {
+      display: flex;
+      justify-content: center;
+      gap: .55rem;
+      flex-wrap: wrap;
+      margin-top: .85rem;
+    }
+    .chip {
+      min-width: 68px;
+      border-radius: 999px;
+      padding: .65rem .85rem;
+      background: rgba(255,255,255,0.08);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .chip.active {
+      background: var(--accent);
+      color: var(--accent-dark);
+      border-color: transparent;
+    }
+    .hint { color: var(--muted); margin-top: 1rem; line-height: 1.6; }
+    @media (max-width: 720px) {
+      .topbar { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Greg's Casino</h1>
+    <p class="subtext">Blackjack, bad decisions, and a dealer who acts like this is all very normal.</p>
+
+    <div class="topbar">
+      <div class="stat"><span class="stat-label">Bankroll</span><span id="bankroll" class="stat-value">500</span></div>
+      <div class="stat"><span class="stat-label">Bet</span><span id="bet" class="stat-value">25</span></div>
+      <div class="stat"><span class="stat-label">Wins</span><span id="wins" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label">Best</span><span id="best" class="stat-value">500</span></div>
+      <div class="stat"><span class="stat-label">Round</span><span id="roundState" class="stat-value">Ready</span></div>
+    </div>
+
+    <div class="action-row">
+      <a class="secondary" href="index.html">Back Home</a>
+      <button id="mute" class="secondary">Sound: On</button>
+      <button id="deal">Deal</button>
+      <button id="hit" class="secondary">Hit</button>
+      <button id="stand" class="secondary">Stand</button>
+      <button id="newGame" class="secondary">Reset Bankroll</button>
+    </div>
+
+    <div class="table">
+      <div class="row">
+        <div class="row-head">
+          <div class="row-title">Dealer</div>
+          <div id="dealerScore">Score: ?</div>
+        </div>
+        <div id="dealerHand" class="hand"></div>
+      </div>
+
+      <div class="row">
+        <div class="row-head">
+          <div class="row-title">Player</div>
+          <div id="playerScore">Score: 0</div>
+        </div>
+        <div id="playerHand" class="hand"></div>
+      </div>
+
+      <div class="chips">
+        <button class="chip active" data-bet="25">25</button>
+        <button class="chip" data-bet="50">50</button>
+        <button class="chip" data-bet="100">100</button>
+        <button class="chip" data-bet="200">200</button>
+      </div>
+
+      <div id="message" class="message">Place a bet and deal a hand.</div>
+    </div>
+
+    <p class="hint">Goal: get closer to 21 than the dealer without going over. Dealer stands on 17.</p>
+  </div>
+
+  <script>
+    const suits = ['♠', '♥', '♦', '♣'];
+    const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
+    const bestKey = 'gregs-casino-best-bankroll';
+    const audioKey = 'arcade-muted';
+
+    const bankrollEl = document.getElementById('bankroll');
+    const betEl = document.getElementById('bet');
+    const winsEl = document.getElementById('wins');
+    const bestEl = document.getElementById('best');
+    const roundStateEl = document.getElementById('roundState');
+    const dealerScoreEl = document.getElementById('dealerScore');
+    const playerScoreEl = document.getElementById('playerScore');
+    const dealerHandEl = document.getElementById('dealerHand');
+    const playerHandEl = document.getElementById('playerHand');
+    const messageEl = document.getElementById('message');
+    const dealBtn = document.getElementById('deal');
+    const hitBtn = document.getElementById('hit');
+    const standBtn = document.getElementById('stand');
+    const newGameBtn = document.getElementById('newGame');
+    const muteBtn = document.getElementById('mute');
+    const chipBtns = [...document.querySelectorAll('.chip')];
+
+    let deck = [];
+    let playerHand = [];
+    let dealerHand = [];
+    let bankroll = 500;
+    let currentBet = 25;
+    let wins = 0;
+    let roundActive = false;
+    let dealerHidden = true;
+    let isMuted = localStorage.getItem(audioKey) === 'true';
+    let bestBankroll = Number(localStorage.getItem(bestKey) || 500);
+    let audioCtx = null;
+
+    bestEl.textContent = bestBankroll;
+
+    function ensureAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    function tone(freq, duration = 0.06, type = 'square', volume = 0.04) {
+      if (isMuted) return;
+      ensureAudio();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.value = volume;
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+    function sDeal() { tone(420, 0.04, 'triangle', 0.03); }
+    function sHit() { tone(560, 0.04, 'square', 0.03); }
+    function sWin() { tone(660, 0.05, 'square', 0.03); setTimeout(() => tone(880, 0.08, 'square', 0.03), 40); }
+    function sLose() { tone(180, 0.16, 'sawtooth', 0.05); }
+    function sPush() { tone(320, 0.06, 'triangle', 0.03); }
+    function sUi() { tone(480, 0.04, 'square', 0.025); }
+    function refreshMute() { muteBtn.textContent = `Sound: ${isMuted ? 'Off' : 'On'}`; }
+
+    function makeDeck() {
+      const cards = [];
+      for (const suit of suits) {
+        for (const rank of ranks) cards.push({ suit, rank });
+      }
+      for (let i = cards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [cards[i], cards[j]] = [cards[j], cards[i]];
+      }
+      return cards;
+    }
+
+    function cardValue(rank) {
+      if (rank === 'A') return 11;
+      if (['J', 'Q', 'K'].includes(rank)) return 10;
+      return Number(rank);
+    }
+
+    function handValue(hand) {
+      let total = 0;
+      let aces = 0;
+      for (const card of hand) {
+        total += cardValue(card.rank);
+        if (card.rank === 'A') aces += 1;
+      }
+      while (total > 21 && aces > 0) {
+        total -= 10;
+        aces -= 1;
+      }
+      return total;
+    }
+
+    function drawCard() {
+      if (!deck.length) deck = makeDeck();
+      return deck.pop();
+    }
+
+    function renderCard(card, hidden = false) {
+      const div = document.createElement('div');
+      div.className = hidden ? 'card card-back' : 'card';
+      if (hidden) {
+        div.textContent = '🂠';
+        return div;
+      }
+      const red = card.suit === '♥' || card.suit === '♦';
+      if (red) div.classList.add('red');
+      div.innerHTML = `<div class="corner">${card.rank}${card.suit}</div><div class="suit-big">${card.suit}</div><div class="corner" style="align-self:flex-end;">${card.rank}${card.suit}</div>`;
+      return div;
+    }
+
+    function renderHands() {
+      dealerHandEl.innerHTML = '';
+      playerHandEl.innerHTML = '';
+      dealerHand.forEach((card, index) => dealerHandEl.appendChild(renderCard(card, dealerHidden && index === 1)));
+      playerHand.forEach(card => playerHandEl.appendChild(renderCard(card)));
+      const playerTotal = handValue(playerHand);
+      playerScoreEl.textContent = `Score: ${playerTotal}`;
+      if (dealerHidden) {
+        const visible = dealerHand.length ? cardValue(dealerHand[0].rank) : 0;
+        dealerScoreEl.textContent = `Score: ${visible}+?`;
+      } else {
+        dealerScoreEl.textContent = `Score: ${handValue(dealerHand)}`;
+      }
+    }
+
+    function updateStats() {
+      bankrollEl.textContent = bankroll;
+      betEl.textContent = currentBet;
+      winsEl.textContent = wins;
+      roundStateEl.textContent = roundActive ? 'Playing' : 'Ready';
+      if (bankroll > bestBankroll) {
+        bestBankroll = bankroll;
+        localStorage.setItem(bestKey, String(bestBankroll));
+        bestEl.textContent = bestBankroll;
+      }
+      dealBtn.disabled = roundActive || bankroll < currentBet;
+      hitBtn.disabled = !roundActive;
+      standBtn.disabled = !roundActive;
+    }
+
+    function setMessage(text) { messageEl.textContent = text; }
+
+    function setBet(value) {
+      if (roundActive) return;
+      currentBet = Math.min(value, bankroll || value);
+      chipBtns.forEach(btn => btn.classList.toggle('active', Number(btn.dataset.bet) === currentBet));
+      updateStats();
+    }
+
+    function startRound() {
+      if (roundActive || bankroll < currentBet) return;
+      if (deck.length < 15) deck = makeDeck();
+      bankroll -= currentBet;
+      playerHand = [drawCard(), drawCard()];
+      dealerHand = [drawCard(), drawCard()];
+      dealerHidden = true;
+      roundActive = true;
+      sDeal();
+      renderHands();
+      updateStats();
+      const playerTotal = handValue(playerHand);
+      if (playerTotal === 21) {
+        setMessage('Blackjack. Naturally Greg is furious.');
+        setTimeout(resolveDealer, 500);
+      } else {
+        setMessage('Hit or stand? This feels responsible already.');
+      }
+    }
+
+    function playerHit() {
+      if (!roundActive) return;
+      playerHand.push(drawCard());
+      sHit();
+      renderHands();
+      const total = handValue(playerHand);
+      if (total > 21) {
+        dealerHidden = false;
+        renderHands();
+        roundActive = false;
+        setMessage('Bust. Greg takes the chips and the attitude.');
+        sLose();
+        updateStats();
+      } else if (total === 21) {
+        setMessage('21. Time to see if the dealer hates this as much as Greg does.');
+        setTimeout(resolveDealer, 400);
+      } else {
+        setMessage('Still alive. That is how casinos keep you talking.');
+      }
+    }
+
+    function resolveDealer() {
+      dealerHidden = false;
+      renderHands();
+      let dealerTotal = handValue(dealerHand);
+      while (dealerTotal < 17) {
+        dealerHand.push(drawCard());
+        dealerTotal = handValue(dealerHand);
+      }
+      renderHands();
+      const playerTotal = handValue(playerHand);
+      roundActive = false;
+
+      if (dealerTotal > 21 || playerTotal > dealerTotal) {
+        bankroll += currentBet * 2;
+        wins += 1;
+        setMessage('You win. Greg is pretending this is fine.');
+        sWin();
+      } else if (playerTotal === dealerTotal) {
+        bankroll += currentBet;
+        setMessage('Push. Nobody wins, which feels emotionally correct.');
+        sPush();
+      } else {
+        setMessage('Dealer wins. Greg suddenly believes in house rules again.');
+        sLose();
+      }
+
+      if (bankroll <= 0) {
+        bankroll = 0;
+        setMessage('Bankroll wiped out. Greg thanks you for your donation. Reset to keep playing.');
+      }
+      updateStats();
+    }
+
+    function resetBankroll() {
+      bankroll = 500;
+      wins = 0;
+      playerHand = [];
+      dealerHand = [];
+      roundActive = false;
+      dealerHidden = true;
+      deck = makeDeck();
+      renderHands();
+      updateStats();
+      setMessage('Fresh stack, fresh mistakes.');
+      sUi();
+    }
+
+    chipBtns.forEach(btn => btn.addEventListener('click', () => setBet(Number(btn.dataset.bet))));
+    dealBtn.addEventListener('click', startRound);
+    hitBtn.addEventListener('click', playerHit);
+    standBtn.addEventListener('click', resolveDealer);
+    newGameBtn.addEventListener('click', resetBankroll);
+    muteBtn.addEventListener('click', () => {
+      isMuted = !isMuted;
+      localStorage.setItem(audioKey, String(isMuted));
+      refreshMute();
+      if (!isMuted) sUi();
+    });
+
+    document.addEventListener('keydown', e => {
+      const key = e.key.toLowerCase();
+      if (key === 'd') startRound();
+      else if (key === 'h') playerHit();
+      else if (key === 's') resolveDealer();
+    });
+
+    deck = makeDeck();
+    refreshMute();
+    renderHands();
+    setBet(25);
+    updateStats();
+  </script>
+</body>
+</html>
