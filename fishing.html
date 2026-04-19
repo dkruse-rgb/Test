@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fishing</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.12);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-dark: #001018;
+      --good: #22c55e;
+      --gold: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top, rgba(56,189,248,0.16), transparent 35%), linear-gradient(180deg, #020617, #0f172a);
+    }
+    .wrap {
+      width: min(94vw, 680px);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.25rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+      text-align: center;
+    }
+    h1 { margin: 0 0 .35rem; font-size: clamp(2rem, 5vw, 2.7rem); }
+    .subtext { margin: 0 0 1rem; color: var(--muted); }
+    .topbar {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: .75rem;
+      margin: 1rem 0;
+    }
+    .stat {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: .8rem;
+    }
+    .stat-label { display:block; color: var(--muted); font-size: .8rem; margin-bottom: .25rem; text-transform: uppercase; letter-spacing: .08em; }
+    .stat-value { font-size: 1.1rem; font-weight: 800; }
+    .action-row {
+      display: flex;
+      justify-content: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    a, button {
+      background: var(--accent);
+      color: var(--accent-dark);
+      border: 0;
+      border-radius: 999px;
+      padding: .8rem 1rem;
+      text-decoration: none;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
+      font-family: inherit;
+    }
+    a:hover, button:hover { transform: translateY(-1px); opacity: .96; }
+    .secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .board-wrap { position: relative; width: min(100%, 620px); margin: 0 auto; }
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: #04111f;
+      border: 2px solid var(--accent);
+      border-radius: 18px;
+      touch-action: none;
+    }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2,6,23,.74);
+      border-radius: 18px;
+      padding: 1rem;
+    }
+    .overlay.hidden { opacity: 0; pointer-events: none; }
+    .overlay-card { max-width: 320px; }
+    .overlay h2 { margin: 0 0 .5rem; font-size: 1.8rem; }
+    .overlay p { color: var(--muted); line-height: 1.55; }
+    .touch-row {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+      flex-wrap: wrap;
+    }
+    .touch-row button { min-width: 110px; }
+    .hint { color: var(--muted); margin-top: 1rem; line-height: 1.6; }
+    @media (max-width: 640px) {
+      .topbar { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Fishing</h1>
+    <p class="subtext">Cast your line, hook fish, and reel them in before time runs out.</p>
+
+    <div class="topbar">
+      <div class="stat"><span class="stat-label">Score</span><span id="score" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label">Best</span><span id="best" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label">Fish</span><span id="caught" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label">Time</span><span id="timer" class="stat-value">60</span></div>
+      <div class="stat"><span class="stat-label">Line</span><span id="state" class="stat-value">Ready</span></div>
+    </div>
+
+    <div class="action-row">
+      <a class="secondary" href="index.html">Back Home</a>
+      <button id="mute" class="secondary">Sound: On</button>
+      <button id="pause" class="secondary">Pause</button>
+      <button id="restart">Restart</button>
+    </div>
+
+    <div class="board-wrap">
+      <canvas id="game" width="620" height="720"></canvas>
+      <div id="overlay" class="overlay">
+        <div class="overlay-card">
+          <h2 id="overlayTitle">Ready to fish?</h2>
+          <p id="overlayText">Press Start, cast the hook, and reel fish back to the boat. Bigger fish pay better.</p>
+          <button id="overlayButton">Start Game</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="touch-row">
+      <button id="castBtn">Cast / Reel</button>
+      <button id="leftBtn">Boat Left</button>
+      <button id="rightBtn">Boat Right</button>
+    </div>
+
+    <p class="hint">Desktop: left/right arrows or A/D move the boat. Space casts and reels. Mobile: use the buttons.</p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const bestEl = document.getElementById('best');
+    const caughtEl = document.getElementById('caught');
+    const timerEl = document.getElementById('timer');
+    const stateEl = document.getElementById('state');
+    const pauseBtn = document.getElementById('pause');
+    const restartBtn = document.getElementById('restart');
+    const muteBtn = document.getElementById('mute');
+    const overlay = document.getElementById('overlay');
+    const overlayTitle = document.getElementById('overlayTitle');
+    const overlayText = document.getElementById('overlayText');
+    const overlayButton = document.getElementById('overlayButton');
+    const castBtn = document.getElementById('castBtn');
+    const leftBtn = document.getElementById('leftBtn');
+    const rightBtn = document.getElementById('rightBtn');
+
+    const audioKey = 'arcade-muted';
+    const bestKey = 'fishing-best-score';
+    let isMuted = localStorage.getItem(audioKey) === 'true';
+    let bestScore = Number(localStorage.getItem(bestKey) || 0);
+    let audioCtx = null;
+    bestEl.textContent = bestScore;
+
+    const boat = { x: 310, y: 86, w: 100, h: 26, speed: 8, dx: 0 };
+    const line = { x: 310, top: 96, length: 0, max: 510, speed: 8, state: 'ready', hooked: null };
+    let fish = [];
+    let score = 0;
+    let caught = 0;
+    let timeLeft = 60;
+    let running = false;
+    let paused = false;
+    let gameLoop = null;
+    let timerLoop = null;
+
+    function ensureAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+    function tone(freq, duration = 0.06, type = 'triangle', volume = 0.04) {
+      if (isMuted) return;
+      ensureAudio();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.value = volume;
+      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime + duration);
+    }
+    function sUi() { tone(480, 0.04, 'square', 0.025); }
+    function sCast() { tone(360, 0.05, 'triangle', 0.03); }
+    function sHook() { tone(680, 0.05, 'square', 0.03); }
+    function sCatch() { tone(620, 0.05, 'square', 0.03); setTimeout(() => tone(880, 0.08, 'square', 0.03), 40); }
+    function sEnd() { tone(180, 0.18, 'sawtooth', 0.05); }
+    function refreshMuteUi() { muteBtn.textContent = `Sound: ${isMuted ? 'Off' : 'On'}`; }
+
+    function setOverlay(title, text, buttonText) {
+      overlayTitle.textContent = title;
+      overlayText.textContent = text;
+      overlayButton.textContent = buttonText;
+      overlay.classList.remove('hidden');
+    }
+    function hideOverlay() { overlay.classList.add('hidden'); }
+
+    function randomFish() {
+      const size = Math.random() < 0.2 ? 'big' : Math.random() < 0.5 ? 'medium' : 'small';
+      const config = {
+        small: { points: 10, speed: 2.4, w: 30, h: 16, color: '#38bdf8' },
+        medium: { points: 20, speed: 1.8, w: 42, h: 22, color: '#22c55e' },
+        big: { points: 35, speed: 1.3, w: 58, h: 28, color: '#f59e0b' }
+      }[size];
+      const fromLeft = Math.random() > 0.5;
+      return {
+        ...config,
+        dir: fromLeft ? 1 : -1,
+        x: fromLeft ? -80 : canvas.width + 80,
+        y: 170 + Math.random() * 470,
+        hooked: false
+      };
+    }
+
+    function populateFish() {
+      fish = [];
+      for (let i = 0; i < 8; i++) fish.push(randomFish());
+    }
+
+    function resetGame(showOverlay = true) {
+      boat.x = 310;
+      boat.dx = 0;
+      line.x = boat.x;
+      line.length = 0;
+      line.state = 'ready';
+      line.hooked = null;
+      score = 0;
+      caught = 0;
+      timeLeft = 60;
+      running = false;
+      paused = false;
+      scoreEl.textContent = score;
+      caughtEl.textContent = caught;
+      timerEl.textContent = timeLeft;
+      stateEl.textContent = 'Ready';
+      pauseBtn.textContent = 'Pause';
+      populateFish();
+      stopLoops();
+      draw();
+      if (showOverlay) setOverlay('Ready to fish?', 'Press Start, cast the hook, and reel fish back to the boat. Bigger fish pay better.', 'Start Game');
+      else hideOverlay();
+    }
+
+    function stopLoops() {
+      if (gameLoop) cancelAnimationFrame(gameLoop);
+      if (timerLoop) clearInterval(timerLoop);
+      gameLoop = null;
+      timerLoop = null;
+    }
+
+    function startGame() {
+      if (running && !paused) return;
+      running = true;
+      paused = false;
+      pauseBtn.textContent = 'Pause';
+      hideOverlay();
+      sUi();
+      if (!timerLoop) {
+        timerLoop = setInterval(() => {
+          if (!running || paused) return;
+          timeLeft -= 1;
+          timerEl.textContent = timeLeft;
+          if (timeLeft <= 0) endGame();
+        }, 1000);
+      }
+      loop();
+    }
+
+    function endGame() {
+      running = false;
+      paused = false;
+      stopLoops();
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem(bestKey, String(bestScore));
+        bestEl.textContent = bestScore;
+      }
+      sEnd();
+      setOverlay('Time up', `You caught ${caught} fish for ${score} points. ${score >= bestScore && score > 0 ? 'That is your best so far.' : 'The lake remains smug.'}`, 'Play Again');
+    }
+
+    function togglePause() {
+      if (!running && !paused) return;
+      paused = !paused;
+      pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+      sUi();
+      if (paused) setOverlay('Paused', 'The fish are pretending they were not going anywhere.', 'Resume');
+      else { hideOverlay(); loop(); }
+    }
+
+    function castOrReel() {
+      if (!running) { startGame(); return; }
+      if (paused) return;
+      if (line.state === 'ready') {
+        line.state = 'dropping';
+        line.x = boat.x;
+        stateEl.textContent = 'Casting';
+        sCast();
+      } else if (line.state === 'dropping') {
+        line.state = 'reeling';
+        stateEl.textContent = line.hooked ? 'Hooked!' : 'Reeling';
+        sUi();
+      }
+    }
+
+    function moveBoat() {
+      boat.x += boat.dx;
+      if (boat.x < 50) boat.x = 50;
+      if (boat.x > canvas.width - 50) boat.x = canvas.width - 50;
+      if (line.state === 'ready') line.x = boat.x;
+    }
+
+    function moveFish() {
+      fish.forEach(f => {
+        if (f.hooked) {
+          f.x = line.x;
+          f.y = line.top + line.length + 10;
+          return;
+        }
+        f.x += f.speed * f.dir;
+        if (f.dir === 1 && f.x > canvas.width + 90) Object.assign(f, randomFish());
+        if (f.dir === -1 && f.x < -90) Object.assign(f, randomFish());
+      });
+    }
+
+    function updateLine() {
+      if (line.state === 'dropping') {
+        line.length += line.speed;
+        if (!line.hooked) {
+          const hookY = line.top + line.length;
+          fish.forEach(f => {
+            if (f.hooked) return;
+            if (Math.abs(f.x - line.x) < f.w * 0.55 && Math.abs(f.y - hookY) < f.h * 0.65) {
+              f.hooked = true;
+              line.hooked = f;
+              line.state = 'reeling';
+              stateEl.textContent = 'Hooked!';
+              sHook();
+            }
+          });
+        }
+        if (line.length >= line.max) {
+          line.state = 'reeling';
+          stateEl.textContent = line.hooked ? 'Hooked!' : 'Reeling';
+        }
+      } else if (line.state === 'reeling') {
+        line.length -= line.speed + (line.hooked ? 1 : 0);
+        if (line.length <= 0) {
+          line.length = 0;
+          if (line.hooked) {
+            score += line.hooked.points;
+            caught += 1;
+            scoreEl.textContent = score;
+            caughtEl.textContent = caught;
+            sCatch();
+            const idx = fish.indexOf(line.hooked);
+            if (idx >= 0) fish[idx] = randomFish();
+          }
+          line.hooked = null;
+          line.state = 'ready';
+          line.x = boat.x;
+          stateEl.textContent = 'Ready';
+        }
+      }
+    }
+
+    function drawBackground() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const sky = ctx.createLinearGradient(0, 0, 0, 170);
+      sky.addColorStop(0, '#7dd3fc');
+      sky.addColorStop(1, '#0ea5e9');
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, canvas.width, 120);
+      ctx.fillStyle = '#fef3c7';
+      ctx.beginPath(); ctx.arc(88, 52, 26, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#1d4ed8';
+      ctx.fillRect(0, 120, canvas.width, canvas.height - 120);
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      for (let i = 0; i < 9; i++) {
+        ctx.fillRect(0, 150 + i * 58, canvas.width, 2);
+      }
+      ctx.fillStyle = '#334155';
+      ctx.fillRect(0, 96, canvas.width, 24);
+    }
+
+    function drawBoat() {
+      ctx.fillStyle = '#92400e';
+      ctx.beginPath();
+      ctx.moveTo(boat.x - 46, boat.y);
+      ctx.lineTo(boat.x + 46, boat.y);
+      ctx.lineTo(boat.x + 30, boat.y + 18);
+      ctx.lineTo(boat.x - 30, boat.y + 18);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = '#e2e8f0';
+      ctx.fillRect(boat.x - 4, boat.y - 34, 8, 34);
+      ctx.beginPath();
+      ctx.moveTo(boat.x + 2, boat.y - 32);
+      ctx.lineTo(boat.x + 2, boat.y - 6);
+      ctx.lineTo(boat.x + 28, boat.y - 18);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function drawLine() {
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(line.x, line.top);
+      ctx.lineTo(line.x, line.top + line.length);
+      ctx.stroke();
+      ctx.fillStyle = '#f8fafc';
+      ctx.beginPath();
+      ctx.arc(line.x, line.top + line.length, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawFish(f) {
+      ctx.save();
+      ctx.translate(f.x, f.y);
+      if (f.dir === -1 && !f.hooked) ctx.scale(-1, 1);
+      ctx.fillStyle = f.color;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, f.w / 2, f.h / 2, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(-f.w / 2, 0);
+      ctx.lineTo(-f.w / 2 - 14, -10);
+      ctx.lineTo(-f.w / 2 - 14, 10);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = '#e2e8f0';
+      ctx.beginPath();
+      ctx.arc(f.w / 5, -2, 2.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function draw() {
+      drawBackground();
+      drawBoat();
+      fish.forEach(drawFish);
+      drawLine();
+    }
+
+    function loop() {
+      if (!running || paused) return;
+      moveBoat();
+      moveFish();
+      updateLine();
+      draw();
+      gameLoop = requestAnimationFrame(loop);
+    }
+
+    document.addEventListener('keydown', e => {
+      const key = e.key.toLowerCase();
+      if (key === 'arrowleft' || key === 'a') boat.dx = -boat.speed;
+      else if (key === 'arrowright' || key === 'd') boat.dx = boat.speed;
+      else if (key === ' ') { e.preventDefault(); castOrReel(); }
+    });
+    document.addEventListener('keyup', e => {
+      const key = e.key.toLowerCase();
+      if (['arrowleft','a','arrowright','d'].includes(key)) boat.dx = 0;
+    });
+
+    function holdButton(el, startFn, endFn) {
+      el.addEventListener('mousedown', startFn);
+      el.addEventListener('mouseup', endFn);
+      el.addEventListener('mouseleave', endFn);
+      el.addEventListener('touchstart', startFn, { passive: true });
+      el.addEventListener('touchend', endFn, { passive: true });
+      el.addEventListener('touchcancel', endFn, { passive: true });
+    }
+    holdButton(leftBtn, () => boat.dx = -boat.speed, () => boat.dx = 0);
+    holdButton(rightBtn, () => boat.dx = boat.speed, () => boat.dx = 0);
+    castBtn.addEventListener('click', castOrReel);
+
+    pauseBtn.addEventListener('click', togglePause);
+    restartBtn.addEventListener('click', () => { sUi(); resetGame(false); startGame(); });
+    muteBtn.addEventListener('click', () => { isMuted = !isMuted; localStorage.setItem(audioKey, String(isMuted)); refreshMuteUi(); if (!isMuted) sUi(); });
+    overlayButton.addEventListener('click', () => {
+      if (!running || paused) {
+        if (timeLeft <= 0) resetGame(false);
+        startGame();
+      }
+    });
+
+    canvas.addEventListener('touchstart', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.touches[0].clientX - rect.left;
+      boat.x = Math.max(50, Math.min(canvas.width - 50, x * (canvas.width / rect.width)));
+      if (line.state === 'ready') line.x = boat.x;
+    }, { passive: true });
+
+    canvas.addEventListener('touchmove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const x = e.touches[0].clientX - rect.left;
+      boat.x = Math.max(50, Math.min(canvas.width - 50, x * (canvas.width / rect.width)));
+      if (line.state === 'ready') line.x = boat.x;
+    }, { passive: true });
+
+    refreshMuteUi();
+    bestEl.textContent = bestScore;
+    resetGame(true);
+  </script>
+</body>
+</html>
