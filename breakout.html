@@ -5,83 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Breakout</title>
   <style>
-    :root {
-      --bg: #0f172a;
-      --panel: rgba(255,255,255,0.07);
-      --border: rgba(255,255,255,0.12);
-      --text: #e2e8f0;
-      --muted: #94a3b8;
-      --accent: #38bdf8;
-      --accent-dark: #001018;
-      --gold: #f59e0b;
-    }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      font-family: Arial, Helvetica, sans-serif;
-      color: var(--text);
-      background: radial-gradient(circle at top, rgba(245,158,11,0.16), transparent 35%), linear-gradient(180deg, #020617, #0f172a);
-    }
-    .wrap {
-      width: min(94vw, 620px);
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 1.25rem;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
-      text-align: center;
-    }
-    h1 { margin: 0 0 0.35rem; font-size: clamp(2rem, 5vw, 2.6rem); }
-    .subtext { margin: 0 0 1rem; color: var(--muted); }
-    .topbar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin: 1rem 0; }
-    .stat { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 16px; padding: 0.8rem; }
-    .stat-label { display: block; color: var(--muted); font-size: 0.8rem; margin-bottom: 0.25rem; text-transform: uppercase; letter-spacing: 0.08em; }
-    .stat-value { font-size: 1.15rem; font-weight: 800; }
-    .action-row { display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem; }
-    a, button {
-      background: var(--accent);
-      color: var(--accent-dark);
-      border: 0;
-      border-radius: 999px;
-      padding: 0.8rem 1rem;
-      text-decoration: none;
-      font-weight: 800;
-      cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.15s ease;
-      font-family: inherit;
-    }
-    a:hover, button:hover { transform: translateY(-1px); opacity: 0.96; }
-    .secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
-    .board-wrap { position: relative; width: min(100%, 540px); margin: 0 auto; }
-    canvas { display: block; width: 100%; height: auto; background: #020617; border: 2px solid var(--gold); border-radius: 16px; touch-action: none; }
-    .overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(2,6,23,0.76); border-radius: 16px; padding: 1rem; }
-    .overlay.hidden { opacity: 0; pointer-events: none; }
-    .overlay-card { max-width: 300px; }
-    .overlay h2 { margin: 0 0 0.5rem; font-size: 1.8rem; }
-    .overlay p { color: var(--muted); line-height: 1.55; }
-    .touch-row { display: flex; justify-content: center; gap: 1rem; margin-top: 1rem; }
-    .touch-row button { width: 88px; height: 64px; border-radius: 18px; font-size: 1.25rem; padding: 0; }
-    .hint { color: var(--muted); margin-top: 1rem; }
-    @media (max-width: 560px) { .topbar { grid-template-columns: repeat(2, 1fr); } }
+    :root { --bg:#0f172a; --panel:rgba(255,255,255,0.07); --border:rgba(255,255,255,0.12); --text:#e2e8f0; --muted:#94a3b8; --accent:#38bdf8; --accent-dark:#001018; --gold:#f59e0b; }
+    *{box-sizing:border-box} body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:1rem;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:radial-gradient(circle at top, rgba(245,158,11,0.16), transparent 35%), linear-gradient(180deg, #020617, #0f172a)}
+    .wrap{width:min(94vw,620px);background:var(--panel);border:1px solid var(--border);border-radius:24px;padding:1.25rem;box-shadow:0 20px 50px rgba(0,0,0,0.35);text-align:center}h1{margin:0 0 0.35rem;font-size:clamp(2rem,5vw,2.6rem)}.subtext{margin:0 0 1rem;color:var(--muted)}.topbar{display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;margin:1rem 0}.stat{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:16px;padding:0.8rem}.stat-label{display:block;color:var(--muted);font-size:0.8rem;margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.08em}.stat-value{font-size:1.15rem;font-weight:800}.action-row{display:flex;justify-content:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:1rem}a,button{background:var(--accent);color:var(--accent-dark);border:0;border-radius:999px;padding:0.8rem 1rem;text-decoration:none;font-weight:800;cursor:pointer;transition:transform 0.15s ease, opacity 0.15s ease;font-family:inherit}a:hover,button:hover{transform:translateY(-1px);opacity:0.96}.secondary{background:transparent;color:var(--text);border:1px solid var(--border)}.board-wrap{position:relative;width:min(100%,540px);margin:0 auto}canvas{display:block;width:100%;height:auto;background:#020617;border:2px solid var(--gold);border-radius:16px;touch-action:none}.overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(2,6,23,0.76);border-radius:16px;padding:1rem}.overlay.hidden{opacity:0;pointer-events:none}.overlay-card{max-width:300px}.overlay h2{margin:0 0 0.5rem;font-size:1.8rem}.overlay p{color:var(--muted);line-height:1.55}.touch-row{display:flex;justify-content:center;gap:1rem;margin-top:1rem}.touch-row button{width:88px;height:64px;border-radius:18px;font-size:1.25rem;padding:0}.announcer{margin-top:1rem;padding:.85rem 1rem;border-radius:18px;background:rgba(255,255,255,0.05);border:1px solid var(--border);text-align:left}.announcer strong{display:block;color:var(--text);margin-bottom:.2rem}.hint{color:var(--muted);margin-top:1rem}@media (max-width:560px){.topbar{grid-template-columns:repeat(2,1fr)}}
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Breakout</h1>
     <p class="subtext">Smash bricks, catch the ball, and try not to whiff like a cartoon handyman.</p>
-
     <div class="topbar">
       <div class="stat"><span class="stat-label">Score</span><span id="score" class="stat-value">0</span></div>
       <div class="stat"><span class="stat-label">Lives</span><span id="lives" class="stat-value">3</span></div>
       <div class="stat"><span class="stat-label">Level</span><span id="level" class="stat-value">1</span></div>
       <div class="stat"><span class="stat-label">Best</span><span id="best" class="stat-value">0</span></div>
     </div>
-
     <div class="action-row">
       <a class="secondary" href="index.html">Back Home</a>
       <a class="secondary" href="settings.html" aria-label="Settings" title="Settings">⚙️</a>
@@ -89,245 +27,51 @@
       <button id="pause" class="secondary">Pause</button>
       <button id="restart">Restart</button>
     </div>
-
     <div class="board-wrap">
       <canvas id="game" width="540" height="640"></canvas>
-      <div id="overlay" class="overlay">
-        <div class="overlay-card">
-          <h2 id="overlay-title">Ready?</h2>
-          <p id="overlay-text">Move the paddle, keep the ball alive, and turn those bricks into glitter and regret.</p>
-          <button id="overlay-button">Start Game</button>
-        </div>
-      </div>
+      <div id="overlay" class="overlay"><div class="overlay-card"><h2 id="overlay-title">Ready?</h2><p id="overlay-text">Move the paddle, keep the ball alive, and turn those bricks into glitter and regret.</p><button id="overlay-button">Start Game</button></div></div>
     </div>
-
-    <div class="touch-row">
-      <button id="left">←</button>
-      <button id="right">→</button>
-    </div>
-
+    <div class="touch-row"><button id="left">←</button><button id="right">→</button></div>
+    <div class="announcer"><strong id="breakoutMood">Brick wall announcer:</strong><span id="breakoutLine">Those bricks are acting tough, but they are extremely breakable in practice.</span></div>
     <p class="hint">Desktop: move with mouse or arrow keys. Mobile: drag on the game board or use the arrows.</p>
   </div>
-
   <script>
-    const canvas = document.getElementById('game');
-    const ctx = canvas.getContext('2d');
-    const scoreEl = document.getElementById('score');
-    const livesEl = document.getElementById('lives');
-    const levelEl = document.getElementById('level');
-    const bestEl = document.getElementById('best');
-    const pauseBtn = document.getElementById('pause');
-    const restartBtn = document.getElementById('restart');
-    const muteBtn = document.getElementById('mute');
-    const overlay = document.getElementById('overlay');
-    const overlayTitle = document.getElementById('overlay-title');
-    const overlayText = document.getElementById('overlay-text');
-    const overlayButton = document.getElementById('overlay-button');
-
-    const bestKey = 'breakout-best-score';
-    const audioKey = 'arcade-muted';
-    let bestScore = Number(localStorage.getItem(bestKey) || 0);
-    let isMuted = localStorage.getItem(audioKey) === 'true';
-    let audioCtx = null;
-    bestEl.textContent = bestScore;
-
-    const paddle = { w: 110, h: 14, x: 215, y: 600, speed: 8, dx: 0 };
-    const ball = { x: 270, y: 580, r: 9, dx: 4, dy: -4, speed: 4 };
-    const brick = { rows: 5, cols: 8, w: 56, h: 22, gap: 8, top: 70, left: 18 };
-    let bricks = [];
-    let score = 0;
-    let lives = 3;
-    let level = 1;
-    let running = false;
-    let paused = false;
-    let animationId = null;
-    let touchLeftHeld = false;
-    let touchRightHeld = false;
-
-    function ensureAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-    function tone(freq, duration = 0.08, type = 'square', volume = 0.04) {
-      if (isMuted) return;
-      ensureAudio();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.value = freq;
-      gain.gain.value = volume;
-      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
-    }
-    function sPaddle() { tone(280, 0.03, 'square', 0.03); }
-    function sBrick() { tone(520, 0.04, 'triangle', 0.04); }
-    function sLose() { tone(160, 0.14, 'sawtooth', 0.05); }
-    function sLevel() { tone(660, 0.05, 'square', 0.03); setTimeout(() => tone(880, 0.07, 'square', 0.03), 40); }
-    function sUi() { tone(440, 0.04, 'square', 0.025); }
-    function refreshMuteUi() { muteBtn.textContent = `Sound: ${isMuted ? 'Off' : 'On'}`; }
-
-    function makeBricks() {
-      bricks = [];
-      const colors = ['#f59e0b', '#ef4444', '#38bdf8', '#22c55e', '#a855f7', '#f97316'];
-      const rows = Math.min(8, brick.rows + level - 1);
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < brick.cols; c++) {
-          bricks.push({ x: brick.left + c * (brick.w + brick.gap), y: brick.top + r * (brick.h + brick.gap), w: brick.w, h: brick.h, visible: true, color: colors[r % colors.length] });
-        }
-      }
-    }
-    function setOverlay(title, text, buttonText) {
-      overlayTitle.textContent = title;
-      overlayText.textContent = text;
-      overlayButton.textContent = buttonText;
-      overlay.classList.remove('hidden');
-    }
-    function hideOverlay() { overlay.classList.add('hidden'); }
-    function resetBall() {
-      ball.x = canvas.width / 2;
-      ball.y = paddle.y - 18;
-      ball.speed = 4 + (level - 1) * 0.5;
-      ball.dx = (Math.random() > 0.5 ? 1 : -1) * ball.speed;
-      ball.dy = -ball.speed;
-    }
-    function resetPaddle() { paddle.x = (canvas.width - paddle.w) / 2; paddle.dx = 0; }
-    function resetGame(showOverlay = true) {
-      score = 0; lives = 3; level = 1;
-      scoreEl.textContent = score; livesEl.textContent = lives; levelEl.textContent = level;
-      paused = false; running = false; pauseBtn.textContent = 'Pause';
-      resetPaddle(); resetBall(); makeBricks(); draw();
-      if (showOverlay) setOverlay('Ready?', 'Move the paddle, bounce the ball, and crush every brick on the screen.', 'Start Game');
-      else hideOverlay();
-      if (animationId) cancelAnimationFrame(animationId);
-    }
-    function updateBest() {
-      if (score > bestScore) {
-        bestScore = score;
-        localStorage.setItem(bestKey, String(bestScore));
-        bestEl.textContent = bestScore;
-      }
-    }
-    function drawBall() { ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2); ctx.fillStyle = '#e2e8f0'; ctx.fill(); ctx.closePath(); }
-    function drawPaddle() { ctx.fillStyle = '#38bdf8'; ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h); }
-    function drawBricks() { bricks.forEach(b => { if (!b.visible) return; ctx.fillStyle = b.color; ctx.fillRect(b.x, b.y, b.w, b.h); ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.strokeRect(b.x, b.y, b.w, b.h); }); }
-    function drawBackground() {
-      ctx.fillStyle = '#020617'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-      for (let y = 0; y < canvas.height; y += 20) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke(); }
-    }
-    function draw() { drawBackground(); drawBricks(); drawPaddle(); drawBall(); }
-    function movePaddle() {
-      if (touchLeftHeld && !touchRightHeld) paddle.dx = -paddle.speed;
-      else if (touchRightHeld && !touchLeftHeld) paddle.dx = paddle.speed;
-      paddle.x += paddle.dx;
-      if (paddle.x < 0) paddle.x = 0;
-      if (paddle.x + paddle.w > canvas.width) paddle.x = canvas.width - paddle.w;
-    }
-    function wallCollision() {
-      if (ball.x + ball.r > canvas.width || ball.x - ball.r < 0) { ball.dx *= -1; sPaddle(); }
-      if (ball.y - ball.r < 0) { ball.dy *= -1; sPaddle(); }
-      if (ball.y + ball.r > canvas.height) {
-        lives -= 1; livesEl.textContent = lives; sLose();
-        if (lives <= 0) {
-          running = false; paused = false; updateBest();
-          setOverlay('Game Over', `You scored ${score}. ${score >= bestScore && score > 0 ? 'That is your best so far.' : 'The bricks send their regards.'}`, 'Play Again');
-          return;
-        }
-        resetPaddle(); resetBall(); paused = true; running = false;
-        setOverlay('Ball Lost', 'You still have lives left. Tap below to jump back in.', 'Resume');
-      }
-    }
-    function paddleCollision() {
-      if (ball.x > paddle.x && ball.x < paddle.x + paddle.w && ball.y + ball.r > paddle.y && ball.y - ball.r < paddle.y + paddle.h) {
-        const hit = (ball.x - (paddle.x + paddle.w / 2)) / (paddle.w / 2);
-        ball.dx = hit * 6;
-        ball.dy = -Math.abs(ball.dy);
-        sPaddle();
-      }
-    }
-    function brickCollision() {
-      for (const b of bricks) {
-        if (!b.visible) continue;
-        if (ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w && ball.y + ball.r > b.y && ball.y - ball.r < b.y + b.h) {
-          b.visible = false;
-          ball.dy *= -1;
-          score += 10;
-          scoreEl.textContent = score;
-          updateBest();
-          sBrick();
-          break;
-        }
-      }
-      if (bricks.every(b => !b.visible)) {
-        level += 1; levelEl.textContent = level; score += 50; scoreEl.textContent = score; updateBest();
-        resetPaddle(); resetBall(); makeBricks(); paused = true; running = false; sLevel();
-        setOverlay('Level Clear', `Welcome to level ${level}. The bricks have become noticeably less cooperative.`, 'Next Level');
-      }
-    }
-    function update() {
-      if (!running || paused) return;
-      movePaddle();
-      ball.x += ball.dx; ball.y += ball.dy;
-      wallCollision(); paddleCollision(); brickCollision(); draw();
-      animationId = requestAnimationFrame(update);
-    }
-    function startGame() {
-      if (running && !paused) return;
-      paused = false; running = true; hideOverlay(); pauseBtn.textContent = 'Pause'; sUi();
-      animationId = requestAnimationFrame(update);
-    }
-    function togglePause() {
-      if (!running && !paused) return;
-      paused = !paused; pauseBtn.textContent = paused ? 'Resume' : 'Pause'; sUi();
-      if (paused) setOverlay('Paused', 'The ball is waiting. Probably judging you, but waiting.', 'Resume');
-      else { hideOverlay(); animationId = requestAnimationFrame(update); }
-    }
-    function movePointer(clientX) {
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      let x = (clientX - rect.left) * scaleX - paddle.w / 2;
-      if (x < 0) x = 0;
-      if (x + paddle.w > canvas.width) x = canvas.width - paddle.w;
-      paddle.x = x;
-    }
-    document.addEventListener('mousemove', e => movePointer(e.clientX));
-    canvas.addEventListener('touchmove', e => movePointer(e.touches[0].clientX), { passive: true });
-    document.addEventListener('keydown', e => {
-      const key = e.key.toLowerCase();
-      if (key === 'arrowleft' || key === 'a') paddle.dx = -paddle.speed;
-      else if (key === 'arrowright' || key === 'd') paddle.dx = paddle.speed;
-      else if (key === ' ') {
-        e.preventDefault();
-        if (!running || paused) startGame();
-        else togglePause();
-      }
-    });
-    document.addEventListener('keyup', e => {
-      const key = e.key.toLowerCase();
-      if (['arrowleft','a','arrowright','d'].includes(key)) paddle.dx = 0;
-    });
-    function holdButton(el, setter, value) {
-      const start = () => setter(value, true);
-      const end = () => setter(value, false);
-      el.addEventListener('mousedown', start);
-      el.addEventListener('mouseup', end);
-      el.addEventListener('mouseleave', end);
-      el.addEventListener('touchstart', start, { passive: true });
-      el.addEventListener('touchend', end, { passive: true });
-      el.addEventListener('touchcancel', end, { passive: true });
-    }
-    function setHeld(dir, isHeld) { if (dir === 'left') touchLeftHeld = isHeld; if (dir === 'right') touchRightHeld = isHeld; }
-    holdButton(document.getElementById('left'), setHeld, 'left');
-    holdButton(document.getElementById('right'), setHeld, 'right');
-    pauseBtn.addEventListener('click', togglePause);
-    restartBtn.addEventListener('click', () => { sUi(); resetGame(false); startGame(); });
-    muteBtn.addEventListener('click', () => { isMuted = !isMuted; localStorage.setItem(audioKey, String(isMuted)); refreshMuteUi(); if (!isMuted) sUi(); });
-    overlayButton.addEventListener('click', () => { if (!running || paused) startGame(); });
-    refreshMuteUi();
-    resetGame(true);
+    const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),scoreEl=document.getElementById('score'),livesEl=document.getElementById('lives'),levelEl=document.getElementById('level'),bestEl=document.getElementById('best'),pauseBtn=document.getElementById('pause'),restartBtn=document.getElementById('restart'),muteBtn=document.getElementById('mute'),overlay=document.getElementById('overlay'),overlayTitle=document.getElementById('overlay-title'),overlayText=document.getElementById('overlay-text'),overlayButton=document.getElementById('overlay-button'),breakoutMoodEl=document.getElementById('breakoutMood'),breakoutLineEl=document.getElementById('breakoutLine');
+    const bestKey='breakout-best-score', audioKey='arcade-muted';
+    const breakoutLines={start:['Those bricks are acting tough, but they are extremely breakable in practice.','The wall looks confident. That is adorable.','Paddle up. The bricks have been notified of your intentions.'],brick:['Brick down! The wall is now filing complaints.','Nice hit. That stack just lost a little dignity.','Another brick gone. Structural morale is collapsing fast.'],streak:['You are carving through that wall like it owes rent.','This is turning into organized property damage.','The bricks would like a word with whoever trained you.'],lose:['Ball lost. The wall takes this far too personally.','That one got away. The bricks are chirping now.','Tough bounce. The wall thinks it has momentum.'],level:['Level clear. The next wall has heard about you and is nervous.','You broke the whole section. Very rude, very effective.','Fresh level. More bricks, same bad future for them.'],pause:['Paused. Even the paddle deserves a union break.','Break time. The wall is using this moment to gossip.'],end:['Round over. The surviving bricks are being entirely too smug.','That wall got some shots in, but not enough to feel proud.','Game over. The bricks will celebrate this way too hard.']};
+    function pick(arr){return arr[Math.floor(Math.random()*arr.length)]} function setBreakout(line,mood='Brick wall announcer:'){breakoutMoodEl.textContent=mood; breakoutLineEl.textContent=line}
+    let bestScore=Number(localStorage.getItem(bestKey)||0), isMuted=localStorage.getItem(audioKey)==='true', audioCtx=null; bestEl.textContent=bestScore;
+    const paddle={w:110,h:14,x:215,y:600,speed:8,dx:0}, ball={x:270,y:580,r:9,dx:4,dy:-4,speed:4}, brick={rows:5,cols:8,w:56,h:22,gap:8,top:70,left:18};
+    let bricks=[], score=0, lives=3, level=1, running=false, paused=false, animationId=null, touchLeftHeld=false, touchRightHeld=false;
+    function ensureAudio(){if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)(); if(audioCtx.state==='suspended') audioCtx.resume()}
+    function tone(freq,duration=0.08,type='square',volume=0.04){if(isMuted)return; ensureAudio(); const osc=audioCtx.createOscillator(), gain=audioCtx.createGain(); osc.type=type; osc.frequency.value=freq; gain.gain.value=volume; gain.gain.exponentialRampToValueAtTime(0.0001,audioCtx.currentTime+duration); osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime+duration)}
+    function sPaddle(){tone(280,0.03,'square',0.03)} function sBrick(){tone(520,0.04,'triangle',0.04)} function sLose(){tone(160,0.14,'sawtooth',0.05)} function sLevel(){tone(660,0.05,'square',0.03);setTimeout(()=>tone(880,0.07,'square',0.03),40)} function sUi(){tone(440,0.04,'square',0.025)} function refreshMuteUi(){muteBtn.textContent=`Sound: ${isMuted?'Off':'On'}`}
+    function makeBricks(){bricks=[]; const colors=['#f59e0b','#ef4444','#38bdf8','#22c55e','#a855f7','#f97316']; const rows=Math.min(8,brick.rows+level-1); for(let r=0;r<rows;r++){for(let c=0;c<brick.cols;c++){bricks.push({x:brick.left+c*(brick.w+brick.gap),y:brick.top+r*(brick.h+brick.gap),w:brick.w,h:brick.h,visible:true,color:colors[r%colors.length]});}}}
+    function setOverlay(title,text,buttonText){overlayTitle.textContent=title;overlayText.textContent=text;overlayButton.textContent=buttonText;overlay.classList.remove('hidden')} function hideOverlay(){overlay.classList.add('hidden')}
+    function resetBall(){ball.x=canvas.width/2; ball.y=paddle.y-18; ball.speed=4+(level-1)*0.5; ball.dx=(Math.random()>0.5?1:-1)*ball.speed; ball.dy=-ball.speed}
+    function resetPaddle(){paddle.x=(canvas.width-paddle.w)/2; paddle.dx=0}
+    function resetGame(showOverlay=true){score=0; lives=3; level=1; scoreEl.textContent=score; livesEl.textContent=lives; levelEl.textContent=level; paused=false; running=false; pauseBtn.textContent='Pause'; resetPaddle(); resetBall(); makeBricks(); draw(); setBreakout(pick(breakoutLines.start)); if(showOverlay) setOverlay('Ready?','Move the paddle, bounce the ball, and crush every brick on the screen.','Start Game'); else hideOverlay(); if(animationId) cancelAnimationFrame(animationId)}
+    function updateBest(){if(score>bestScore){bestScore=score; localStorage.setItem(bestKey,String(bestScore)); bestEl.textContent=bestScore}}
+    function drawBall(){ctx.beginPath(); ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2); ctx.fillStyle='#e2e8f0'; ctx.fill(); ctx.closePath()}
+    function drawPaddle(){ctx.fillStyle='#38bdf8'; ctx.fillRect(paddle.x,paddle.y,paddle.w,paddle.h)}
+    function drawBricks(){bricks.forEach(b=>{if(!b.visible)return; ctx.fillStyle=b.color; ctx.fillRect(b.x,b.y,b.w,b.h); ctx.strokeStyle='rgba(255,255,255,0.12)'; ctx.strokeRect(b.x,b.y,b.w,b.h)})}
+    function drawBackground(){ctx.fillStyle='#020617'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.strokeStyle='rgba(255,255,255,0.04)'; for(let y=0;y<canvas.height;y+=20){ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke()}}
+    function draw(){drawBackground(); drawBricks(); drawPaddle(); drawBall()}
+    function movePaddle(){if(touchLeftHeld&&!touchRightHeld) paddle.dx=-paddle.speed; else if(touchRightHeld&&!touchLeftHeld) paddle.dx=paddle.speed; paddle.x+=paddle.dx; if(paddle.x<0) paddle.x=0; if(paddle.x+paddle.w>canvas.width) paddle.x=canvas.width-paddle.w}
+    function wallCollision(){if(ball.x+ball.r>canvas.width||ball.x-ball.r<0){ball.dx*=-1; sPaddle()} if(ball.y-ball.r<0){ball.dy*=-1; sPaddle()} if(ball.y+ball.r>canvas.height){lives-=1; livesEl.textContent=lives; setBreakout(pick(breakoutLines.lose)); sLose(); if(lives<=0){running=false; paused=false; updateBest(); setBreakout(pick(breakoutLines.end)); setOverlay('Game Over',`You scored ${score}. ${score>=bestScore&&score>0?'That is your best so far.':'The bricks send their regards.'}`,'Play Again'); return;} resetPaddle(); resetBall(); paused=true; running=false; setOverlay('Ball Lost','You still have lives left. Tap below to jump back in.','Resume');}}
+    function paddleCollision(){if(ball.x>paddle.x&&ball.x<paddle.x+paddle.w&&ball.y+ball.r>paddle.y&&ball.y-ball.r<paddle.y+paddle.h){const hit=(ball.x-(paddle.x+paddle.w/2))/(paddle.w/2); ball.dx=hit*6; ball.dy=-Math.abs(ball.dy); sPaddle()}}
+    function brickCollision(){for(const b of bricks){if(!b.visible) continue; if(ball.x+ball.r>b.x&&ball.x-ball.r<b.x+b.w&&ball.y+ball.r>b.y&&ball.y-ball.r<b.y+b.h){b.visible=false; ball.dy*=-1; score+=10; scoreEl.textContent=score; updateBest(); setBreakout(score>=120?pick(breakoutLines.streak):pick(breakoutLines.brick)); sBrick(); break;}} if(bricks.every(b=>!b.visible)){level+=1; levelEl.textContent=level; score+=50; scoreEl.textContent=score; updateBest(); resetPaddle(); resetBall(); makeBricks(); paused=true; running=false; setBreakout(pick(breakoutLines.level)); sLevel(); setOverlay('Level Clear',`Welcome to level ${level}. The bricks have become noticeably less cooperative.`,'Next Level')}}
+    function update(){if(!running||paused)return; movePaddle(); ball.x+=ball.dx; ball.y+=ball.dy; wallCollision(); paddleCollision(); brickCollision(); draw(); animationId=requestAnimationFrame(update)}
+    function startGame(){if(running&&!paused)return; paused=false; running=true; hideOverlay(); pauseBtn.textContent='Pause'; sUi(); animationId=requestAnimationFrame(update)}
+    function togglePause(){if(!running&&!paused)return; paused=!paused; pauseBtn.textContent=paused?'Resume':'Pause'; sUi(); if(paused){setBreakout(pick(breakoutLines.pause)); setOverlay('Paused','The ball is waiting. Probably judging you, but waiting.','Resume')} else {hideOverlay(); animationId=requestAnimationFrame(update)}}
+    function movePointer(clientX){const rect=canvas.getBoundingClientRect(); const scaleX=canvas.width/rect.width; let x=(clientX-rect.left)*scaleX-paddle.w/2; if(x<0)x=0; if(x+paddle.w>canvas.width)x=canvas.width-paddle.w; paddle.x=x}
+    document.addEventListener('mousemove',e=>movePointer(e.clientX)); canvas.addEventListener('touchmove',e=>movePointer(e.touches[0].clientX),{passive:true});
+    document.addEventListener('keydown',e=>{const key=e.key.toLowerCase(); if(key==='arrowleft'||key==='a') paddle.dx=-paddle.speed; else if(key==='arrowright'||key==='d') paddle.dx=paddle.speed; else if(key===' '){e.preventDefault(); if(!running||paused) startGame(); else togglePause();}}); document.addEventListener('keyup',e=>{const key=e.key.toLowerCase(); if(['arrowleft','a','arrowright','d'].includes(key)) paddle.dx=0});
+    function holdButton(el,setter,value){const start=()=>setter(value,true), end=()=>setter(value,false); el.addEventListener('mousedown',start); el.addEventListener('mouseup',end); el.addEventListener('mouseleave',end); el.addEventListener('touchstart',start,{passive:true}); el.addEventListener('touchend',end,{passive:true}); el.addEventListener('touchcancel',end,{passive:true})}
+    function setHeld(dir,isHeld){if(dir==='left') touchLeftHeld=isHeld; if(dir==='right') touchRightHeld=isHeld}
+    holdButton(document.getElementById('left'),setHeld,'left'); holdButton(document.getElementById('right'),setHeld,'right');
+    pauseBtn.addEventListener('click',togglePause); restartBtn.addEventListener('click',()=>{sUi(); resetGame(false); startGame()}); muteBtn.addEventListener('click',()=>{isMuted=!isMuted; localStorage.setItem(audioKey,String(isMuted)); refreshMuteUi(); if(!isMuted) sUi()}); overlayButton.addEventListener('click',()=>{if(!running||paused) startGame()});
+    refreshMuteUi(); resetGame(true);
   </script>
 </body>
 </html>
