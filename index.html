@@ -213,7 +213,7 @@
           <a href="breakout.html">Breakout</a>
           <a href="pong.html">Pong</a>
           <a href="minesweeper.html">Minesweeper</a>
-          <a href="fishing.html">Fishing</a>
+          <a href="fishing.html">Jimmy's Big Catch</a>
         </div>
       </nav>
     </header>
@@ -233,7 +233,7 @@
             <div>
               <h2>Choose your cabinet</h2>
               <p>
-                Snake for panic and pathing. Breakout for ricochets and brick carnage. Pong for a personal feud with a paddle bot. Minesweeper for calm suspicion. Fishing for laid-back score chasing with a sneaky timer.
+                Snake for panic and pathing. Breakout for ricochets and brick carnage. Pong for a personal feud with a paddle bot. Minesweeper for calm suspicion. Jimmy's Big Catch for laid-back score chasing with a sneaky timer.
               </p>
             </div>
             <div>
@@ -242,7 +242,7 @@
                 <a class="btn btn-secondary" href="breakout.html">Play Breakout</a>
                 <a class="btn btn-secondary" href="pong.html">Play Pong</a>
                 <a class="btn btn-secondary" href="minesweeper.html">Play Minesweeper</a>
-                <a class="btn btn-secondary" href="fishing.html">Play Fishing</a>
+                <a class="btn btn-secondary" href="fishing.html">Play Jimmy's Big Catch</a>
                 <a class="btn btn-secondary" href="scores.html">Open Hub</a>
               </div>
               <div class="score-strip">
@@ -311,8 +311,8 @@
             <h3>Minesweeper</h3><p>Reveal safe tiles, flag danger, and attempt to think one click ahead of disaster.</p><div class="button-row"><a class="btn btn-primary" href="minesweeper.html">Play Minesweeper</a></div>
           </div>
           <div class="tile">
-            <div class="cabinet-art art-fish"><div class="fish-boat"></div><div class="hook-line" style="left:54px; top:26px; height:84px;"></div><div class="hook-dot" style="left:50px; top:106px;"></div><div class="fish-shape small" style="left:112px; top:74px;"></div><div class="fish-shape medium" style="left:70px; top:124px;"></div><div class="fish-shape big" style="left:130px; top:138px; width:44px; height:22px;"></div><div class="poster-title">Fishing<span class="poster-sub">Cast • Hook • Reel</span></div></div>
-            <h3>Fishing</h3><p>Cast your line, hook fish, and reel them in before the timer runs out.</p><div class="button-row"><a class="btn btn-primary" href="fishing.html">Play Fishing</a></div>
+            <div class="cabinet-art art-fish"><div class="fish-boat"></div><div class="hook-line" style="left:54px; top:26px; height:84px;"></div><div class="hook-dot" style="left:50px; top:106px;"></div><div class="fish-shape small" style="left:112px; top:74px;"></div><div class="fish-shape medium" style="left:70px; top:124px;"></div><div class="fish-shape big" style="left:130px; top:138px; width:44px; height:22px;"></div><div class="poster-title">Jimmy's Big Catch<span class="poster-sub">Cast • Hook • Reel</span></div></div>
+            <h3>Jimmy's Big Catch</h3><p>Cast your line, hook fish, and reel them in before the timer runs out.</p><div class="button-row"><a class="btn btn-primary" href="fishing.html">Play Jimmy's Big Catch</a></div>
           </div>
         </div>
       </section>
@@ -325,7 +325,7 @@
           <div class="feature"><h3>Desktop and mobile ready</h3><p>Keyboard, swipe, drag, tap, and on-screen buttons depending on the game.</p></div>
           <div class="feature"><h3>Local score memory</h3><p>Your browser keeps your best runs and best times so there is always a rematch waiting.</p></div>
           <div class="feature"><h3>Arcade hub page</h3><p>The hub keeps the whole thing tied together like a proper little game collection.</p></div>
-          <div class="feature"><h3>More variety now</h3><p>Not every cabinet has to be pure panic. Sometimes the fish are the problem.</p></div>
+          <div class="feature"><h3>More variety now</h3><p>Not every cabinet has to be pure panic. Sometimes Jimmy's Big Catch is the problem.</p></div>
         </div>
       </section>
 
@@ -337,7 +337,7 @@
           <div class="howto"><span class="step-number">2</span><h3>Start quick</h3><p>Every game is simple to jump into, so you can be losing immediately with very little delay.</p></div>
           <div class="howto"><span class="step-number">3</span><h3>Check your score</h3><p>Use the hub to see local bests and decide which cabinet deserves your next revenge run.</p></div>
           <div class="howto"><span class="step-number">4</span><h3>Repeat irresponsibly</h3><p>This is where one round becomes twelve and the laws of time stop mattering.</p></div>
-          <div class="howto"><span class="step-number">5</span><h3>Catch something shiny</h3><p>The fishing game looks calm right up until the timer starts getting ideas.</p></div>
+          <div class="howto"><span class="step-number">5</span><h3>Catch something shiny</h3><p>Jimmy's Big Catch looks calm right up until the timer starts getting ideas.</p></div>
         </div>
       </section>
     </main>
@@ -354,7 +354,7 @@
         { name: 'Breakout', raw: localStorage.getItem('breakout-best-score'), type: 'score', label: 'best score', href: 'breakout.html' },
         { name: 'Pong', raw: localStorage.getItem('pong-best-wins'), type: 'score', label: 'best wins', href: 'pong.html' },
         { name: 'Minesweeper', raw: localStorage.getItem('minesweeper-best-medium'), type: 'time', label: 'best medium time', href: 'minesweeper.html' },
-        { name: 'Fishing', raw: localStorage.getItem('fishing-best-score'), type: 'score', label: 'best score', href: 'fishing.html' }
+        { name: "Jimmy's Big Catch", raw: localStorage.getItem('fishing-best-score'), type: 'score', label: 'best score', href: 'fishing.html' }
       ];
 
       const parsed = entries.map(entry => ({ ...entry, value: entry.raw === null ? null : Number(entry.raw) })).filter(entry => entry.value !== null && !Number.isNaN(entry.value));
