@@ -49,6 +49,15 @@
       pointer-events: none;
       animation: ambientDrift 18s ease-in-out infinite alternate;
     }
+    .reduced-motion *, .reduced-motion *::before, .reduced-motion *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+    .reduced-motion body::after,
+    body.reduced-motion::after {
+      animation: none !important;
+    }
     .wrap { width: min(1180px, calc(100% - 2rem)); margin: 0 auto; position: relative; z-index: 1; }
     header { padding: 1.25rem 0; }
     nav {
@@ -73,6 +82,19 @@
     .nav-links { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
     .nav-links a { color: var(--muted); text-decoration: none; font-weight: 700; transition: color .2s ease; }
     .nav-links a:hover { color: var(--text); }
+    .gear-link {
+      width: 42px;
+      height: 42px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--text) !important;
+      background: rgba(255,255,255,0.05);
+      font-size: 1.1rem;
+      line-height: 1;
+    }
     .title-screen { padding: 3rem 0 2rem; text-align: center; position: relative; }
     .marquee {
       display: inline-block;
@@ -407,6 +429,7 @@
           <a href="#games">Games</a>
           <a href="#leaderboard">Leaderboard</a>
           <a href="scores.html">Hub</a>
+          <a class="gear-link" href="settings.html" aria-label="Settings" title="Settings">⚙️</a>
         </div>
       </nav>
     </header>
@@ -491,6 +514,13 @@
   </div>
 
   <script>
+    const REDUCED_MOTION_KEY = 'arcade-reduced-motion';
+
+    function applyMotionPreference() {
+      const reduced = localStorage.getItem(REDUCED_MOTION_KEY) === 'true';
+      document.body.classList.toggle('reduced-motion', reduced);
+    }
+
     function loadLeaderboard() {
       const entries = [
         { name: 'Snake', raw: localStorage.getItem('snake-best-score'), type: 'score', label: 'best score', href: 'snake.html' },
@@ -535,8 +565,16 @@
         return `<a class="leader-card" href="${entry.href}" style="text-decoration:none;color:inherit;"><div class="leader-row"><div><div class="leader-rank">#${index + 1}</div><h3 style="margin:0 0 0.25rem;">${entry.name}</h3><div class="leader-meta">${entry.label} • ${meta}</div></div><div class="leader-score">${displayValue}</div></div></a>`;
       }).join('');
     }
+
+    applyMotionPreference();
     loadLeaderboard();
-    window.addEventListener('focus', loadLeaderboard);
+    window.addEventListener('focus', () => {
+      applyMotionPreference();
+      loadLeaderboard();
+    });
+    window.addEventListener('storage', (event) => {
+      if (event.key === REDUCED_MOTION_KEY) applyMotionPreference();
+    });
   </script>
 </body>
 </html>
