@@ -112,7 +112,7 @@
     .featured-card { padding: 1.25rem; }
     .preview-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 0.9rem;
       margin-bottom: 1rem;
     }
@@ -130,7 +130,8 @@
     .snake-preview { border: 2px solid rgba(56,189,248,0.55); }
     .breakout-preview { border: 2px solid rgba(245,158,11,0.55); }
     .pong-preview { border: 2px solid rgba(34,197,94,0.55); }
-    .snake-seg, .food, .brick, .ball, .paddle, .pong-paddle, .pong-ball, .net {
+    .mine-preview { border: 2px solid rgba(239,68,68,0.55); }
+    .snake-seg, .food, .brick, .ball, .paddle, .pong-paddle, .pong-ball, .net, .mine-cell {
       position: absolute;
       border-radius: 8px;
     }
@@ -155,6 +156,16 @@
     .pong-right { right: 8%; top: 25%; background: var(--green); }
     .pong-ball { width: 10%; height: 10%; left: 47%; top: 44%; background: #e2e8f0; border-radius: 999px; }
     .net { left: 49%; top: 0; width: 2%; height: 100%; background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.18) 0 10%, transparent 10% 18%); border-radius: 0; }
+    .mine-cell { width: 22%; height: 22%; background: #1e293b; border: 1px solid rgba(255,255,255,0.08); }
+    .m1 { left: 12%; top: 12%; }
+    .m2 { left: 38%; top: 12%; background: #0b1220; color: #60a5fa; }
+    .m3 { left: 64%; top: 12%; background: rgba(245,158,11,0.18); }
+    .m4 { left: 12%; top: 38%; background: #0b1220; color: #22c55e; }
+    .m5 { left: 38%; top: 38%; background: rgba(239,68,68,0.18); }
+    .m6 { left: 64%; top: 38%; background: #1e293b; }
+    .m7 { left: 12%; top: 64%; background: #0b1220; }
+    .m8 { left: 38%; top: 64%; background: #1e293b; }
+    .m9 { left: 64%; top: 64%; background: #0b1220; }
     .card-title { font-size: 1.5rem; margin: 0 0 0.4rem; }
     .card-text { color: var(--muted); line-height: 1.6; margin: 0 0 1rem; }
     .launch-row {
@@ -184,12 +195,12 @@
       max-width: 62ch;
       margin-bottom: 1.5rem;
     }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    .games-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .games-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
     .feature, .howto, .game-tile { padding: 1.2rem; }
     .feature h3, .howto h3, .game-tile h3 { margin-top: 0; margin-bottom: 0.6rem; }
     .feature p, .howto p, .game-tile p { color: var(--muted); line-height: 1.6; margin-bottom: 0; }
-    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
     .step-number {
       display: inline-flex;
       align-items: center;
@@ -226,6 +237,7 @@
           <a href="snake.html">Snake</a>
           <a href="breakout.html">Breakout</a>
           <a href="pong.html">Pong</a>
+          <a href="minesweeper.html">Minesweeper</a>
         </div>
       </nav>
     </header>
@@ -234,14 +246,15 @@
       <section id="play" class="hero">
         <div>
           <span class="eyebrow">Mini Browser Arcade</span>
-          <h1>Three classics. One tiny arcade.</h1>
+          <h1>Four classics. One tiny arcade.</h1>
           <p>
-            Test Arcade now has Snake, Breakout, and Pong, plus a hub page that shows your saved browser high scores. It has become a suspiciously respectable little time sink.
+            Test Arcade now has Snake, Breakout, Pong, and Minesweeper, plus a hub page that shows your saved browser high scores. At this point it has fully committed to being a tiny game cabinet on the internet.
           </p>
           <div class="actions">
             <a class="btn btn-primary" href="snake.html">Play Snake</a>
             <a class="btn btn-secondary" href="breakout.html">Play Breakout</a>
             <a class="btn btn-secondary" href="pong.html">Play Pong</a>
+            <a class="btn btn-secondary" href="minesweeper.html">Play Minesweeper</a>
             <a class="btn btn-secondary" href="scores.html">Open Hub</a>
           </div>
         </div>
@@ -269,17 +282,28 @@
               <div class="pong-paddle pong-right"></div>
               <div class="pong-ball"></div>
             </div>
+            <div class="preview mine-preview">
+              <div class="mine-cell m1"></div>
+              <div class="mine-cell m2">1</div>
+              <div class="mine-cell m3">🚩</div>
+              <div class="mine-cell m4">2</div>
+              <div class="mine-cell m5">💣</div>
+              <div class="mine-cell m6"></div>
+              <div class="mine-cell m7"></div>
+              <div class="mine-cell m8"></div>
+              <div class="mine-cell m9"></div>
+            </div>
           </div>
           <h2 class="card-title">A whole tiny arcade now</h2>
           <p class="card-text">
-            Snake is panic and pathing. Breakout is angles and brick violence. Pong is a personal grudge against a computer paddle. The hub page keeps score so your browser can remember your victories.
+            Snake is panic and pathing. Breakout is angles and brick violence. Pong is a personal grudge against a computer paddle. Minesweeper is calm suspicion right before emotional damage. The hub page keeps score so your browser can remember the good days.
           </p>
           <div class="launch-row">
             <a class="btn btn-primary" href="scores.html">Open Arcade Hub</a>
           </div>
           <div class="mini-stats">
             <div class="mini-stat">
-              <strong>3</strong>
+              <strong>4</strong>
               <span>Playable games</span>
             </div>
             <div class="mini-stat">
@@ -319,13 +343,18 @@
             <p>Face the CPU in a clean old-school paddle duel and try not to let the robot feel superior.</p>
             <div class="actions"><a class="btn btn-primary" href="pong.html">Play Pong</a></div>
           </div>
+          <div class="panel game-tile">
+            <h3>Minesweeper</h3>
+            <p>Reveal safe tiles, flag suspicious squares, and try not to turn confidence into fireworks.</p>
+            <div class="actions"><a class="btn btn-primary" href="minesweeper.html">Play Minesweeper</a></div>
+          </div>
         </div>
       </section>
 
       <section id="features" class="section">
         <h2>Why this version is fun</h2>
         <p class="section-intro">
-          It is now an actual mini arcade site with multiple games and a score hub, which is a lot more charming than a lonely test page pretending to have big plans.
+          It is now a real mini arcade site with multiple games and a score hub, which is a lot more charming than a lonely test page pretending to have big plans.
         </p>
         <div class="grid">
           <div class="panel feature">
@@ -334,11 +363,15 @@
           </div>
           <div class="panel feature">
             <h3>Saved browser high scores</h3>
-            <p>Snake, Breakout, and Pong each track your best local score or best winning run.</p>
+            <p>Each game tracks its best local score or best time so there is always something to beat.</p>
           </div>
           <div class="panel feature">
             <h3>Arcade hub page</h3>
             <p>One place to launch every game and check or clear the local saved scores.</p>
+          </div>
+          <div class="panel feature">
+            <h3>Four distinct vibes</h3>
+            <p>Reflexes, angles, duels, and logic. A tiny sampler pack of old-school trouble.</p>
           </div>
         </div>
       </section>
@@ -346,30 +379,35 @@
       <section id="how" class="section">
         <h2>How to play</h2>
         <p class="section-intro">
-          Highly technical summary: steer the snake, bounce the ball, or defeat the paddle robot. Then repeat until time becomes theoretical.
+          Highly technical summary: steer the snake, bounce the ball, defeat the paddle robot, or politely interrogate a grid full of hidden explosives.
         </p>
         <div class="steps">
           <div class="panel howto">
             <span class="step-number">1</span>
             <h3>Pick a cabinet</h3>
-            <p>Choose Snake, Breakout, or Pong depending on what flavor of stress sounds fun.</p>
+            <p>Choose whichever flavor of stress, logic, or chaos sounds fun right now.</p>
           </div>
           <div class="panel howto">
             <span class="step-number">2</span>
             <h3>Learn fast</h3>
-            <p>All three games are intentionally simple, so you can jump in with almost no setup.</p>
+            <p>All four games are intentionally simple, so you can jump in with almost no setup.</p>
           </div>
           <div class="panel howto">
             <span class="step-number">3</span>
             <h3>Check the hub</h3>
             <p>Use the Arcade Hub page to see your saved scores and pick your next rematch.</p>
           </div>
+          <div class="panel howto">
+            <span class="step-number">4</span>
+            <h3>Repeat irresponsibly</h3>
+            <p>This is the part where one round quietly becomes twelve.</p>
+          </div>
         </div>
       </section>
     </main>
 
     <footer>
-      <p>Test Arcade • Snake, Breakout, and Pong with a local score hub</p>
+      <p>Test Arcade • Snake, Breakout, Pong, and Minesweeper with a local score hub</p>
     </footer>
   </div>
 </body>
