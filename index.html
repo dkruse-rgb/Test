@@ -91,7 +91,9 @@
     .breakout-preview { border: 2px solid rgba(245,158,11,0.55); }
     .pong-preview { border: 2px solid rgba(34,197,94,0.55); }
     .mine-preview { border: 2px solid rgba(239,68,68,0.55); }
-    .snake-seg, .food, .brick, .ball, .paddle, .pong-paddle, .pong-ball, .net, .mine-cell { position: absolute; border-radius: 8px; }
+    .snake-seg, .food, .brick, .ball, .paddle, .pong-paddle, .pong-ball, .net, .mine-cell, .poster-piece {
+      position: absolute; border-radius: 8px;
+    }
     .snake-seg, .food { width: 18%; height: 18%; }
     .snake-seg { background: var(--green); }
     .snake-head { background: var(--accent); }
@@ -114,6 +116,60 @@
       padding: 1.2rem; background: var(--panel); border: 1px solid var(--border); border-radius: 22px; box-shadow: 0 16px 40px rgba(0,0,0,0.2);
     }
     .tile h3, .feature h3, .howto h3, .leader-card h3 { margin-top: 0; margin-bottom: 0.55rem; }
+    .tile { overflow: hidden; }
+    .cabinet-art {
+      position: relative; height: 210px; border-radius: 18px; margin: -0.1rem -0.1rem 1rem;
+      border: 1px solid rgba(255,255,255,0.08); overflow: hidden;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+    .cabinet-art::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(2,6,23,0.78), rgba(2,6,23,0.08) 55%, rgba(255,255,255,0.03));
+      pointer-events: none;
+    }
+    .poster-title {
+      position: absolute; left: 14px; right: 14px; bottom: 14px; z-index: 2;
+      text-transform: uppercase; font-weight: 900; letter-spacing: 0.12em; color: white;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.45);
+    }
+    .poster-sub {
+      display: block; margin-top: 0.35rem; font-size: 0.78rem; color: rgba(226,232,240,0.86); letter-spacing: 0.08em;
+    }
+    .art-snake {
+      background: radial-gradient(circle at top, rgba(56,189,248,0.22), transparent 35%), linear-gradient(180deg, #041325, #071629 55%, #10231b);
+    }
+    .art-breakout {
+      background: radial-gradient(circle at top, rgba(245,158,11,0.2), transparent 35%), linear-gradient(180deg, #261407, #1f1221 55%, #0b1322);
+    }
+    .art-pong {
+      background: radial-gradient(circle at top, rgba(34,197,94,0.18), transparent 35%), linear-gradient(180deg, #081724, #0d1f18 55%, #0a1423);
+    }
+    .art-mine {
+      background: radial-gradient(circle at top, rgba(239,68,68,0.18), transparent 35%), linear-gradient(180deg, #201018, #151d2f 55%, #111827);
+    }
+    .snake-trail, .snake-food, .break-brick, .break-ball, .break-paddle, .pong-line, .pong-dot, .pong-bar, .mine-square {
+      position: absolute;
+    }
+    .snake-trail { width: 44px; height: 44px; border-radius: 12px; }
+    .snake-trail.head { background: var(--accent); box-shadow: 0 0 18px rgba(56,189,248,0.35); }
+    .snake-trail.body { background: var(--green); }
+    .snake-food { width: 28px; height: 28px; border-radius: 999px; background: var(--red); box-shadow: 0 0 20px rgba(239,68,68,0.35); }
+    .break-brick { width: 58px; height: 24px; border-radius: 8px; box-shadow: 0 4px 14px rgba(0,0,0,0.28); }
+    .break-ball { width: 20px; height: 20px; border-radius: 999px; background: white; box-shadow: 0 0 16px rgba(255,255,255,0.3); }
+    .break-paddle { width: 100px; height: 14px; border-radius: 999px; background: var(--accent); }
+    .pong-line { left: 50%; top: 0; width: 4px; height: 100%; transform: translateX(-50%); background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.2) 0 16px, transparent 16px 28px); }
+    .pong-dot { width: 20px; height: 20px; border-radius: 999px; background: white; box-shadow: 0 0 16px rgba(255,255,255,0.3); }
+    .pong-bar { width: 14px; height: 82px; border-radius: 999px; }
+    .pong-bar.left { background: var(--accent); }
+    .pong-bar.right { background: var(--green); }
+    .mine-square {
+      width: 48px; height: 48px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.05rem;
+    }
+    .mine-closed { background: #1e293b; }
+    .mine-open { background: #0b1220; }
+    .mine-hot { background: rgba(239,68,68,0.22); }
+    .mine-flag { background: rgba(245,158,11,0.18); }
     .step-number {
       display: inline-flex; width: 2rem; height: 2rem; align-items: center; justify-content: center; border-radius: 999px; margin-bottom: 0.8rem;
       background: rgba(56,189,248,0.14); color: var(--accent); font-weight: 900;
@@ -244,10 +300,60 @@
         <h2>Game Select</h2>
         <p class="section-intro">Pick a cabinet and commit to whatever kind of avoidable digital stress sounds most entertaining.</p>
         <div class="games-grid">
-          <div class="tile"><h3>Snake</h3><p>Eat, grow, survive, and try not to fold yourself into your own bad decisions.</p><div class="button-row"><a class="btn btn-primary" href="snake.html">Play Snake</a></div></div>
-          <div class="tile"><h3>Breakout</h3><p>Break bricks, save the ball, and keep your paddle where your future depends on it.</p><div class="button-row"><a class="btn btn-primary" href="breakout.html">Play Breakout</a></div></div>
-          <div class="tile"><h3>Pong</h3><p>Battle the CPU in a clean old-school duel and refuse to let the robot get smug.</p><div class="button-row"><a class="btn btn-primary" href="pong.html">Play Pong</a></div></div>
-          <div class="tile"><h3>Minesweeper</h3><p>Reveal safe tiles, flag danger, and attempt to think one click ahead of disaster.</p><div class="button-row"><a class="btn btn-primary" href="minesweeper.html">Play Minesweeper</a></div></div>
+          <div class="tile">
+            <div class="cabinet-art art-snake">
+              <div class="snake-trail head" style="left:20px; top:120px;"></div>
+              <div class="snake-trail body" style="left:66px; top:120px;"></div>
+              <div class="snake-trail body" style="left:112px; top:120px;"></div>
+              <div class="snake-trail body" style="left:112px; top:74px;"></div>
+              <div class="snake-food" style="right:28px; top:30px;"></div>
+              <div class="poster-title">Snake<span class="poster-sub">Grow • Dodge • Survive</span></div>
+            </div>
+            <h3>Snake</h3>
+            <p>Eat, grow, survive, and try not to fold yourself into your own bad decisions.</p>
+            <div class="button-row"><a class="btn btn-primary" href="snake.html">Play Snake</a></div>
+          </div>
+          <div class="tile">
+            <div class="cabinet-art art-breakout">
+              <div class="break-brick" style="left:16px; top:22px; background:#f59e0b;"></div>
+              <div class="break-brick" style="left:80px; top:22px; background:#ef4444;"></div>
+              <div class="break-brick" style="left:144px; top:22px; background:#38bdf8;"></div>
+              <div class="break-brick" style="left:48px; top:54px; background:#22c55e;"></div>
+              <div class="break-brick" style="left:112px; top:54px; background:#a855f7;"></div>
+              <div class="break-ball" style="left:156px; top:116px;"></div>
+              <div class="break-paddle" style="left:56px; bottom:28px;"></div>
+              <div class="poster-title">Breakout<span class="poster-sub">Smash • Bounce • Clear</span></div>
+            </div>
+            <h3>Breakout</h3>
+            <p>Break bricks, save the ball, and keep your paddle where your future depends on it.</p>
+            <div class="button-row"><a class="btn btn-primary" href="breakout.html">Play Breakout</a></div>
+          </div>
+          <div class="tile">
+            <div class="cabinet-art art-pong">
+              <div class="pong-line"></div>
+              <div class="pong-bar left" style="left:24px; top:88px;"></div>
+              <div class="pong-bar right" style="right:24px; top:54px;"></div>
+              <div class="pong-dot" style="left:120px; top:92px;"></div>
+              <div class="poster-title">Pong<span class="poster-sub">Serve • Rally • Win</span></div>
+            </div>
+            <h3>Pong</h3>
+            <p>Battle the CPU in a clean old-school duel and refuse to let the robot get smug.</p>
+            <div class="button-row"><a class="btn btn-primary" href="pong.html">Play Pong</a></div>
+          </div>
+          <div class="tile">
+            <div class="cabinet-art art-mine">
+              <div class="mine-square mine-open" style="left:18px; top:26px; color:#60a5fa;">1</div>
+              <div class="mine-square mine-flag" style="left:72px; top:26px;">🚩</div>
+              <div class="mine-square mine-closed" style="left:126px; top:26px;"></div>
+              <div class="mine-square mine-open" style="left:18px; top:80px; color:#22c55e;">2</div>
+              <div class="mine-square mine-hot" style="left:72px; top:80px;">💣</div>
+              <div class="mine-square mine-closed" style="left:126px; top:80px;"></div>
+              <div class="poster-title">Minesweeper<span class="poster-sub">Reveal • Flag • Outsmart</span></div>
+            </div>
+            <h3>Minesweeper</h3>
+            <p>Reveal safe tiles, flag danger, and attempt to think one click ahead of disaster.</p>
+            <div class="button-row"><a class="btn btn-primary" href="minesweeper.html">Play Minesweeper</a></div>
+          </div>
         </div>
       </section>
 
@@ -275,7 +381,7 @@
     </main>
 
     <footer>
-      <p>Test Arcade • Four classics, shared sound controls, local score hub, retro title-screen nonsense, and a champion board</p>
+      <p>Test Arcade • Four classics, shared sound controls, local score hub, retro title-screen nonsense, cabinet art, and a champion board</p>
     </footer>
   </div>
 
@@ -318,14 +424,10 @@
 
       const champion = ranked[0];
       championName.textContent = champion.name;
-      championScore.textContent = champion.type === 'time'
-        ? `${champion.label}: ${champion.value}s`
-        : `${champion.label}: ${champion.value}`;
+      championScore.textContent = champion.type === 'time' ? `${champion.label}: ${champion.value}s` : `${champion.label}: ${champion.value}`;
       championValue.textContent = champion.type === 'time' ? `${champion.value}s` : String(champion.value);
       championMetric.textContent = champion.type === 'time' ? 'Fastest recorded time' : 'Highest recorded score';
-      championNote.textContent = champion.type === 'time'
-        ? 'Minesweeper took the crown by being brutally efficient. Suspicion wins today.'
-        : `${champion.name} currently owns the room. That cabinet is talking entirely too much trash.`;
+      championNote.textContent = champion.type === 'time' ? 'Minesweeper took the crown by being brutally efficient. Suspicion wins today.' : `${champion.name} currently owns the room. That cabinet is talking entirely too much trash.`;
 
       board.innerHTML = ranked.map((entry, index) => {
         const displayValue = entry.type === 'time' ? `${entry.value}s` : String(entry.value);
