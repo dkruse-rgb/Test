@@ -82,7 +82,7 @@
     .score-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem; margin-top: 1rem; }
     .score-pill { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 16px; padding: 0.85rem; text-align: center; }
     .score-pill strong { display: block; font-size: 1.1rem; margin-bottom: 0.15rem; }
-    .cabinet-grid .preview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-top: 1rem; }
+    .cabinet-grid .preview-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.8rem; margin-top: 1rem; }
     .preview {
       aspect-ratio: 1 / 1; border-radius: 18px; background: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px), #020617;
       background-size: 10% 10%, 10% 10%, auto; position: relative; overflow: hidden;
@@ -91,7 +91,8 @@
     .breakout-preview { border: 2px solid rgba(245,158,11,0.55); }
     .pong-preview { border: 2px solid rgba(34,197,94,0.55); }
     .mine-preview { border: 2px solid rgba(239,68,68,0.55); }
-    .snake-seg, .food, .brick, .ball, .paddle, .pong-paddle, .pong-ball, .net, .mine-cell, .poster-piece {
+    .fish-preview { border: 2px solid rgba(14,165,233,0.6); }
+    .snake-seg, .food, .brick, .ball, .paddle, .pong-paddle, .pong-ball, .net, .mine-cell, .poster-piece, .fish-shape, .hook-line, .hook-dot {
       position: absolute; border-radius: 8px;
     }
     .snake-seg, .food { width: 18%; height: 18%; }
@@ -109,9 +110,17 @@
     .net { left: 49%; top: 0; width: 2%; height: 100%; background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.18) 0 10%, transparent 10% 18%); border-radius: 0; }
     .mine-cell { width: 22%; height: 22%; background: #1e293b; border: 1px solid rgba(255,255,255,0.08); }
     .m1 { left: 12%; top: 12%; } .m2 { left: 38%; top: 12%; background: #0b1220; color: #60a5fa; } .m3 { left: 64%; top: 12%; background: rgba(245,158,11,0.18); } .m4 { left: 12%; top: 38%; background: #0b1220; color: #22c55e; } .m5 { left: 38%; top: 38%; background: rgba(239,68,68,0.18); } .m6 { left: 64%; top: 38%; background: #1e293b; } .m7 { left: 12%; top: 64%; background: #0b1220; } .m8 { left: 38%; top: 64%; background: #1e293b; } .m9 { left: 64%; top: 64%; background: #0b1220; }
+    .fish-water { position:absolute; inset:0; background: linear-gradient(180deg, #38bdf8 0%, #0ea5e9 22%, #1d4ed8 23%, #1e3a8a 100%); }
+    .fish-boat { position:absolute; left:18px; top:22px; width:56px; height:16px; background:#92400e; clip-path: polygon(0 0, 100% 0, 84% 100%, 16% 100%); }
+    .fish-shape { width: 34px; height: 18px; border-radius: 999px 999px 999px 999px / 70% 70% 70% 70%; background: var(--gold); }
+    .fish-shape.small { background:#38bdf8; }
+    .fish-shape.medium { background:#22c55e; }
+    .fish-shape.big { background:#f59e0b; }
+    .hook-line { width:2px; background:#e2e8f0; }
+    .hook-dot { width:10px; height:10px; border-radius:999px; background:#f8fafc; }
     .section { padding: 1rem 0 3rem; }
     .section-intro { max-width: 64ch; margin-bottom: 1.3rem; }
-    .games-grid, .features-grid, .steps, .leaderboard-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+    .games-grid, .features-grid, .steps, .leaderboard-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; }
     .tile, .feature, .howto, .leader-card {
       padding: 1.2rem; background: var(--panel); border: 1px solid var(--border); border-radius: 22px; box-shadow: 0 16px 40px rgba(0,0,0,0.2);
     }
@@ -135,18 +144,11 @@
     .poster-sub {
       display: block; margin-top: 0.35rem; font-size: 0.78rem; color: rgba(226,232,240,0.86); letter-spacing: 0.08em;
     }
-    .art-snake {
-      background: radial-gradient(circle at top, rgba(56,189,248,0.22), transparent 35%), linear-gradient(180deg, #041325, #071629 55%, #10231b);
-    }
-    .art-breakout {
-      background: radial-gradient(circle at top, rgba(245,158,11,0.2), transparent 35%), linear-gradient(180deg, #261407, #1f1221 55%, #0b1322);
-    }
-    .art-pong {
-      background: radial-gradient(circle at top, rgba(34,197,94,0.18), transparent 35%), linear-gradient(180deg, #081724, #0d1f18 55%, #0a1423);
-    }
-    .art-mine {
-      background: radial-gradient(circle at top, rgba(239,68,68,0.18), transparent 35%), linear-gradient(180deg, #201018, #151d2f 55%, #111827);
-    }
+    .art-snake { background: radial-gradient(circle at top, rgba(56,189,248,0.22), transparent 35%), linear-gradient(180deg, #041325, #071629 55%, #10231b); }
+    .art-breakout { background: radial-gradient(circle at top, rgba(245,158,11,0.2), transparent 35%), linear-gradient(180deg, #261407, #1f1221 55%, #0b1322); }
+    .art-pong { background: radial-gradient(circle at top, rgba(34,197,94,0.18), transparent 35%), linear-gradient(180deg, #081724, #0d1f18 55%, #0a1423); }
+    .art-mine { background: radial-gradient(circle at top, rgba(239,68,68,0.18), transparent 35%), linear-gradient(180deg, #201018, #151d2f 55%, #111827); }
+    .art-fish { background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 22%, #1d4ed8 23%, #1e3a8a 100%); }
     .snake-trail, .snake-food, .break-brick, .break-ball, .break-paddle, .pong-line, .pong-dot, .pong-bar, .mine-square {
       position: absolute;
     }
@@ -162,33 +164,18 @@
     .pong-bar { width: 14px; height: 82px; border-radius: 999px; }
     .pong-bar.left { background: var(--accent); }
     .pong-bar.right { background: var(--green); }
-    .mine-square {
-      width: 48px; height: 48px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08);
-      display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 1.05rem;
-    }
+    .mine-square { width: 48px; height: 48px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:1.05rem; }
     .mine-closed { background: #1e293b; }
     .mine-open { background: #0b1220; }
     .mine-hot { background: rgba(239,68,68,0.22); }
     .mine-flag { background: rgba(245,158,11,0.18); }
-    .step-number {
-      display: inline-flex; width: 2rem; height: 2rem; align-items: center; justify-content: center; border-radius: 999px; margin-bottom: 0.8rem;
-      background: rgba(56,189,248,0.14); color: var(--accent); font-weight: 900;
-    }
-    .champion-card {
-      display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1rem; align-items: center; margin-bottom: 1rem;
-      background: linear-gradient(135deg, rgba(245,158,11,0.14), rgba(56,189,248,0.08));
-      border: 1px solid rgba(245,158,11,0.25);
-    }
-    .champion-badge {
-      display: inline-block; padding: 0.35rem 0.7rem; border-radius: 999px; background: rgba(245,158,11,0.16); color: var(--gold); font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.86rem;
-      margin-bottom: 0.8rem;
-    }
+    .step-number { display: inline-flex; width: 2rem; height: 2rem; align-items: center; justify-content: center; border-radius: 999px; margin-bottom: 0.8rem; background: rgba(56,189,248,0.14); color: var(--accent); font-weight: 900; }
+    .champion-card { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 1rem; align-items: center; margin-bottom: 1rem; background: linear-gradient(135deg, rgba(245,158,11,0.14), rgba(56,189,248,0.08)); border: 1px solid rgba(245,158,11,0.25); }
+    .champion-badge { display: inline-block; padding: 0.35rem 0.7rem; border-radius: 999px; background: rgba(245,158,11,0.16); color: var(--gold); font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.86rem; margin-bottom: 0.8rem; }
     .champion-name { font-size: clamp(1.8rem, 5vw, 3rem); margin: 0 0 0.35rem; }
     .champion-score { font-size: 1.05rem; color: var(--text); margin-bottom: 0.5rem; }
     .champion-note { color: var(--muted); line-height: 1.65; }
-    .champion-side {
-      background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 18px; padding: 1rem; text-align: center;
-    }
+    .champion-side { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 18px; padding: 1rem; text-align: center; }
     .champion-side strong { display: block; font-size: 2rem; margin-bottom: 0.2rem; color: var(--gold); }
     .leader-row { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; }
     .leader-rank { font-size: 1.4rem; font-weight: 900; color: var(--gold); }
@@ -196,6 +183,10 @@
     .leader-score { font-weight: 900; font-size: 1.2rem; }
     .empty-board { color: var(--muted); text-align: center; padding: 1.2rem 0; }
     footer { padding: 1rem 0 3rem; color: var(--muted); text-align: center; }
+    @media (max-width: 1180px) {
+      .games-grid, .features-grid, .steps, .leaderboard-grid { grid-template-columns: repeat(3, 1fr); }
+      .cabinet-grid .preview-grid { grid-template-columns: repeat(3, 1fr); }
+    }
     @media (max-width: 980px) {
       .hero-panel, .games-grid, .features-grid, .steps, .score-strip, .cabinet-grid .preview-grid, .leaderboard-grid, .champion-card { grid-template-columns: 1fr 1fr; }
     }
@@ -222,6 +213,7 @@
           <a href="breakout.html">Breakout</a>
           <a href="pong.html">Pong</a>
           <a href="minesweeper.html">Minesweeper</a>
+          <a href="fishing.html">Fishing</a>
         </div>
       </nav>
     </header>
@@ -231,7 +223,7 @@
         <div class="marquee">Insert Coin Energy</div>
         <h1 class="arcade-title">TEST <span>ARCADE</span></h1>
         <p class="subtitle">
-          Four browser games, shared sound controls, local score tracking, and just enough retro nonsense to feel like a tiny neon game cabinet living inside your repo.
+          Five browser games, shared sound controls, local score tracking, and just enough retro nonsense to feel like a tiny neon game cabinet living inside your repo.
         </p>
         <div class="press-start">Press Start*</div>
         <p class="note">*No coin required. Reckless time management still applies.</p>
@@ -241,7 +233,7 @@
             <div>
               <h2>Choose your cabinet</h2>
               <p>
-                Snake for panic and pathing. Breakout for ricochets and brick carnage. Pong for a personal feud with a paddle bot. Minesweeper for calm, methodical suspicion that can explode at any moment.
+                Snake for panic and pathing. Breakout for ricochets and brick carnage. Pong for a personal feud with a paddle bot. Minesweeper for calm suspicion. Fishing for laid-back score chasing with a sneaky timer.
               </p>
             </div>
             <div>
@@ -250,10 +242,11 @@
                 <a class="btn btn-secondary" href="breakout.html">Play Breakout</a>
                 <a class="btn btn-secondary" href="pong.html">Play Pong</a>
                 <a class="btn btn-secondary" href="minesweeper.html">Play Minesweeper</a>
+                <a class="btn btn-secondary" href="fishing.html">Play Fishing</a>
                 <a class="btn btn-secondary" href="scores.html">Open Hub</a>
               </div>
               <div class="score-strip">
-                <div class="score-pill"><strong>4</strong><span>Games</span></div>
+                <div class="score-pill"><strong>5</strong><span>Games</span></div>
                 <div class="score-pill"><strong>Sound</strong><span>Mute toggle</span></div>
                 <div class="score-pill"><strong>Local</strong><span>Saved scores</span></div>
                 <div class="score-pill"><strong>Mobile</strong><span>Touch controls</span></div>
@@ -263,12 +256,13 @@
 
           <section class="panel panel-pad cabinet-grid">
             <h2>Arcade lineup</h2>
-            <p class="section-intro">A tiny roster of classics, now dressed like they know they are at a party.</p>
+            <p class="section-intro">A tiny roster of classics and one suspiciously chill fishing cabinet.</p>
             <div class="preview-grid" aria-hidden="true">
               <div class="preview snake-preview"><div class="snake-seg snake-head seg1"></div><div class="snake-seg seg2"></div><div class="snake-seg seg3"></div><div class="food apple"></div></div>
               <div class="preview breakout-preview"><div class="brick b1"></div><div class="brick b2"></div><div class="brick b3"></div><div class="brick b4"></div><div class="brick b5"></div><div class="paddle"></div><div class="ball"></div></div>
               <div class="preview pong-preview"><div class="net"></div><div class="pong-paddle pong-left"></div><div class="pong-paddle pong-right"></div><div class="pong-ball"></div></div>
               <div class="preview mine-preview"><div class="mine-cell m1"></div><div class="mine-cell m2">1</div><div class="mine-cell m3">🚩</div><div class="mine-cell m4">2</div><div class="mine-cell m5">💣</div><div class="mine-cell m6"></div><div class="mine-cell m7"></div><div class="mine-cell m8"></div><div class="mine-cell m9"></div></div>
+              <div class="preview fish-preview"><div class="fish-water"></div><div class="fish-boat"></div><div class="hook-line" style="left:30px; top:38px; height:54px;"></div><div class="hook-dot" style="left:26px; top:88px;"></div><div class="fish-shape small" style="left:56px; top:68px;"></div><div class="fish-shape medium" style="left:30px; top:112px;"></div></div>
             </div>
           </section>
         </div>
@@ -301,58 +295,24 @@
         <p class="section-intro">Pick a cabinet and commit to whatever kind of avoidable digital stress sounds most entertaining.</p>
         <div class="games-grid">
           <div class="tile">
-            <div class="cabinet-art art-snake">
-              <div class="snake-trail head" style="left:20px; top:120px;"></div>
-              <div class="snake-trail body" style="left:66px; top:120px;"></div>
-              <div class="snake-trail body" style="left:112px; top:120px;"></div>
-              <div class="snake-trail body" style="left:112px; top:74px;"></div>
-              <div class="snake-food" style="right:28px; top:30px;"></div>
-              <div class="poster-title">Snake<span class="poster-sub">Grow • Dodge • Survive</span></div>
-            </div>
-            <h3>Snake</h3>
-            <p>Eat, grow, survive, and try not to fold yourself into your own bad decisions.</p>
-            <div class="button-row"><a class="btn btn-primary" href="snake.html">Play Snake</a></div>
+            <div class="cabinet-art art-snake"><div class="snake-trail head" style="left:20px; top:120px;"></div><div class="snake-trail body" style="left:66px; top:120px;"></div><div class="snake-trail body" style="left:112px; top:120px;"></div><div class="snake-trail body" style="left:112px; top:74px;"></div><div class="snake-food" style="right:28px; top:30px;"></div><div class="poster-title">Snake<span class="poster-sub">Grow • Dodge • Survive</span></div></div>
+            <h3>Snake</h3><p>Eat, grow, survive, and try not to fold yourself into your own bad decisions.</p><div class="button-row"><a class="btn btn-primary" href="snake.html">Play Snake</a></div>
           </div>
           <div class="tile">
-            <div class="cabinet-art art-breakout">
-              <div class="break-brick" style="left:16px; top:22px; background:#f59e0b;"></div>
-              <div class="break-brick" style="left:80px; top:22px; background:#ef4444;"></div>
-              <div class="break-brick" style="left:144px; top:22px; background:#38bdf8;"></div>
-              <div class="break-brick" style="left:48px; top:54px; background:#22c55e;"></div>
-              <div class="break-brick" style="left:112px; top:54px; background:#a855f7;"></div>
-              <div class="break-ball" style="left:156px; top:116px;"></div>
-              <div class="break-paddle" style="left:56px; bottom:28px;"></div>
-              <div class="poster-title">Breakout<span class="poster-sub">Smash • Bounce • Clear</span></div>
-            </div>
-            <h3>Breakout</h3>
-            <p>Break bricks, save the ball, and keep your paddle where your future depends on it.</p>
-            <div class="button-row"><a class="btn btn-primary" href="breakout.html">Play Breakout</a></div>
+            <div class="cabinet-art art-breakout"><div class="break-brick" style="left:16px; top:22px; background:#f59e0b;"></div><div class="break-brick" style="left:80px; top:22px; background:#ef4444;"></div><div class="break-brick" style="left:144px; top:22px; background:#38bdf8;"></div><div class="break-brick" style="left:48px; top:54px; background:#22c55e;"></div><div class="break-brick" style="left:112px; top:54px; background:#a855f7;"></div><div class="break-ball" style="left:156px; top:116px;"></div><div class="break-paddle" style="left:56px; bottom:28px;"></div><div class="poster-title">Breakout<span class="poster-sub">Smash • Bounce • Clear</span></div></div>
+            <h3>Breakout</h3><p>Break bricks, save the ball, and keep your paddle where your future depends on it.</p><div class="button-row"><a class="btn btn-primary" href="breakout.html">Play Breakout</a></div>
           </div>
           <div class="tile">
-            <div class="cabinet-art art-pong">
-              <div class="pong-line"></div>
-              <div class="pong-bar left" style="left:24px; top:88px;"></div>
-              <div class="pong-bar right" style="right:24px; top:54px;"></div>
-              <div class="pong-dot" style="left:120px; top:92px;"></div>
-              <div class="poster-title">Pong<span class="poster-sub">Serve • Rally • Win</span></div>
-            </div>
-            <h3>Pong</h3>
-            <p>Battle the CPU in a clean old-school duel and refuse to let the robot get smug.</p>
-            <div class="button-row"><a class="btn btn-primary" href="pong.html">Play Pong</a></div>
+            <div class="cabinet-art art-pong"><div class="pong-line"></div><div class="pong-bar left" style="left:24px; top:88px;"></div><div class="pong-bar right" style="right:24px; top:54px;"></div><div class="pong-dot" style="left:120px; top:92px;"></div><div class="poster-title">Pong<span class="poster-sub">Serve • Rally • Win</span></div></div>
+            <h3>Pong</h3><p>Battle the CPU in a clean old-school duel and refuse to let the robot get smug.</p><div class="button-row"><a class="btn btn-primary" href="pong.html">Play Pong</a></div>
           </div>
           <div class="tile">
-            <div class="cabinet-art art-mine">
-              <div class="mine-square mine-open" style="left:18px; top:26px; color:#60a5fa;">1</div>
-              <div class="mine-square mine-flag" style="left:72px; top:26px;">🚩</div>
-              <div class="mine-square mine-closed" style="left:126px; top:26px;"></div>
-              <div class="mine-square mine-open" style="left:18px; top:80px; color:#22c55e;">2</div>
-              <div class="mine-square mine-hot" style="left:72px; top:80px;">💣</div>
-              <div class="mine-square mine-closed" style="left:126px; top:80px;"></div>
-              <div class="poster-title">Minesweeper<span class="poster-sub">Reveal • Flag • Outsmart</span></div>
-            </div>
-            <h3>Minesweeper</h3>
-            <p>Reveal safe tiles, flag danger, and attempt to think one click ahead of disaster.</p>
-            <div class="button-row"><a class="btn btn-primary" href="minesweeper.html">Play Minesweeper</a></div>
+            <div class="cabinet-art art-mine"><div class="mine-square mine-open" style="left:18px; top:26px; color:#60a5fa;">1</div><div class="mine-square mine-flag" style="left:72px; top:26px;">🚩</div><div class="mine-square mine-closed" style="left:126px; top:26px;"></div><div class="mine-square mine-open" style="left:18px; top:80px; color:#22c55e;">2</div><div class="mine-square mine-hot" style="left:72px; top:80px;">💣</div><div class="mine-square mine-closed" style="left:126px; top:80px;"></div><div class="poster-title">Minesweeper<span class="poster-sub">Reveal • Flag • Outsmart</span></div></div>
+            <h3>Minesweeper</h3><p>Reveal safe tiles, flag danger, and attempt to think one click ahead of disaster.</p><div class="button-row"><a class="btn btn-primary" href="minesweeper.html">Play Minesweeper</a></div>
+          </div>
+          <div class="tile">
+            <div class="cabinet-art art-fish"><div class="fish-boat"></div><div class="hook-line" style="left:54px; top:26px; height:84px;"></div><div class="hook-dot" style="left:50px; top:106px;"></div><div class="fish-shape small" style="left:112px; top:74px;"></div><div class="fish-shape medium" style="left:70px; top:124px;"></div><div class="fish-shape big" style="left:130px; top:138px; width:44px; height:22px;"></div><div class="poster-title">Fishing<span class="poster-sub">Cast • Hook • Reel</span></div></div>
+            <h3>Fishing</h3><p>Cast your line, hook fish, and reel them in before the timer runs out.</p><div class="button-row"><a class="btn btn-primary" href="fishing.html">Play Fishing</a></div>
           </div>
         </div>
       </section>
@@ -365,6 +325,7 @@
           <div class="feature"><h3>Desktop and mobile ready</h3><p>Keyboard, swipe, drag, tap, and on-screen buttons depending on the game.</p></div>
           <div class="feature"><h3>Local score memory</h3><p>Your browser keeps your best runs and best times so there is always a rematch waiting.</p></div>
           <div class="feature"><h3>Arcade hub page</h3><p>The hub keeps the whole thing tied together like a proper little game collection.</p></div>
+          <div class="feature"><h3>More variety now</h3><p>Not every cabinet has to be pure panic. Sometimes the fish are the problem.</p></div>
         </div>
       </section>
 
@@ -372,16 +333,17 @@
         <h2>How to play</h2>
         <p class="section-intro">Very technical stuff here: choose a game, try not to embarrass yourself immediately, then hit restart like it owes you money.</p>
         <div class="steps">
-          <div class="howto"><span class="step-number">1</span><h3>Pick a vibe</h3><p>Fast reflexes, angles, paddle duels, or logic under pressure. Your call.</p></div>
+          <div class="howto"><span class="step-number">1</span><h3>Pick a vibe</h3><p>Fast reflexes, angles, paddle duels, logic under pressure, or suspiciously relaxing fishing.</p></div>
           <div class="howto"><span class="step-number">2</span><h3>Start quick</h3><p>Every game is simple to jump into, so you can be losing immediately with very little delay.</p></div>
           <div class="howto"><span class="step-number">3</span><h3>Check your score</h3><p>Use the hub to see local bests and decide which cabinet deserves your next revenge run.</p></div>
           <div class="howto"><span class="step-number">4</span><h3>Repeat irresponsibly</h3><p>This is where one round becomes twelve and the laws of time stop mattering.</p></div>
+          <div class="howto"><span class="step-number">5</span><h3>Catch something shiny</h3><p>The fishing game looks calm right up until the timer starts getting ideas.</p></div>
         </div>
       </section>
     </main>
 
     <footer>
-      <p>Test Arcade • Four classics, shared sound controls, local score hub, retro title-screen nonsense, cabinet art, and a champion board</p>
+      <p>Test Arcade • Five games, shared sound controls, local score hub, retro title-screen nonsense, cabinet art, and a champion board</p>
     </footer>
   </div>
 
@@ -391,13 +353,11 @@
         { name: 'Snake', raw: localStorage.getItem('snake-best-score'), type: 'score', label: 'best score', href: 'snake.html' },
         { name: 'Breakout', raw: localStorage.getItem('breakout-best-score'), type: 'score', label: 'best score', href: 'breakout.html' },
         { name: 'Pong', raw: localStorage.getItem('pong-best-wins'), type: 'score', label: 'best wins', href: 'pong.html' },
-        { name: 'Minesweeper', raw: localStorage.getItem('minesweeper-best-medium'), type: 'time', label: 'best medium time', href: 'minesweeper.html' }
+        { name: 'Minesweeper', raw: localStorage.getItem('minesweeper-best-medium'), type: 'time', label: 'best medium time', href: 'minesweeper.html' },
+        { name: 'Fishing', raw: localStorage.getItem('fishing-best-score'), type: 'score', label: 'best score', href: 'fishing.html' }
       ];
 
-      const parsed = entries
-        .map(entry => ({ ...entry, value: entry.raw === null ? null : Number(entry.raw) }))
-        .filter(entry => entry.value !== null && !Number.isNaN(entry.value));
-
+      const parsed = entries.map(entry => ({ ...entry, value: entry.raw === null ? null : Number(entry.raw) })).filter(entry => entry.value !== null && !Number.isNaN(entry.value));
       const championName = document.getElementById('championName');
       const championScore = document.getElementById('championScore');
       const championValue = document.getElementById('championValue');
@@ -432,18 +392,7 @@
       board.innerHTML = ranked.map((entry, index) => {
         const displayValue = entry.type === 'time' ? `${entry.value}s` : String(entry.value);
         const meta = entry.type === 'time' ? 'Lower is better' : 'Higher is better';
-        return `
-          <a class="leader-card" href="${entry.href}" style="text-decoration:none;color:inherit;">
-            <div class="leader-row">
-              <div>
-                <div class="leader-rank">#${index + 1}</div>
-                <h3>${entry.name}</h3>
-                <div class="leader-meta">${entry.label} • ${meta}</div>
-              </div>
-              <div class="leader-score">${displayValue}</div>
-            </div>
-          </a>
-        `;
+        return `<a class="leader-card" href="${entry.href}" style="text-decoration:none;color:inherit;"><div class="leader-row"><div><div class="leader-rank">#${index + 1}</div><h3>${entry.name}</h3><div class="leader-meta">${entry.label} • ${meta}</div></div><div class="leader-score">${displayValue}</div></div></a>`;
       }).join('');
     }
 
