@@ -112,7 +112,7 @@
     .featured-card { padding: 1.25rem; }
     .preview-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(3, 1fr);
       gap: 0.9rem;
       margin-bottom: 1rem;
     }
@@ -129,7 +129,8 @@
     }
     .snake-preview { border: 2px solid rgba(56,189,248,0.55); }
     .breakout-preview { border: 2px solid rgba(245,158,11,0.55); }
-    .snake-seg, .food, .brick, .ball, .paddle {
+    .pong-preview { border: 2px solid rgba(34,197,94,0.55); }
+    .snake-seg, .food, .brick, .ball, .paddle, .pong-paddle, .pong-ball, .net {
       position: absolute;
       border-radius: 8px;
     }
@@ -149,6 +150,11 @@
     .b5 { left: 43%; top: 23%; background: #a855f7; }
     .paddle { width: 34%; height: 8%; left: 33%; bottom: 8%; background: var(--accent); border-radius: 999px; }
     .ball { width: 10%; height: 10%; left: 58%; bottom: 22%; background: #e2e8f0; border-radius: 999px; }
+    .pong-paddle { width: 8%; height: 34%; background: var(--accent); border-radius: 999px; }
+    .pong-left { left: 8%; top: 33%; }
+    .pong-right { right: 8%; top: 25%; background: var(--green); }
+    .pong-ball { width: 10%; height: 10%; left: 47%; top: 44%; background: #e2e8f0; border-radius: 999px; }
+    .net { left: 49%; top: 0; width: 2%; height: 100%; background: repeating-linear-gradient(to bottom, rgba(255,255,255,0.18) 0 10%, transparent 10% 18%); border-radius: 0; }
     .card-title { font-size: 1.5rem; margin: 0 0 0.4rem; }
     .card-text { color: var(--muted); line-height: 1.6; margin: 0 0 1rem; }
     .launch-row {
@@ -159,7 +165,7 @@
     }
     .mini-stats {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 0.75rem;
     }
     .mini-stat {
@@ -179,7 +185,7 @@
       margin-bottom: 1.5rem;
     }
     .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .games-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
     .feature, .howto, .game-tile { padding: 1.2rem; }
     .feature h3, .howto h3, .game-tile h3 { margin-top: 0; margin-bottom: 0.6rem; }
     .feature p, .howto p, .game-tile p { color: var(--muted); line-height: 1.6; margin-bottom: 0; }
@@ -214,10 +220,12 @@
         <div class="nav-links">
           <a href="#play">Play</a>
           <a href="#games">Games</a>
+          <a href="scores.html">Hub</a>
           <a href="#features">Features</a>
           <a href="#how">How to Play</a>
           <a href="snake.html">Snake</a>
           <a href="breakout.html">Breakout</a>
+          <a href="pong.html">Pong</a>
         </div>
       </nav>
     </header>
@@ -226,13 +234,15 @@
       <section id="play" class="hero">
         <div>
           <span class="eyebrow">Mini Browser Arcade</span>
-          <h1>Now with two ways to waste time gloriously.</h1>
+          <h1>Three classics. One tiny arcade.</h1>
           <p>
-            Test Arcade is now a tiny two-game browser arcade with Snake and Breakout. Both work on desktop and mobile, both are easy to jump into, and both are excellent at quietly eating your afternoon.
+            Test Arcade now has Snake, Breakout, and Pong, plus a hub page that shows your saved browser high scores. It has become a suspiciously respectable little time sink.
           </p>
           <div class="actions">
             <a class="btn btn-primary" href="snake.html">Play Snake</a>
             <a class="btn btn-secondary" href="breakout.html">Play Breakout</a>
+            <a class="btn btn-secondary" href="pong.html">Play Pong</a>
+            <a class="btn btn-secondary" href="scores.html">Open Hub</a>
           </div>
         </div>
 
@@ -253,19 +263,28 @@
               <div class="paddle"></div>
               <div class="ball"></div>
             </div>
+            <div class="preview pong-preview">
+              <div class="net"></div>
+              <div class="pong-paddle pong-left"></div>
+              <div class="pong-paddle pong-right"></div>
+              <div class="pong-ball"></div>
+            </div>
           </div>
-          <h2 class="card-title">Pick your poison</h2>
+          <h2 class="card-title">A whole tiny arcade now</h2>
           <p class="card-text">
-            Snake is all about pathing and panic. Breakout is for ricochets, brick carnage, and clutch paddle saves. Either way, your productivity has been asked to wait outside.
+            Snake is panic and pathing. Breakout is angles and brick violence. Pong is a personal grudge against a computer paddle. The hub page keeps score so your browser can remember your victories.
           </p>
           <div class="launch-row">
-            <a class="btn btn-primary" href="snake.html">Launch Snake</a>
-            <a class="btn btn-secondary" href="breakout.html">Launch Breakout</a>
+            <a class="btn btn-primary" href="scores.html">Open Arcade Hub</a>
           </div>
           <div class="mini-stats">
             <div class="mini-stat">
-              <strong>2</strong>
+              <strong>3</strong>
               <span>Playable games</span>
+            </div>
+            <div class="mini-stat">
+              <strong>Hub</strong>
+              <span>Local score page</span>
             </div>
             <div class="mini-stat">
               <strong>Mobile</strong>
@@ -282,22 +301,23 @@
       <section id="games" class="section">
         <h2>Games</h2>
         <p class="section-intro">
-          Tiny, fast-loading classics with just enough polish to feel deliberate and just enough chaos to keep things interesting.
+          Tiny, fast-loading classics with just enough polish to feel intentional and just enough nonsense to keep you pressing restart.
         </p>
         <div class="games-grid">
           <div class="panel game-tile">
             <h3>Snake</h3>
             <p>Eat the red food, avoid your own body, and deal with the fact that the game speeds up the better you do.</p>
-            <div class="actions">
-              <a class="btn btn-primary" href="snake.html">Play Snake</a>
-            </div>
+            <div class="actions"><a class="btn btn-primary" href="snake.html">Play Snake</a></div>
           </div>
           <div class="panel game-tile">
             <h3>Breakout</h3>
             <p>Clear bricks, protect the ball, survive on limited lives, and keep the paddle where it needs to be.</p>
-            <div class="actions">
-              <a class="btn btn-primary" href="breakout.html">Play Breakout</a>
-            </div>
+            <div class="actions"><a class="btn btn-primary" href="breakout.html">Play Breakout</a></div>
+          </div>
+          <div class="panel game-tile">
+            <h3>Pong</h3>
+            <p>Face the CPU in a clean old-school paddle duel and try not to let the robot feel superior.</p>
+            <div class="actions"><a class="btn btn-primary" href="pong.html">Play Pong</a></div>
           </div>
         </div>
       </section>
@@ -305,20 +325,20 @@
       <section id="features" class="section">
         <h2>Why this version is fun</h2>
         <p class="section-intro">
-          It is no longer a lonely one-game test page. It is now a proper tiny arcade, which sounds dramatically cooler because it is.
+          It is now an actual mini arcade site with multiple games and a score hub, which is a lot more charming than a lonely test page pretending to have big plans.
         </p>
         <div class="grid">
           <div class="panel feature">
             <h3>Desktop and mobile controls</h3>
-            <p>Keyboard, touch, swipe, tap, and drag controls depending on the game.</p>
+            <p>Keyboard, touch, swipe, tap, drag, and on-screen buttons depending on the game.</p>
           </div>
           <div class="panel feature">
-            <h3>Saved best scores</h3>
-            <p>Both games keep a browser-stored best score so there is always something to chase.</p>
+            <h3>Saved browser high scores</h3>
+            <p>Snake, Breakout, and Pong each track your best local score or best winning run.</p>
           </div>
           <div class="panel feature">
-            <h3>Quick arcade sessions</h3>
-            <p>Fast starts, fast restarts, and a nice “one more round” problem baked into the design.</p>
+            <h3>Arcade hub page</h3>
+            <p>One place to launch every game and check or clear the local saved scores.</p>
           </div>
         </div>
       </section>
@@ -326,30 +346,30 @@
       <section id="how" class="section">
         <h2>How to play</h2>
         <p class="section-intro">
-          Very scientific breakdown: steer the thing in Snake, bounce the thing in Breakout, and try not to embarrass yourself in either one.
+          Highly technical summary: steer the snake, bounce the ball, or defeat the paddle robot. Then repeat until time becomes theoretical.
         </p>
         <div class="steps">
           <div class="panel howto">
             <span class="step-number">1</span>
             <h3>Pick a cabinet</h3>
-            <p>Choose Snake for pathing chaos or Breakout for paddle-and-ball mayhem.</p>
+            <p>Choose Snake, Breakout, or Pong depending on what flavor of stress sounds fun.</p>
           </div>
           <div class="panel howto">
             <span class="step-number">2</span>
-            <h3>Learn the controls fast</h3>
-            <p>Both games are intentionally simple, so you can jump in almost immediately.</p>
+            <h3>Learn fast</h3>
+            <p>All three games are intentionally simple, so you can jump in with almost no setup.</p>
           </div>
           <div class="panel howto">
             <span class="step-number">3</span>
-            <h3>Chase a better run</h3>
-            <p>When you lose, the correct response is clearly to mutter something rude and try again.</p>
+            <h3>Check the hub</h3>
+            <p>Use the Arcade Hub page to see your saved scores and pick your next rematch.</p>
           </div>
         </div>
       </section>
     </main>
 
     <footer>
-      <p>Test Arcade • Snake and Breakout in one tiny browser arcade</p>
+      <p>Test Arcade • Snake, Breakout, and Pong with a local score hub</p>
     </footer>
   </div>
 </body>
