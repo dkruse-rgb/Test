@@ -8,10 +8,10 @@
     :root {
       --bg: #020617;
       --panel: rgba(255,255,255,0.07);
-      --panel-strong: rgba(255,255,255,0.1);
       --text: #e2e8f0;
       --muted: #94a3b8;
       --accent: #38bdf8;
+      --gold: #f59e0b;
       --accent-dark: #001018;
       --border: rgba(255,255,255,0.12);
       --green: #22c55e;
@@ -28,10 +28,7 @@
       color: var(--text);
       min-height: 100vh;
     }
-    .wrap {
-      width: min(1120px, calc(100% - 2rem));
-      margin: 0 auto;
-    }
+    .wrap { width: min(1120px, calc(100% - 2rem)); margin: 0 auto; }
     header { padding: 1.25rem 0; }
     nav {
       display: flex;
@@ -61,9 +58,9 @@
       font-weight: 600;
     }
     .hero {
-      padding: 4rem 0 3rem;
+      padding: 4rem 0 2rem;
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      grid-template-columns: 1.05fr 0.95fr;
       gap: 1.5rem;
       align-items: center;
     }
@@ -102,19 +99,9 @@
       font-weight: 800;
       transition: transform 0.18s ease, opacity 0.18s ease;
     }
-    .btn:hover {
-      transform: translateY(-1px);
-      opacity: 0.96;
-    }
-    .btn-primary {
-      background: var(--accent);
-      color: var(--accent-dark);
-    }
-    .btn-secondary {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
+    .btn:hover { transform: translateY(-1px); opacity: 0.96; }
+    .btn-primary { background: var(--accent); color: var(--accent-dark); }
+    .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
     .panel {
       background: var(--panel);
       border: 1px solid var(--border);
@@ -122,13 +109,16 @@
       backdrop-filter: blur(10px);
       box-shadow: 0 20px 50px rgba(0,0,0,0.25);
     }
-    .game-card {
-      padding: 1.25rem;
+    .featured-card { padding: 1.25rem; }
+    .preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.9rem;
+      margin-bottom: 1rem;
     }
-    .game-preview {
+    .preview {
       aspect-ratio: 1 / 1;
       border-radius: 18px;
-      margin-bottom: 1rem;
       background:
         linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px),
@@ -136,35 +126,41 @@
       background-size: 10% 10%, 10% 10%, auto;
       position: relative;
       overflow: hidden;
-      border: 2px solid rgba(56,189,248,0.5);
     }
-    .snake-seg, .food {
+    .snake-preview { border: 2px solid rgba(56,189,248,0.55); }
+    .breakout-preview { border: 2px solid rgba(245,158,11,0.55); }
+    .snake-seg, .food, .brick, .ball, .paddle {
       position: absolute;
-      width: 10%;
-      height: 10%;
-      border-radius: 10px;
+      border-radius: 8px;
     }
+    .snake-seg, .food { width: 18%; height: 18%; }
     .snake-seg { background: var(--green); }
     .snake-head { background: var(--accent); }
     .food { background: var(--red); }
-    .seg1 { left: 40%; top: 50%; }
-    .seg2 { left: 30%; top: 50%; }
-    .seg3 { left: 20%; top: 50%; }
-    .apple { left: 70%; top: 30%; }
-    .card-title {
-      font-size: 1.5rem;
-      margin: 0 0 0.4rem;
-    }
-    .card-text {
-      color: var(--muted);
-      line-height: 1.6;
-      margin: 0 0 1rem;
+    .seg1 { left: 38%; top: 50%; }
+    .seg2 { left: 22%; top: 50%; }
+    .seg3 { left: 6%; top: 50%; }
+    .apple { left: 64%; top: 22%; }
+    .brick { width: 20%; height: 10%; border-radius: 6px; }
+    .b1 { left: 8%; top: 10%; background: #f59e0b; }
+    .b2 { left: 31%; top: 10%; background: #ef4444; }
+    .b3 { left: 54%; top: 10%; background: #38bdf8; }
+    .b4 { left: 20%; top: 23%; background: #22c55e; }
+    .b5 { left: 43%; top: 23%; background: #a855f7; }
+    .paddle { width: 34%; height: 8%; left: 33%; bottom: 8%; background: var(--accent); border-radius: 999px; }
+    .ball { width: 10%; height: 10%; left: 58%; bottom: 22%; background: #e2e8f0; border-radius: 999px; }
+    .card-title { font-size: 1.5rem; margin: 0 0 0.4rem; }
+    .card-text { color: var(--muted); line-height: 1.6; margin: 0 0 1rem; }
+    .launch-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
     }
     .mini-stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 0.75rem;
-      margin-top: 1rem;
     }
     .mini-stat {
       background: rgba(255,255,255,0.05);
@@ -173,46 +169,21 @@
       padding: 0.85rem;
       text-align: center;
     }
-    .mini-stat strong {
-      display: block;
-      font-size: 1.2rem;
-      margin-bottom: 0.2rem;
-    }
-    .section {
-      padding: 1rem 0 3rem;
-    }
-    .section h2 {
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
-      margin-bottom: 0.6rem;
-    }
+    .mini-stat strong { display: block; font-size: 1.2rem; margin-bottom: 0.2rem; }
+    .section { padding: 1rem 0 3rem; }
+    .section h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); margin-bottom: 0.6rem; }
     .section-intro {
       color: var(--muted);
       line-height: 1.7;
       max-width: 62ch;
       margin-bottom: 1.5rem;
     }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-    }
-    .feature, .howto {
-      padding: 1.2rem;
-    }
-    .feature h3, .howto h3 {
-      margin-top: 0;
-      margin-bottom: 0.6rem;
-    }
-    .feature p, .howto p {
-      color: var(--muted);
-      line-height: 1.6;
-      margin-bottom: 0;
-    }
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-    }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; }
+    .feature, .howto, .game-tile { padding: 1.2rem; }
+    .feature h3, .howto h3, .game-tile h3 { margin-top: 0; margin-bottom: 0.6rem; }
+    .feature p, .howto p, .game-tile p { color: var(--muted); line-height: 1.6; margin-bottom: 0; }
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
     .step-number {
       display: inline-flex;
       align-items: center;
@@ -225,24 +196,13 @@
       font-weight: 800;
       margin-bottom: 0.85rem;
     }
-    footer {
-      padding: 1rem 0 3rem;
-      color: var(--muted);
-      text-align: center;
-    }
+    footer { padding: 1rem 0 3rem; color: var(--muted); text-align: center; }
     @media (max-width: 900px) {
-      .hero, .grid, .steps {
-        grid-template-columns: 1fr;
-      }
-      .mini-stats {
-        grid-template-columns: 1fr;
-      }
+      .hero, .grid, .steps, .games-grid { grid-template-columns: 1fr; }
+      .mini-stats, .preview-grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 700px) {
-      nav {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+      nav { flex-direction: column; align-items: flex-start; }
     }
   </style>
 </head>
@@ -253,9 +213,11 @@
         <div class="brand">Test Arcade</div>
         <div class="nav-links">
           <a href="#play">Play</a>
+          <a href="#games">Games</a>
           <a href="#features">Features</a>
           <a href="#how">How to Play</a>
-          <a href="snake.html">Snake Game</a>
+          <a href="snake.html">Snake</a>
+          <a href="breakout.html">Breakout</a>
         </div>
       </nav>
     </header>
@@ -264,63 +226,99 @@
       <section id="play" class="hero">
         <div>
           <span class="eyebrow">Mini Browser Arcade</span>
-          <h1>Play Snake in your browser.</h1>
+          <h1>Now with two ways to waste time gloriously.</h1>
           <p>
-            A fast little arcade page with a simple Snake game built for desktop and mobile.
-            It has touch controls, swipe support, saved high scores, pause, and a speed curve that gets meaner the longer you survive.
+            Test Arcade is now a tiny two-game browser arcade with Snake and Breakout. Both work on desktop and mobile, both are easy to jump into, and both are excellent at quietly eating your afternoon.
           </p>
           <div class="actions">
             <a class="btn btn-primary" href="snake.html">Play Snake</a>
-            <a class="btn btn-secondary" href="#how">How to Play</a>
+            <a class="btn btn-secondary" href="breakout.html">Play Breakout</a>
           </div>
         </div>
 
-        <aside class="panel game-card">
-          <div class="game-preview" aria-hidden="true">
-            <div class="snake-seg snake-head seg1"></div>
-            <div class="snake-seg seg2"></div>
-            <div class="snake-seg seg3"></div>
-            <div class="food apple"></div>
+        <aside class="panel featured-card">
+          <div class="preview-grid" aria-hidden="true">
+            <div class="preview snake-preview">
+              <div class="snake-seg snake-head seg1"></div>
+              <div class="snake-seg seg2"></div>
+              <div class="snake-seg seg3"></div>
+              <div class="food apple"></div>
+            </div>
+            <div class="preview breakout-preview">
+              <div class="brick b1"></div>
+              <div class="brick b2"></div>
+              <div class="brick b3"></div>
+              <div class="brick b4"></div>
+              <div class="brick b5"></div>
+              <div class="paddle"></div>
+              <div class="ball"></div>
+            </div>
           </div>
-          <h2 class="card-title">Snake is live</h2>
+          <h2 class="card-title">Pick your poison</h2>
           <p class="card-text">
-            One page. One game. Zero nonsense. Just eat the red food, dodge the walls, and try not to drive your own snake into itself like a tiny green train wreck.
+            Snake is all about pathing and panic. Breakout is for ricochets, brick carnage, and clutch paddle saves. Either way, your productivity has been asked to wait outside.
           </p>
-          <a class="btn btn-primary" href="snake.html">Launch Game</a>
+          <div class="launch-row">
+            <a class="btn btn-primary" href="snake.html">Launch Snake</a>
+            <a class="btn btn-secondary" href="breakout.html">Launch Breakout</a>
+          </div>
           <div class="mini-stats">
             <div class="mini-stat">
-              <strong>Mobile</strong>
-              <span>Swipe + buttons</span>
+              <strong>2</strong>
+              <span>Playable games</span>
             </div>
             <div class="mini-stat">
-              <strong>Saved</strong>
-              <span>High score memory</span>
+              <strong>Mobile</strong>
+              <span>Touch-friendly controls</span>
             </div>
             <div class="mini-stat">
               <strong>Arcade</strong>
-              <span>Gets faster as you score</span>
+              <span>Quick runs, fast fun</span>
             </div>
           </div>
         </aside>
       </section>
 
+      <section id="games" class="section">
+        <h2>Games</h2>
+        <p class="section-intro">
+          Tiny, fast-loading classics with just enough polish to feel deliberate and just enough chaos to keep things interesting.
+        </p>
+        <div class="games-grid">
+          <div class="panel game-tile">
+            <h3>Snake</h3>
+            <p>Eat the red food, avoid your own body, and deal with the fact that the game speeds up the better you do.</p>
+            <div class="actions">
+              <a class="btn btn-primary" href="snake.html">Play Snake</a>
+            </div>
+          </div>
+          <div class="panel game-tile">
+            <h3>Breakout</h3>
+            <p>Clear bricks, protect the ball, survive on limited lives, and keep the paddle where it needs to be.</p>
+            <div class="actions">
+              <a class="btn btn-primary" href="breakout.html">Play Breakout</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="features" class="section">
         <h2>Why this version is fun</h2>
         <p class="section-intro">
-          I gave the game page a few upgrades so it feels more like a tiny arcade cabinet and less like a homework assignment from 2009.
+          It is no longer a lonely one-game test page. It is now a proper tiny arcade, which sounds dramatically cooler because it is.
         </p>
         <div class="grid">
           <div class="panel feature">
             <h3>Desktop and mobile controls</h3>
-            <p>Use arrow keys, WASD, swipe gestures, or on-screen direction buttons.</p>
+            <p>Keyboard, touch, swipe, tap, and drag controls depending on the game.</p>
           </div>
           <div class="panel feature">
-            <h3>High score tracking</h3>
-            <p>Your best run is saved in the browser so you have something to chase next time.</p>
+            <h3>Saved best scores</h3>
+            <p>Both games keep a browser-stored best score so there is always something to chase.</p>
           </div>
           <div class="panel feature">
-            <h3>Speed scaling</h3>
-            <p>The snake gets quicker as you score, so the pressure ramps up in a good way.</p>
+            <h3>Quick arcade sessions</h3>
+            <p>Fast starts, fast restarts, and a nice “one more round” problem baked into the design.</p>
           </div>
         </div>
       </section>
@@ -328,30 +326,30 @@
       <section id="how" class="section">
         <h2>How to play</h2>
         <p class="section-intro">
-          The rules are blessedly simple, which is exactly why Snake can ruin ten minutes of your life without asking permission.
+          Very scientific breakdown: steer the thing in Snake, bounce the thing in Breakout, and try not to embarrass yourself in either one.
         </p>
         <div class="steps">
           <div class="panel howto">
             <span class="step-number">1</span>
-            <h3>Start moving</h3>
-            <p>Open the game and use your keyboard, swipe, or tap the on-screen arrows to steer.</p>
+            <h3>Pick a cabinet</h3>
+            <p>Choose Snake for pathing chaos or Breakout for paddle-and-ball mayhem.</p>
           </div>
           <div class="panel howto">
             <span class="step-number">2</span>
-            <h3>Eat the red food</h3>
-            <p>Each food pickup adds a point and makes your snake a little longer.</p>
+            <h3>Learn the controls fast</h3>
+            <p>Both games are intentionally simple, so you can jump in almost immediately.</p>
           </div>
           <div class="panel howto">
             <span class="step-number">3</span>
-            <h3>Do not panic badly</h3>
-            <p>Avoid the walls and your own body. Survive longer, and the game speeds up.</p>
+            <h3>Chase a better run</h3>
+            <p>When you lose, the correct response is clearly to mutter something rude and try again.</p>
           </div>
         </div>
       </section>
     </main>
 
     <footer>
-      <p>Test Arcade • Built around a simple browser Snake game</p>
+      <p>Test Arcade • Snake and Breakout in one tiny browser arcade</p>
     </footer>
   </div>
 </body>
