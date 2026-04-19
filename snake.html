@@ -14,6 +14,7 @@
       background: #0f172a;
       color: #e2e8f0;
       font-family: Arial, Helvetica, sans-serif;
+      padding: 1rem;
     }
     .wrap {
       width: min(92vw, 520px);
@@ -30,6 +31,9 @@
       border: 2px solid #38bdf8;
       border-radius: 12px;
       max-width: 100%;
+      width: 100%;
+      height: auto;
+      touch-action: none;
     }
     .row {
       display: flex;
@@ -50,12 +54,31 @@
       cursor: pointer;
     }
     .hint { font-size: 0.95rem; }
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, 72px);
+      justify-content: center;
+      gap: 0.5rem;
+      margin: 1rem auto 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .controls button {
+      width: 72px;
+      height: 72px;
+      padding: 0;
+      font-size: 1.4rem;
+      border-radius: 18px;
+    }
+    .controls .empty {
+      visibility: hidden;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Snake</h1>
-    <p>Use the arrow keys or WASD to move. Tap restart if you crash.</p>
+    <p>Use the arrow keys, WASD, swipe, or the on-screen buttons to move.</p>
     <div class="row">
       <strong>Score: <span id="score">0</span></strong>
       <div>
@@ -64,6 +87,14 @@
       </div>
     </div>
     <canvas id="game" width="400" height="400"></canvas>
+    <div class="controls">
+      <button class="empty" aria-hidden="true" tabindex="-1"></button>
+      <button id="up" aria-label="Move up">↑</button>
+      <button class="empty" aria-hidden="true" tabindex="-1"></button>
+      <button id="left" aria-label="Move left">←</button>
+      <button id="down" aria-label="Move down">↓</button>
+      <button id="right" aria-label="Move right">→</button>
+    </div>
     <p class="hint">Eat the red food. Do not run into the walls or yourself.</p>
   </div>
 
@@ -76,6 +107,20 @@
     const gridSize = 20;
     const tileCount = canvas.width / gridSize;
     let snake, dx, dy, food, score, gameOver;
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    function setDirection(nextDx, nextDy) {
+      if (nextDx === 0 && nextDy === -1 && dy !== 1) {
+        dx = 0; dy = -1;
+      } else if (nextDx === 0 && nextDy === 1 && dy !== -1) {
+        dx = 0; dy = 1;
+      } else if (nextDx === -1 && nextDy === 0 && dx !== 1) {
+        dx = -1; dy = 0;
+      } else if (nextDx === 1 && nextDy === 0 && dx !== -1) {
+        dx = 1; dy = 0;
+      }
+    }
 
     function resetGame() {
       snake = [{ x: 10, y: 10 }];
@@ -151,11 +196,39 @@
 
     document.addEventListener('keydown', (e) => {
       const key = e.key.toLowerCase();
-      if ((key === 'arrowup' || key === 'w') && dy !== 1) { dx = 0; dy = -1; }
-      else if ((key === 'arrowdown' || key === 's') && dy !== -1) { dx = 0; dy = 1; }
-      else if ((key === 'arrowleft' || key === 'a') && dx !== 1) { dx = -1; dy = 0; }
-      else if ((key === 'arrowright' || key === 'd') && dx !== -1) { dx = 1; dy = 0; }
+      if (key === 'arrowup' || key === 'w') setDirection(0, -1);
+      else if (key === 'arrowdown' || key === 's') setDirection(0, 1);
+      else if (key === 'arrowleft' || key === 'a') setDirection(-1, 0);
+      else if (key === 'arrowright' || key === 'd') setDirection(1, 0);
     });
+
+    document.getElementById('up').addEventListener('click', () => setDirection(0, -1));
+    document.getElementById('down').addEventListener('click', () => setDirection(0, 1));
+    document.getElementById('left').addEventListener('click', () => setDirection(-1, 0));
+    document.getElementById('right').addEventListener('click', () => setDirection(1, 0));
+
+    canvas.addEventListener('touchstart', (e) => {
+      const touch = e.changedTouches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+    }, { passive: true });
+
+    canvas.addEventListener('touchend', (e) => {
+      const touch = e.changedTouches[0];
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      const threshold = 20;
+
+      if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return;
+
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX > 0) setDirection(1, 0);
+        else setDirection(-1, 0);
+      } else {
+        if (deltaY > 0) setDirection(0, 1);
+        else setDirection(0, -1);
+      }
+    }, { passive: true });
 
     restartBtn.addEventListener('click', () => {
       resetGame();
