@@ -13,9 +13,6 @@
       --muted: #94a3b8;
       --accent: #38bdf8;
       --accent-dark: #001018;
-      --gold: #f59e0b;
-      --green: #22c55e;
-      --red: #ef4444;
     }
     * { box-sizing: border-box; }
     body {
@@ -47,6 +44,7 @@
       text-decoration: none;
       font-weight: 800;
       cursor: pointer;
+      font-family: inherit;
     }
     button.alt, a.alt {
       background: transparent;
@@ -85,7 +83,7 @@
     .score-value { font-size: 1.3rem; font-weight: 800; }
     .games {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(4, 1fr);
       gap: 1rem;
     }
     .game-card h3 { margin-top: 0; margin-bottom: 0.5rem; }
@@ -136,6 +134,13 @@
             </div>
             <div id="pongScore" class="score-value">0</div>
           </div>
+          <div class="score-row">
+            <div>
+              <div class="score-name">Minesweeper</div>
+              <div class="score-label">Best medium time</div>
+            </div>
+            <div id="minesweeperScore" class="score-value">—</div>
+          </div>
         </div>
         <p class="tiny">These scores are stored in your own browser on this device, not on a server.</p>
       </section>
@@ -143,7 +148,7 @@
       <section class="panel">
         <h2>Arcade Notes</h2>
         <p class="tiny" style="font-size:1rem; line-height:1.7; margin-top:0;">
-          Snake rewards clean pathing and nerves. Breakout rewards angles and recovery. Pong rewards refusing to let the computer get smug. Together they form a deeply scientific study of whether you were planning to be productive today.
+          Snake rewards clean pathing and nerves. Breakout rewards angles and recovery. Pong rewards refusing to let the computer get smug. Minesweeper rewards suspicious thinking and not detonating your own confidence.
         </p>
       </section>
     </div>
@@ -164,6 +169,11 @@
         <p>Face the CPU in a clean old-school paddle duel to seven points.</p>
         <div class="actions"><a href="pong.html">Play Pong</a></div>
       </div>
+      <div class="panel game-card">
+        <h3>Minesweeper</h3>
+        <p>Reveal safe tiles, flag danger, and try not to discover any mines the hard way.</p>
+        <div class="actions"><a href="minesweeper.html">Play Minesweeper</a></div>
+      </div>
     </section>
   </div>
 
@@ -172,6 +182,8 @@
       document.getElementById('snakeScore').textContent = localStorage.getItem('snake-best-score') || '0';
       document.getElementById('breakoutScore').textContent = localStorage.getItem('breakout-best-score') || '0';
       document.getElementById('pongScore').textContent = localStorage.getItem('pong-best-wins') || '0';
+      const mine = localStorage.getItem('minesweeper-best-medium');
+      document.getElementById('minesweeperScore').textContent = mine ? `${mine}s` : '—';
     }
 
     document.getElementById('refresh').addEventListener('click', readScores);
@@ -179,6 +191,9 @@
       localStorage.removeItem('snake-best-score');
       localStorage.removeItem('breakout-best-score');
       localStorage.removeItem('pong-best-wins');
+      localStorage.removeItem('minesweeper-best-easy');
+      localStorage.removeItem('minesweeper-best-medium');
+      localStorage.removeItem('minesweeper-best-hard');
       readScores();
     });
 
