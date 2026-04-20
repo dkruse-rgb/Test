@@ -89,6 +89,7 @@
           <div class="score-row"><div><div class="score-name">Pong</div><div class="score-label">Best winning score</div></div><div id="pongScore" class="score-value">0</div></div>
           <div class="score-row"><div><div class="score-name">Minesweeper</div><div class="score-label">Best medium time</div></div><div id="minesweeperScore" class="score-value">—</div></div>
           <div class="score-row"><div><div class="score-name">Jimmy's Big Catch</div><div class="score-label">Best lake haul</div></div><div id="fishingScore" class="score-value">0</div></div>
+          <div class="score-row"><div><div class="score-name">Helper</div><div class="score-label">Best crossings</div></div><div id="helperScore" class="score-value">0</div></div>
           <div class="score-row"><div><div class="score-name">Greg's Casino</div><div class="score-label">Best bankroll</div></div><div id="casinoScore" class="score-value">500</div></div>
           <div class="score-row"><div><div class="score-name">Chad's Shooting Gallery</div><div class="score-label">Best shooting score</div></div><div id="galleryScore" class="score-value">0</div></div>
           <div class="score-row"><div><div class="score-name">Rulebook Rumble</div><div class="score-label">Best quiz score</div></div><div id="rulebookScore" class="score-value">0</div></div>
@@ -121,7 +122,7 @@
           <div class="achievement-name">Cabinet Glory</div>
           <div class="score-label">Unlocked based on your local scores and times.</div>
         </div>
-        <div class="summary-big"><span id="achievementCount">0</span>/14</div>
+        <div class="summary-big"><span id="achievementCount">0</span>/15</div>
       </div>
       <div id="achievementGrid" class="achievements"></div>
     </section>
@@ -132,6 +133,7 @@
       <div class="panel game-card"><h3>Pong</h3><p>Face the CPU in a clean old-school paddle duel to seven points.</p><div class="actions"><a href="pong.html">Play Pong</a></div></div>
       <div class="panel game-card"><h3>Minesweeper</h3><p>Reveal safe tiles, flag danger, and try not to discover any mines the hard way.</p><div class="actions"><a href="minesweeper.html">Play Minesweeper</a></div></div>
       <div class="panel game-card"><h3>Jimmy's Big Catch</h3><p>Cast, hook, and reel before the timer runs out and the fish start mocking you.</p><div class="actions"><a href="fishing.html">Play Jimmy's Big Catch</a></div></div>
+      <div class="panel game-card"><h3>Helper</h3><p>Hop across live tracks, dodge trains, and get up to your conductor in one piece.</p><div class="actions"><a href="helper.html">Play Helper</a></div></div>
       <div class="panel game-card"><h3>Greg's Casino</h3><p>Deal, hit, stand, and watch your bankroll become a personal character study.</p><div class="actions"><a href="gregs-casino.html">Play Greg's Casino</a></div></div>
       <div class="panel game-card"><h3>Chad's Shooting Gallery</h3><p>Blast targets, dodge bombs, and reload before the gallery turns into pure panic.</p><div class="actions"><a href="chads-shooting-gallery.html">Play Chad's Shooting Gallery</a></div></div>
       <div class="panel game-card"><h3>Rulebook Rumble</h3><p>Twenty unofficial railroad logic questions with one right answer and three spectacularly bad ones.</p><div class="actions"><a href="rulebook-rumble.html">Play Rulebook Rumble</a></div></div>
@@ -241,6 +243,7 @@
         mineMedium: Number(localStorage.getItem('minesweeper-best-medium') || 0),
         mineHard: Number(localStorage.getItem('minesweeper-best-hard') || 0),
         fishing: Number(localStorage.getItem('fishing-best-score') || 0),
+        helper: Number(localStorage.getItem('helper-best-crossings') || 0),
         casino: Number(localStorage.getItem('gregs-casino-best-bankroll') || 500),
         gallery: Number(localStorage.getItem('chads-gallery-best-score') || 0),
         rulebook: Number(localStorage.getItem('rulebook-rumble-best-score') || 0)
@@ -254,6 +257,7 @@
       document.getElementById('pongScore').textContent = String(data.pong);
       document.getElementById('minesweeperScore').textContent = data.mineMedium ? `${data.mineMedium}s` : '—';
       document.getElementById('fishingScore').textContent = String(data.fishing);
+      document.getElementById('helperScore').textContent = String(data.helper);
       document.getElementById('casinoScore').textContent = String(data.casino);
       document.getElementById('galleryScore').textContent = String(data.gallery);
       document.getElementById('rulebookScore').textContent = String(data.rulebook);
@@ -268,18 +272,19 @@
         { icon: '🏓', name: 'Paddle Bully', desc: 'Win at least 7 in Pong.', unlocked: data.pong >= 7 },
         { icon: '💣', name: 'Suspicious Genius', desc: 'Finish Medium Minesweeper in 120 seconds or less.', unlocked: data.mineMedium > 0 && data.mineMedium <= 120 },
         { icon: '🎣', name: 'Lake Legend', desc: 'Score 100 in Jimmy’s Big Catch.', unlocked: data.fishing >= 100 },
+        { icon: '🦺', name: 'Track Hopper', desc: 'Reach 5 crossings in Helper.', unlocked: data.helper >= 5 },
         { icon: '🃏', name: 'House Problem', desc: 'Push Greg’s bankroll to 700 or higher.', unlocked: data.casino >= 700 },
         { icon: '🎯', name: 'Gallery Goblin', desc: 'Score 120 in Chad’s Shooting Gallery.', unlocked: data.gallery >= 120 },
         { icon: '📘', name: 'Rulebook Rookie', desc: 'Score 10 in Rulebook Rumble.', unlocked: data.rulebook >= 10 },
         { icon: '🚦', name: 'Signal Brain', desc: 'Score 16 in Rulebook Rumble.', unlocked: data.rulebook >= 16 },
-        { icon: '👑', name: 'Arcade Citizen', desc: 'Post a non-zero score in five different cabinets.', unlocked: [data.snake > 0, data.breakout > 0, data.pong > 0, data.mineMedium > 0, data.fishing > 0, data.casino > 500, data.gallery > 0, data.rulebook > 0].filter(Boolean).length >= 5 },
+        { icon: '👑', name: 'Arcade Citizen', desc: 'Post a non-zero score in five different cabinets.', unlocked: [data.snake > 0, data.breakout > 0, data.pong > 0, data.mineMedium > 0, data.fishing > 0, data.helper > 0, data.casino > 500, data.gallery > 0, data.rulebook > 0].filter(Boolean).length >= 5 },
         { icon: '⚡', name: 'Fast Hands', desc: 'Beat Medium Minesweeper in 90 seconds or less.', unlocked: data.mineMedium > 0 && data.mineMedium <= 90 },
         { icon: '💰', name: 'Greg’s Favorite Customer', desc: 'Reach a bankroll of 900 in Greg’s Casino.', unlocked: data.casino >= 900 },
         { icon: '🔥', name: 'Target Panic', desc: 'Reach 200 in Chad’s Shooting Gallery.', unlocked: data.gallery >= 200 },
-        { icon: '👾', name: 'Full Cabinet Menace', desc: 'Unlock any 9 achievements.', unlocked: false }
+        { icon: '👾', name: 'Full Cabinet Menace', desc: 'Unlock any 10 achievements.', unlocked: false }
       ];
-      const unlockedBeforeFinal = achievements.slice(0, 13).filter(a => a.unlocked).length;
-      achievements[13].unlocked = unlockedBeforeFinal >= 9;
+      const unlockedBeforeFinal = achievements.slice(0, 14).filter(a => a.unlocked).length;
+      achievements[14].unlocked = unlockedBeforeFinal >= 10;
       const unlockedCount = achievements.filter(a => a.unlocked).length;
       document.getElementById('achievementCount').textContent = String(unlockedCount);
       document.getElementById('achievementGrid').innerHTML = achievements.map(a => `
@@ -299,6 +304,7 @@
       localStorage.removeItem('minesweeper-best-medium');
       localStorage.removeItem('minesweeper-best-hard');
       localStorage.removeItem('fishing-best-score');
+      localStorage.removeItem('helper-best-crossings');
       localStorage.removeItem('gregs-casino-best-bankroll');
       localStorage.removeItem('chads-gallery-best-score');
       localStorage.removeItem('rulebook-rumble-best-score');
