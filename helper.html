@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Helper</title>
+  <style>
+    :root {
+      --bg: #020617;
+      --panel: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.12);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+      --good: #22c55e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      background: radial-gradient(circle at top, rgba(56,189,248,.15), transparent 34%), linear-gradient(180deg, #020617, #0f172a);
+    }
+    .wrap {
+      width: min(94vw, 620px);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.2rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,.35);
+      text-align: center;
+    }
+    h1 { margin: 0 0 .25rem; font-size: clamp(2rem, 5vw, 2.8rem); }
+    .subtext { margin: 0 0 1rem; color: var(--muted); line-height: 1.6; }
+    .topbar { display: grid; grid-template-columns: repeat(4, 1fr); gap: .75rem; margin: 1rem 0; }
+    .stat { background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 16px; padding: .8rem; }
+    .stat-label { display: block; color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; margin-bottom: .2rem; }
+    .stat-value { font-size: 1.1rem; font-weight: 800; }
+    .action-row { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1rem; }
+    a, button { background: var(--accent); color: #001018; border: 0; border-radius: 999px; padding: .8rem 1rem; text-decoration: none; font-weight: 800; cursor: pointer; font-family: inherit; transition: transform .15s ease, opacity .15s ease; }
+    button.secondary, a.secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    a:hover, button:hover { transform: translateY(-1px); opacity: .96; }
+    .board-wrap { position: relative; width: min(100%, 460px); margin: 0 auto; }
+    canvas { display: block; width: 100%; height: auto; background: #08111f; border: 2px solid var(--accent); border-radius: 18px; box-shadow: inset 0 0 0 1px rgba(255,255,255,.04); }
+    .overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(2,6,23,.76); border-radius: 18px; padding: 1rem; transition: opacity .2s ease; }
+    .overlay.hidden { opacity: 0; pointer-events: none; }
+    .overlay-card { width: min(100%, 320px); background: rgba(9,16,32,.95); border: 1px solid rgba(56,189,248,.28); border-radius: 18px; padding: 1rem; box-shadow: 0 12px 30px rgba(0,0,0,.35); text-align: left; }
+    .overlay-card h2 { margin: 0 0 .5rem; text-align: center; }
+    .overlay-card p { color: var(--muted); line-height: 1.55; }
+    .controls { display: grid; grid-template-columns: repeat(3,72px); justify-content: center; gap: .55rem; margin: 1rem auto 0; user-select: none; -webkit-user-select: none; }
+    .controls button { width: 72px; height: 72px; padding: 0; font-size: 1.35rem; border-radius: 18px; }
+    .controls .empty { visibility: hidden; }
+    .announcer { margin-top: 1rem; padding: .9rem 1rem; border-radius: 18px; background: rgba(255,255,255,.05); border: 1px solid var(--border); text-align: left; }
+    .announcer strong { display: block; margin-bottom: .2rem; }
+    .hint { margin-top: 1rem; color: var(--muted); font-size: .95rem; }
+    @media (max-width: 520px) { .topbar { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 430px) { .topbar { grid-template-columns: 1fr; } .controls { grid-template-columns: repeat(3,64px); } .controls button { width:64px; height:64px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Helper</h1>
+    <p class="subtext">Frogger with railroad stress. Jump track to track, dodge trains, and get your helper up to the conductor without becoming a cautionary tale.</p>
+    <div class="topbar">
+      <div class="stat"><span class="stat-label">Level</span><span id="level" class="stat-value">1</span></div>
+      <div class="stat"><span class="stat-label">Crossings</span><span id="score" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label">Lives</span><span id="lives" class="stat-value">3</span></div>
+      <div class="stat"><span class="stat-label">Best</span><span id="best" class="stat-value">0</span></div>
+    </div>
+    <div class="action-row">
+      <a class="secondary" href="index.html">Back Home</a>
+      <a class="secondary" href="scores.html">Hub</a>
+      <button id="pauseBtn" class="secondary">Pause</button>
+      <button id="restartBtn">Restart</button>
+    </div>
+    <div class="board-wrap">
+      <canvas id="game" width="432" height="576"></canvas>
+      <div id="overlay" class="overlay">
+        <div class="overlay-card">
+          <h2 id="overlayTitle">Ready?</h2>
+          <p id="overlayText">Move one lane at a time. Do not touch the trains. Your conductor is waiting at the top and is probably already annoyed.</p>
+          <button id="overlayBtn" style="width:100%;">Start Shift</button>
+        </div>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="empty" aria-hidden="true" tabindex="-1"></button>
+      <button id="upBtn" aria-label="Move up">↑</button>
+      <button class="empty" aria-hidden="true" tabindex="-1"></button>
+      <button id="leftBtn" aria-label="Move left">←</button>
+      <button id="downBtn" aria-label="Move down">↓</button>
+      <button id="rightBtn" aria-label="Move right">→</button>
+    </div>
+    <div class="announcer">
+      <strong id="mood">Dispatcher note:</strong>
+      <span id="line">Try not to get folded into the side of a moving train.</span>
+    </div>
+    <p class="hint">Arrow keys, WASD, or the buttons work. Top grass is where your conductor is standing like he personally invented urgency.</p>
+  </div>
+<script>
+const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
+const TILE=48,COLS=canvas.width/TILE,ROWS=canvas.height/TILE;
+const SAFE_ROWS=[0,ROWS-1],TRACK_ROWS=[1,2,3,4,5,6,7,8,9,10];
+const levelEl=document.getElementById('level'),scoreEl=document.getElementById('score'),livesEl=document.getElementById('lives'),bestEl=document.getElementById('best');
+const pauseBtn=document.getElementById('pauseBtn'),restartBtn=document.getElementById('restartBtn');
+const overlay=document.getElementById('overlay'),overlayTitle=document.getElementById('overlayTitle'),overlayText=document.getElementById('overlayText'),overlayBtn=document.getElementById('overlayBtn');
+const moodEl=document.getElementById('mood'),lineEl=document.getElementById('line');
+const BEST_KEY='helper-best-crossings';
+let best=Number(localStorage.getItem(BEST_KEY)||0),level=1,score=0,lives=3,isPaused=false,gameOver=false,hasStarted=false,animationId=null,lastTime=0,player=null,trains=[];
+const helperLines={start:['Try not to get folded into the side of a moving train.','Conductor says get up there. The trains disagree.','One helper. Many bad timing decisions available.'],hit:['That train won the argument.','You absolutely did not have that lane.','Outstanding timing, if the goal was disaster.'],cross:['Nice. You made it to the conductor this time.','Clean crossing. Miracles continue.','The conductor still looks unimpressed, but you made it.'],level:['Traffic picked up because the railroad hates happiness.','Next round has more train energy and less mercy.','The timetable has entered its rude phase.']};
+function say(line,mood='Dispatcher note:'){moodEl.textContent=mood;lineEl.textContent=line}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)]}
+function updateStats(){levelEl.textContent=String(level);scoreEl.textContent=String(score);livesEl.textContent=String(lives);bestEl.textContent=String(best)}
+function setOverlay(title,text,buttonText){overlayTitle.textContent=title;overlayText.textContent=text;overlayBtn.textContent=buttonText;overlay.classList.remove('hidden')}
+function hideOverlay(){overlay.classList.add('hidden')}
+function rowY(row){return row*TILE}
+function resetPlayer(){player={col:Math.floor(COLS/2),row:ROWS-1,blink:0}}
+function makeTrain(row,dir,speed,offset){const lengths=[1.2,1.6,2.2];const cars=lengths[Math.floor(Math.random()*lengths.length)];return{row,dir,speed,x:offset,width:TILE*cars,height:TILE*0.7,color:dir>0?'#f59e0b':'#38bdf8'}}
+function buildTraffic(){trains=[];TRACK_ROWS.forEach((row,idx)=>{const dir=idx%2===0?1:-1;const laneSpeed=(90+idx*8)+(level-1)*16;const laneCount=idx<3?1:idx<7?2:3;for(let i=0;i<laneCount;i++){const gap=(canvas.width/laneCount)+(i*65);const startX=dir>0?-200-(i*gap):canvas.width+120+(i*gap);trains.push(makeTrain(row,dir,laneSpeed,startX))}})}
+function resetGame(full=true){if(full){level=1;score=0;lives=3;gameOver=false;hasStarted=false}isPaused=false;pauseBtn.textContent='Pause';resetPlayer();buildTraffic();updateStats();say(pick(helperLines.start));draw();if(full)setOverlay('Ready?','Move one lane at a time. Do not touch the trains. Your conductor is waiting at the top and is probably already annoyed.','Start Shift')}
+function loseLife(){lives-=1;updateStats();say(pick(helperLines.hit),'Impact report:');if(lives<=0){gameOver=true;hasStarted=false;updateBest();setOverlay('Shift Ended',`You reached the conductor ${score} time${score===1?'':'s'} before getting turned into paperwork.`,'Try Again');return}resetPlayer()}
+function updateBest(){if(score>best){best=score;localStorage.setItem(BEST_KEY,String(best));bestEl.textContent=String(best)}}
+function levelUp(){score+=1;level+=1;updateBest();updateStats();say(pick(helperLines.cross),'Conductor:');setTimeout(()=>say(pick(helperLines.level),'Dispatcher note:'),700);resetPlayer();buildTraffic()}
+function move(dx,dy){if(!hasStarted||gameOver||isPaused)return;player.col=Math.max(0,Math.min(COLS-1,player.col+dx));player.row=Math.max(0,Math.min(ROWS-1,player.row+dy));player.blink=0.14;if(player.row===0)levelUp()}
+function startGame(){if(gameOver)resetGame(true);hasStarted=true;isPaused=false;pauseBtn.textContent='Pause';hideOverlay();say('The helper is on the move. Everybody act like this was the plan.');if(!animationId)animationId=requestAnimationFrame(loop)}
+function togglePause(){if(!hasStarted||gameOver)return;isPaused=!isPaused;pauseBtn.textContent=isPaused?'Resume':'Pause';if(isPaused)setOverlay('Paused','Everything stopped except the conductor’s disappointment.','Resume');else hideOverlay()}
+function update(dt){if(!hasStarted||gameOver||isPaused)return;trains.forEach(train=>{train.x+=train.dir*train.speed*dt;if(train.dir>0&&train.x>canvas.width+140)train.x=-train.width-(Math.random()*220+60);if(train.dir<0&&train.x+train.width<-140)train.x=canvas.width+Math.random()*220+60});if(player.blink>0)player.blink-=dt;checkCollision()}
+function checkCollision(){if(SAFE_ROWS.includes(player.row))return;const px=player.col*TILE+TILE*0.18,py=player.row*TILE+TILE*0.16,pw=TILE*0.64,ph=TILE*0.68;for(const train of trains){if(train.row!==player.row)continue;const tx=train.x,ty=rowY(train.row)+TILE*0.15,tw=train.width,th=train.height;if(px<tx+tw&&px+pw>tx&&py<ty+th&&py+ph>ty){loseLife();return}}}
+function drawGround(){for(let row=0;row<ROWS;row++){const y=rowY(row);if(SAFE_ROWS.includes(row)){ctx.fillStyle=row===0?'#14532d':'#166534';ctx.fillRect(0,y,canvas.width,TILE)}else{ctx.fillStyle='#1f2937';ctx.fillRect(0,y,canvas.width,TILE);ctx.fillStyle='rgba(255,255,255,.04)';ctx.fillRect(0,y+TILE*0.48,canvas.width,2);for(let x=0;x<canvas.width;x+=28){ctx.fillStyle='#3f3f46';ctx.fillRect(x,y+TILE*0.22,10,TILE*0.56)}ctx.fillStyle='#94a3b8';ctx.fillRect(0,y+TILE*0.2,canvas.width,3);ctx.fillRect(0,y+TILE*0.8,canvas.width,3)}}}
+function drawConductor(){const x=canvas.width/2,y=TILE*0.35;ctx.fillStyle='#fde68a';ctx.beginPath();ctx.arc(x,y,10,0,Math.PI*2);ctx.fill();ctx.fillStyle='#1e293b';ctx.fillRect(x-11,y+10,22,22);ctx.fillStyle='#0f172a';ctx.fillRect(x-13,y-12,26,5);ctx.fillStyle='rgba(255,255,255,.14)';ctx.fillRect(x+26,8,118,28);ctx.strokeStyle='rgba(255,255,255,.18)';ctx.strokeRect(x+26,8,118,28);ctx.fillStyle='#e2e8f0';ctx.font='12px Arial';ctx.fillText('Helper, get up here!',x+34,26)}
+function drawTrains(){trains.forEach(train=>{const y=rowY(train.row)+TILE*0.15;ctx.fillStyle=train.color;ctx.fillRect(train.x,y,train.width,train.height);ctx.fillStyle='#111827';ctx.fillRect(train.x+10,y+8,14,12);ctx.fillRect(train.x+train.width-24,y+8,14,12);ctx.fillStyle='#e2e8f0';for(let i=34;i<train.width-16;i+=30){ctx.fillRect(train.x+i,y+8,12,10)}ctx.fillStyle='#0f172a';ctx.fillRect(train.x+6,y+train.height-6,train.width-12,4)})}
+function drawPlayer(){const x=player.col*TILE+TILE*0.18,y=player.row*TILE+TILE*0.16;if(player.blink>0&&Math.floor(player.blink*20)%2===0)return;ctx.fillStyle='#fde68a';ctx.beginPath();ctx.arc(x+15,y+11,8,0,Math.PI*2);ctx.fill();ctx.fillStyle='#38bdf8';ctx.fillRect(x+5,y+20,20,18);ctx.fillStyle='#1e293b';ctx.fillRect(x+2,y+38,8,8);ctx.fillRect(x+20,y+38,8,8);ctx.fillRect(x-2,y+21,8,6);ctx.fillRect(x+24,y+21,8,6)}
+function drawLaneNumbers(){ctx.fillStyle='rgba(255,255,255,.18)';ctx.font='11px Arial';for(let row=1;row<ROWS-1;row++)ctx.fillText(String(row),6,rowY(row)+14)}
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);drawGround();drawConductor();drawTrains();drawPlayer();drawLaneNumbers()}
+function loop(ts){if(!lastTime)lastTime=ts;const dt=Math.min((ts-lastTime)/1000,0.05);lastTime=ts;update(dt);draw();animationId=requestAnimationFrame(loop)}
+function handleKey(event){const key=event.key.toLowerCase();if(key===' '||key==='p'){event.preventDefault();if(!hasStarted||gameOver)startGame();else togglePause();return}if(!hasStarted&&!gameOver)startGame();if(key==='arrowup'||key==='w')move(0,-1);else if(key==='arrowdown'||key==='s')move(0,1);else if(key==='arrowleft'||key==='a')move(-1,0);else if(key==='arrowright'||key==='d')move(1,0)}
+document.addEventListener('keydown',handleKey);
+document.getElementById('upBtn').addEventListener('click',()=>{if(!hasStarted&&!gameOver)startGame();move(0,-1)});
+document.getElementById('downBtn').addEventListener('click',()=>{if(!hasStarted&&!gameOver)startGame();move(0,1)});
+document.getElementById('leftBtn').addEventListener('click',()=>{if(!hasStarted&&!gameOver)startGame();move(-1,0)});
+document.getElementById('rightBtn').addEventListener('click',()=>{if(!hasStarted&&!gameOver)startGame();move(1,0)});
+pauseBtn.addEventListener('click',togglePause);restartBtn.addEventListener('click',()=>{resetGame(true);startGame()});overlayBtn.addEventListener('click',()=>{if(gameOver)resetGame(true);startGame()});
+bestEl.textContent=String(best);resetGame(true);animationId=requestAnimationFrame(loop);
+</script>
+</body>
+</html>
