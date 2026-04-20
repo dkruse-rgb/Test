@@ -435,6 +435,7 @@
 
   <script>
     const REDUCED_MOTION_KEY = 'arcade-reduced-motion';
+    const FEATURED_ROTATE_MS = 9000;
     const featuredCabinets = [
       {
         name: "Greg's Casino",
@@ -538,7 +539,7 @@
       setInterval(() => {
         idx = (idx + 1) % featuredCabinets.length;
         renderFeatured();
-      }, 4200);
+      }, FEATURED_ROTATE_MS);
     }
     applyMotionPreference();
     loadLeaderboard();
