@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fruit Crush</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: rgba(255,255,255,0.07);
+      --border: rgba(255,255,255,0.12);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-dark: #001018;
+      --good: #22c55e;
+      --bad: #ef4444;
+      --warn: #f59e0b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(56,189,248,.16), transparent 32%),
+        radial-gradient(circle at bottom, rgba(245,158,11,.10), transparent 26%),
+        linear-gradient(180deg, #020617, #0f172a);
+    }
+    .wrap {
+      width: min(96vw, 760px);
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 1.2rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,.35);
+      text-align: center;
+    }
+    h1 { margin: 0 0 .3rem; font-size: clamp(2rem, 5vw, 2.8rem); }
+    .subtext { margin: 0 0 1rem; color: var(--muted); line-height: 1.6; }
+    .topbar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: .75rem;
+      margin: 1rem 0;
+    }
+    .stat {
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: .8rem;
+    }
+    .stat-label {
+      display: block;
+      color: var(--muted);
+      font-size: .8rem;
+      margin-bottom: .2rem;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .stat-value { font-size: 1.15rem; font-weight: 800; }
+    .action-row {
+      display: flex;
+      justify-content: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    a, button {
+      background: var(--accent);
+      color: var(--accent-dark);
+      border: 0;
+      border-radius: 999px;
+      padding: .85rem 1rem;
+      text-decoration: none;
+      font-weight: 800;
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+    a:hover, button:hover { transform: translateY(-1px); opacity: .96; }
+    .secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .play-area {
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 1rem;
+      align-items: start;
+    }
+    .board-wrap {
+      position: relative;
+      width: min(100%, 520px);
+      margin: 0 auto;
+      aspect-ratio: 1 / 1;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      background: linear-gradient(180deg, #1e293b, #0f172a);
+      border: 2px solid var(--accent);
+      border-radius: 20px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.04);
+      touch-action: none;
+    }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background: rgba(2,6,23,.78);
+      border-radius: 20px;
+      transition: opacity .2s ease;
+    }
+    .overlay.hidden { opacity: 0; pointer-events: none; }
+    .overlay-card {
+      width: min(100%, 320px);
+      background: rgba(9,16,32,.95);
+      border: 1px solid rgba(56,189,248,.28);
+      border-radius: 20px;
+      padding: 1rem;
+      box-shadow: 0 12px 30px rgba(0,0,0,.35);
+      text-align: left;
+    }
+    .overlay-card h2 { margin: 0 0 .5rem; text-align: center; }
+    .overlay-card p { color: var(--muted); line-height: 1.55; }
+    .side-panel {
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 1rem;
+      text-align: left;
+    }
+    .side-panel h2 {
+      margin: 0 0 .75rem;
+      font-size: 1.15rem;
+    }
+    .side-panel p {
+      margin: 0 0 .8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: .5rem;
+      margin-top: .75rem;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .5rem;
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.06);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    .fruit-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      flex: 0 0 auto;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.22);
+    }
+    .announcer {
+      margin-top: 1rem;
+      padding: .9rem 1rem;
+      border-radius: 18px;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+    .announcer strong { display: block; margin-bottom: .25rem; }
+    .hint { margin-top: 1rem; color: var(--muted); line-height: 1.6; }
+    @media (max-width: 860px) {
+      .play-area { grid-template-columns: 1fr; }
+      .side-panel { width: min(100%, 520px); margin: 0 auto; }
+    }
+    @media (max-width: 520px) {
+      .topbar { grid-template-columns: repeat(2, 1fr); }
+      .legend { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Fruit Crush</h1>
+    <p class="subtext">Swap fruit, line up 3 or more, trigger cascades, and squeeze every point out of your move count.</p>
+
+    <div class="topbar">
+      <div class="stat"><span class="stat-label">Score</span><span id="score" class="stat-value">0</span></div>
+      <div class="stat"><span class="stat-label">Moves</span><span id="moves" class="stat-value">20</span></div>
+      <div class="stat"><span class="stat-label">Target</span><span id="target" class="stat-value">1200</span></div>
+      <div class="stat"><span class="stat-label">Best</span><span id="best" class="stat-value">0</span></div>
+    </div>
+
+    <div class="action-row">
+      <a class="secondary" href="index.html">Back Home</a>
+      <a class="secondary" href="scores.html">Hub</a>
+      <button id="restartBtn">Restart Round</button>
+    </div>
+
+    <div class="play-area">
+      <div class="board-wrap">
+        <canvas id="game" width="560" height="560"></canvas>
+        <div id="overlay" class="overlay">
+          <div class="overlay-card">
+            <h2 id="overlayTitle">Ready?</h2>
+            <p id="overlayText">Swap neighboring fruit to make matches of 3 or more. Big cascades pile on extra points. Hit the target before you run out of moves.</p>
+            <button id="overlayBtn" style="width:100%;">Start Crush</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="side-panel">
+        <h2>How it works</h2>
+        <p>Tap or click one fruit, then tap a neighboring fruit to swap. Only real matches count. Bad swaps bounce right back like they never happened.</p>
+        <p>Every match scores points. Cascades score more. Beat the target inside the move limit and the next round gets meaner.</p>
+        <div class="legend">
+          <div class="legend-item"><span class="fruit-dot" style="background:#ef4444"></span>Apple</div>
+          <div class="legend-item"><span class="fruit-dot" style="background:#f59e0b"></span>Orange</div>
+          <div class="legend-item"><span class="fruit-dot" style="background:#facc15"></span>Lemon</div>
+          <div class="legend-item"><span class="fruit-dot" style="background:#22c55e"></span>Lime</div>
+          <div class="legend-item"><span class="fruit-dot" style="background:#38bdf8"></span>Berry</div>
+          <div class="legend-item"><span class="fruit-dot" style="background:#a855f7"></span>Grape</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="announcer">
+      <strong id="mood">Juice stand note:</strong>
+      <span id="line">Find a clean first match and let the board embarrass itself from there.</span>
+    </div>
+
+    <p class="hint">Bigger chains score better. Four in a row feels smart. Five in a row feels a little criminal.</p>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const movesEl = document.getElementById('moves');
+    const targetEl = document.getElementById('target');
+    const bestEl = document.getElementById('best');
+    const overlay = document.getElementById('overlay');
+    const overlayTitle = document.getElementById('overlayTitle');
+    const overlayText = document.getElementById('overlayText');
+    const overlayBtn = document.getElementById('overlayBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const moodEl = document.getElementById('mood');
+    const lineEl = document.getElementById('line');
+
+    const GRID = 8;
+    const CELL = canvas.width / GRID;
+    const BEST_KEY = 'fruit-crush-best-score';
+    const FRUITS = [
+      { name: 'apple', color: '#ef4444', leaf: '#22c55e', glyph: '🍎' },
+      { name: 'orange', color: '#f59e0b', leaf: '#16a34a', glyph: '🍊' },
+      { name: 'lemon', color: '#facc15', leaf: '#16a34a', glyph: '🍋' },
+      { name: 'lime', color: '#22c55e', leaf: '#14532d', glyph: '🥝' },
+      { name: 'berry', color: '#38bdf8', leaf: '#1d4ed8', glyph: '🫐' },
+      { name: 'grape', color: '#a855f7', leaf: '#16a34a', glyph: '🍇' }
+    ];
+
+    const lines = {
+      start: [
+        'Find a clean first match and let the board embarrass itself from there.',
+        'The fruit look innocent right up until the combos start falling.',
+        'You are one tidy swap away from pure produce nonsense.'
+      ],
+      invalid: [
+        'No match. The fruit reject your proposal immediately.',
+        'That swap had no future and the board knew it.',
+        'The fruit considered it and said absolutely not.'
+      ],
+      good: [
+        'Clean match. Good juice energy.',
+        'Nice. That one lined up with very little drama.',
+        'Solid crush. The fruit had it coming.'
+      ],
+      combo: [
+        'Cascade. Now the board is doing tricks for attention.',
+        'Combo chain. The produce has lost all discipline.',
+        'That board just kept folding into itself beautifully.'
+      ],
+      win: [
+        'Target cleared. The juice stand fears your efficiency.',
+        'Round won. The fruit are filing a complaint.',
+        'You hit the target and made it look suspiciously easy.'
+      ],
+      lose: [
+        'Out of moves. The fruit won this round on technicality.',
+        'No moves left. The board escaped by surviving the clock.',
+        'Round over. The fruit barely held the line.'
+      ]
+    };
+
+    let board = [];
+    let selected = null;
+    let score = 0;
+    let moves = 20;
+    let target = 1200;
+    let level = 1;
+    let best = Number(localStorage.getItem(BEST_KEY) || 0);
+    let started = false;
+    let busy = false;
+
+    bestEl.textContent = String(best);
+
+    function say(line, mood = 'Juice stand note:') {
+      moodEl.textContent = mood;
+      lineEl.textContent = line;
+    }
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function setOverlay(title, text, buttonText) {
+      overlayTitle.textContent = title;
+      overlayText.textContent = text;
+      overlayBtn.textContent = buttonText;
+      overlay.classList.remove('hidden');
+    }
+
+    function hideOverlay() {
+      overlay.classList.add('hidden');
+    }
+
+    function updateStats() {
+      scoreEl.textContent = String(score);
+      movesEl.textContent = String(moves);
+      targetEl.textContent = String(target);
+      if (score > best) {
+        best = score;
+        localStorage.setItem(BEST_KEY, String(best));
+        bestEl.textContent = String(best);
+      }
+    }
+
+    function randomFruit() {
+      return Math.floor(Math.random() * FRUITS.length);
+    }
+
+    function createBoard() {
+      board = Array.from({ length: GRID }, () => Array(GRID).fill(0));
+      for (let r = 0; r < GRID; r++) {
+        for (let c = 0; c < GRID; c++) {
+          let value;
+          do {
+            value = randomFruit();
+            board[r][c] = value;
+          } while (
+            (c >= 2 && board[r][c - 1] === value && board[r][c - 2] === value) ||
+            (r >= 2 && board[r - 1][c] === value && board[r - 2][c] === value)
+          );
+        }
+      }
+      if (!hasAnyMove()) shuffleBoard();
+    }
+
+    function shuffleBoard() {
+      const flat = board.flat();
+      for (let i = flat.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [flat[i], flat[j]] = [flat[j], flat[i]];
+      }
+      for (let r = 0; r < GRID; r++) {
+        for (let c = 0; c < GRID; c++) {
+          board[r][c] = flat[r * GRID + c];
+        }
+      }
+      while (findMatches().length || !hasAnyMove()) {
+        for (let i = flat.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [flat[i], flat[j]] = [flat[j], flat[i]];
+        }
+        for (let r = 0; r < GRID; r++) {
+          for (let c = 0; c < GRID; c++) {
+            board[r][c] = flat[r * GRID + c];
+          }
+        }
+      }
+    }
+
+    function drawBoard() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let r = 0; r < GRID; r++) {
+        for (let c = 0; c < GRID; c++) {
+          const x = c * CELL;
+          const y = r * CELL;
+          ctx.fillStyle = (r + c) % 2 === 0 ? 'rgba(255,255,255,.05)' : 'rgba(255,255,255,.03)';
+          ctx.fillRect(x, y, CELL, CELL);
+          ctx.strokeStyle = 'rgba(255,255,255,.08)';
+          ctx.strokeRect(x + 1, y + 1, CELL - 2, CELL - 2);
+
+          const fruitIndex = board[r][c];
+          if (fruitIndex === null || fruitIndex === undefined) continue;
+          const fruit = FRUITS[fruitIndex];
+          const cx = x + CELL / 2;
+          const cy = y + CELL / 2;
+
+          ctx.fillStyle = fruit.color;
+          ctx.beginPath();
+          ctx.arc(cx, cy + 2, CELL * 0.28, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = 'rgba(255,255,255,.18)';
+          ctx.beginPath();
+          ctx.arc(cx - 8, cy - 6, CELL * 0.07, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = fruit.leaf;
+          ctx.beginPath();
+          ctx.ellipse(cx + 8, cy - 18, 8, 5, -0.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#0f172a';
+          ctx.fillRect(cx - 1, cy - 16, 2, 8);
+
+          if (selected && selected.r === r && selected.c === c) {
+            ctx.strokeStyle = '#f8fafc';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(x + 4, y + 4, CELL - 8, CELL - 8);
+            ctx.lineWidth = 1;
+          }
+        }
+      }
+    }
+
+    function inBounds(r, c) {
+      return r >= 0 && r < GRID && c >= 0 && c < GRID;
+    }
+
+    function areNeighbors(a, b) {
+      return Math.abs(a.r - b.r) + Math.abs(a.c - b.c) === 1;
+    }
+
+    function swap(a, b) {
+      [board[a.r][a.c], board[b.r][b.c]] = [board[b.r][b.c], board[a.r][a.c]];
+    }
+
+    function findMatches() {
+      const matches = [];
+      const mark = Array.from({ length: GRID }, () => Array(GRID).fill(false));
+
+      for (let r = 0; r < GRID; r++) {
+        let streak = 1;
+        for (let c = 1; c <= GRID; c++) {
+          if (c < GRID && board[r][c] === board[r][c - 1]) {
+            streak++;
+          } else {
+            if (streak >= 3) {
+              for (let k = 0; k < streak; k++) mark[r][c - 1 - k] = true;
+            }
+            streak = 1;
+          }
+        }
+      }
+
+      for (let c = 0; c < GRID; c++) {
+        let streak = 1;
+        for (let r = 1; r <= GRID; r++) {
+          if (r < GRID && board[r][c] === board[r - 1][c]) {
+            streak++;
+          } else {
+            if (streak >= 3) {
+              for (let k = 0; k < streak; k++) mark[r - 1 - k][c] = true;
+            }
+            streak = 1;
+          }
+        }
+      }
+
+      for (let r = 0; r < GRID; r++) {
+        for (let c = 0; c < GRID; c++) {
+          if (mark[r][c]) matches.push({ r, c });
+        }
+      }
+      return matches;
+    }
+
+    function hasAnyMove() {
+      for (let r = 0; r < GRID; r++) {
+        for (let c = 0; c < GRID; c++) {
+          const dirs = [[0,1],[1,0]];
+          for (const [dr, dc] of dirs) {
+            const nr = r + dr;
+            const nc = c + dc;
+            if (!inBounds(nr, nc)) continue;
+            swap({ r, c }, { r: nr, c: nc });
+            const good = findMatches().length > 0;
+            swap({ r, c }, { r: nr, c: nc });
+            if (good) return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    function collapseBoard() {
+      for (let c = 0; c < GRID; c++) {
+        let writeRow = GRID - 1;
+        for (let r = GRID - 1; r >= 0; r--) {
+          if (board[r][c] !== null) {
+            board[writeRow][c] = board[r][c];
+            if (writeRow !== r) board[r][c] = null;
+            writeRow--;
+          }
+        }
+        for (let r = writeRow; r >= 0; r--) {
+          board[r][c] = randomFruit();
+        }
+      }
+    }
+
+    async function resolveMatches(chain = 1) {
+      let totalMatched = 0;
+      while (true) {
+        const matches = findMatches();
+        if (!matches.length) break;
+        totalMatched += matches.length;
+        score += matches.length * 50 * chain;
+        updateStats();
+        say(chain > 1 ? pick(lines.combo) : pick(lines.good), chain > 1 ? 'Combo call:' : 'Juice stand note:');
+        matches.forEach(({ r, c }) => { board[r][c] = null; });
+        drawBoard();
+        await wait(180);
+        collapseBoard();
+        drawBoard();
+        await wait(180);
+        chain++;
+      }
+      return totalMatched;
+    }
+
+    function wait(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async function trySwap(a, b) {
+      if (busy) return;
+      busy = true;
+      swap(a, b);
+      drawBoard();
+      await wait(120);
+      const matches = findMatches();
+      if (!matches.length) {
+        swap(a, b);
+        drawBoard();
+        say(pick(lines.invalid), 'Board reply:');
+        busy = false;
+        return;
+      }
+      moves -= 1;
+      updateStats();
+      await resolveMatches(1);
+      if (!hasAnyMove()) {
+        shuffleBoard();
+        drawBoard();
+        say('No moves left on the board, so the fruit got reshuffled.', 'Board control:');
+      }
+      checkEndState();
+      busy = false;
+    }
+
+    function cellFromPointer(clientX, clientY) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const x = (clientX - rect.left) * scaleX;
+      const y = (clientY - rect.top) * scaleY;
+      const c = Math.floor(x / CELL);
+      const r = Math.floor(y / CELL);
+      if (!inBounds(r, c)) return null;
+      return { r, c };
+    }
+
+    async function handlePick(pos) {
+      if (!started || busy) return;
+      if (!selected) {
+        selected = pos;
+        drawBoard();
+        return;
+      }
+      if (selected.r === pos.r && selected.c === pos.c) {
+        selected = null;
+        drawBoard();
+        return;
+      }
+      if (!areNeighbors(selected, pos)) {
+        selected = pos;
+        drawBoard();
+        return;
+      }
+      const first = selected;
+      selected = null;
+      drawBoard();
+      await trySwap(first, pos);
+    }
+
+    function resetRound(full = true) {
+      if (full) {
+        score = 0;
+        level = 1;
+        moves = 20;
+        target = 1200;
+        started = false;
+      } else {
+        moves = Math.max(14, 20 - Math.min(level - 1, 8));
+        target = 1200 + (level - 1) * 450;
+      }
+      selected = null;
+      busy = false;
+      createBoard();
+      updateStats();
+      drawBoard();
+      say(pick(lines.start));
+      if (full) {
+        setOverlay('Ready?', 'Swap neighboring fruit to make matches of 3 or more. Big cascades pile on extra points. Hit the target before you run out of moves.', 'Start Crush');
+      }
+    }
+
+    function startRound() {
+      started = true;
+      hideOverlay();
+      say('The fruit are in position. Time to start causing produce-related problems.');
+    }
+
+    function checkEndState() {
+      if (score >= target) {
+        level += 1;
+        say(pick(lines.win), 'Round clear:');
+        setOverlay('Round Cleared', `You hit ${score} and crushed the ${target} target. Next round gets tighter and greedier.`, 'Next Round');
+        started = false;
+        return;
+      }
+      if (moves <= 0) {
+        say(pick(lines.lose), 'Round over:');
+        setOverlay('Out of Moves', `You finished on ${score}. The target was ${target}.`, 'Retry Round');
+        started = false;
+      }
+    }
+
+    canvas.addEventListener('click', async e => {
+      const pos = cellFromPointer(e.clientX, e.clientY);
+      if (!pos) return;
+      if (!started) startRound();
+      await handlePick(pos);
+    });
+
+    overlayBtn.addEventListener('click', () => {
+      if (!started) {
+        if (score >= target && moves > 0) {
+          score = 0;
+          resetRound(false);
+        } else if (moves <= 0) {
+          score = 0;
+          level = 1;
+          resetRound(true);
+        }
+        startRound();
+      }
+    });
+
+    restartBtn.addEventListener('click', () => {
+      score = 0;
+      level = 1;
+      resetRound(true);
+      startRound();
+    });
+
+    resetRound(true);
+  </script>
+</body>
+</html>
