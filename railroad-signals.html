@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Railroad Signals – Picture Matching Game</title>
+  <title>Railroad Signals – Two-Stage Matching Game</title>
   <style>
     :root {
       --bg1: #0b1220;
@@ -78,9 +78,21 @@
       line-height: 1.65;
       max-width: 72ch;
     }
+    .stage-banner {
+      margin-top: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(245,158,11,.12);
+      color: #fde68a;
+      border: 1px solid rgba(245,158,11,.3);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+    }
     .stats {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(5, 1fr);
       gap: 12px;
       margin-top: 18px;
     }
@@ -99,7 +111,7 @@
     .stat strong {
       display: block;
       margin-top: 4px;
-      font-size: 1.55rem;
+      font-size: 1.35rem;
     }
     .controls {
       margin-top: 16px;
@@ -197,7 +209,7 @@
       overflow: hidden;
     }
     .signal-meta small,
-    .indication-card small,
+    .text-card small,
     .study-rule {
       color: var(--muted);
       font-size: .78rem;
@@ -207,7 +219,7 @@
       margin-bottom: 6px;
     }
     .signal-meta strong { font-size: 1rem; }
-    .indication-card {
+    .text-card {
       display: grid;
       gap: 6px;
       min-height: 112px;
@@ -269,12 +281,14 @@
     </div>
 
     <section class="hero">
-      <h1>Picture-Based Railroad Signals Matching Game</h1>
+      <h1>Railroad Signals Two-Stage Matching Game</h1>
       <div class="subtitle">
-        Match the signal picture to the correct indication. These are representative signal aspect pictures designed for quick study and recognition practice.
+        Stage 1 matches the signal name to the signal picture. Stage 2 uses those same pictures and makes you match each one to the correct indication.
       </div>
+      <div id="stageBanner" class="stage-banner">Stage 1: Match the name to the signal</div>
 
       <div class="stats">
+        <div class="stat"><div class="label">Stage</div><strong id="stageCount">1 / 2</strong></div>
         <div class="stat"><div class="label">Pairs matched</div><strong id="matchedCount">0 / 6</strong></div>
         <div class="stat"><div class="label">Moves</div><strong id="moveCount">0</strong></div>
         <div class="stat"><div class="label">Current streak</div><strong id="streakCount">0</strong></div>
@@ -287,7 +301,7 @@
       </div>
 
       <div class="progress-wrap">
-        <div class="progress-label"><span>Round progress</span><span id="progressLabel">0%</span></div>
+        <div class="progress-label"><span>Stage progress</span><span id="progressLabel">0%</span></div>
         <div class="progress"><div id="progressFill"></div></div>
       </div>
 
@@ -303,8 +317,8 @@
         <div id="picturesList" class="list"></div>
       </div>
       <div class="panel">
-        <h2>Indications</h2>
-        <div id="indicationsList" class="list"></div>
+        <h2 id="rightPanelTitle">Signal names</h2>
+        <div id="textList" class="list"></div>
       </div>
     </section>
 
@@ -334,11 +348,12 @@
     ];
 
     const state = {
+      stage: 1,
       round: [],
       pictures: [],
-      indications: [],
+      texts: [],
       selectedPicture: null,
-      selectedIndication: null,
+      selectedText: null,
       matched: new Set(),
       wrong: [],
       moves: 0,
@@ -410,65 +425,83 @@
       </svg>`;
     }
 
+    function getSignal(id) {
+      return SIGNALS.find(s => s.id === id);
+    }
+
+    function textForSignal(signal) {
+      return state.stage === 1 ? signal.name : signal.indication;
+    }
+
     function showMessage(text, type) {
       const box = document.getElementById('message');
       box.textContent = text;
       box.className = 'message show ' + type;
     }
 
+    function setupStage(stage) {
+      state.stage = stage;
+      state.selectedPicture = null;
+      state.selectedText = null;
+      state.matched = new Set();
+      state.wrong = [];
+      state.pictures = shuffle(state.round.map(s => ({ id: s.id })));
+      state.texts = shuffle(state.round.map(s => ({ id: s.id, text: textForSignal(s) })));
+      document.getElementById('stageCount').textContent = `${state.stage} / 2`;
+      document.getElementById('stageBanner').textContent = state.stage === 1
+        ? 'Stage 1: Match the name to the signal'
+        : 'Stage 2: Match the indication to the signal';
+      document.getElementById('rightPanelTitle').textContent = state.stage === 1 ? 'Signal names' : 'Indications';
+      render();
+      showMessage(state.stage === 1 ? 'Stage 1 loaded.' : 'Stage 2 loaded.', 'good');
+    }
+
     function newRound(size = 6) {
       state.size = size;
       state.round = shuffle(SIGNALS).slice(0, size);
-      state.pictures = shuffle(state.round.map(s => ({ id: s.id })));
-      state.indications = shuffle(state.round.map(s => ({ id: s.id, indication: s.indication })));
-      state.selectedPicture = null;
-      state.selectedIndication = null;
-      state.matched = new Set();
-      state.wrong = [];
       state.moves = 0;
       state.streak = 0;
-      render();
-      showMessage('New picture round loaded.', 'good');
+      setupStage(1);
     }
 
     function cardClass(id, side) {
       if (state.matched.has(id)) return 'card matched';
       if (state.wrong.includes(id)) return 'card wrong';
       if (side === 'picture' && state.selectedPicture === id) return 'card selected';
-      if (side === 'indication' && state.selectedIndication === id) return 'card selected';
+      if (side === 'text' && state.selectedText === id) return 'card selected';
       return 'card';
     }
 
     function pickPicture(id) {
       if (state.matched.has(id)) return;
-      if (state.selectedIndication) {
-        evaluate(id, state.selectedIndication);
+      if (state.selectedText) {
+        evaluate(id, state.selectedText);
       } else {
         state.selectedPicture = id;
         renderLists();
       }
     }
 
-    function pickIndication(id) {
+    function pickText(id) {
       if (state.matched.has(id)) return;
       if (state.selectedPicture) {
         evaluate(state.selectedPicture, id);
       } else {
-        state.selectedIndication = id;
+        state.selectedText = id;
         renderLists();
       }
     }
 
-    function evaluate(pictureId, indicationId) {
+    function evaluate(pictureId, textId) {
       state.moves += 1;
-      if (pictureId === indicationId) {
+      if (pictureId === textId) {
         state.matched.add(pictureId);
         state.streak += 1;
         state.bestStreak = Math.max(state.bestStreak, state.streak);
         state.wrong = [];
         showMessage('Correct match.', 'good');
       } else {
-        state.wrong = [pictureId, indicationId];
+        state.wrong = [pictureId, textId];
         state.streak = 0;
         showMessage('Not a match. Try again.', 'bad');
         setTimeout(() => {
@@ -477,20 +510,22 @@
         }, 700);
       }
       state.selectedPicture = null;
-      state.selectedIndication = null;
+      state.selectedText = null;
       render();
-      if (state.matched.size === state.round.length) {
-        showMessage('Round complete. Nice work.', 'done');
-      }
-    }
 
-    function getSignal(id) {
-      return SIGNALS.find(s => s.id === id);
+      if (state.matched.size === state.round.length) {
+        if (state.stage === 1) {
+          showMessage('Stage 1 complete. Moving to indications.', 'done');
+          setTimeout(() => setupStage(2), 900);
+        } else {
+          showMessage('Stage 2 complete. Round finished.', 'done');
+        }
+      }
     }
 
     function renderLists() {
       const picturesList = document.getElementById('picturesList');
-      const indicationsList = document.getElementById('indicationsList');
+      const textList = document.getElementById('textList');
 
       picturesList.innerHTML = state.pictures.map(item => {
         const signal = getSignal(item.id);
@@ -507,11 +542,11 @@
         `;
       }).join('');
 
-      indicationsList.innerHTML = state.indications.map(item => `
-        <button class="${cardClass(item.id, 'indication')}" onclick="pickIndication('${item.id}')">
-          <div class="indication-card">
-            <small>Indication</small>
-            <div>${item.indication}</div>
+      textList.innerHTML = state.texts.map(item => `
+        <button class="${cardClass(item.id, 'text')}" onclick="pickText('${item.id}')">
+          <div class="text-card">
+            <small>${state.stage === 1 ? 'Signal name' : 'Indication'}</small>
+            <div>${item.text}</div>
           </div>
         </button>
       `).join('');
@@ -552,7 +587,7 @@
     renderStudyGrid();
     newRound(6);
     window.pickPicture = pickPicture;
-    window.pickIndication = pickIndication;
+    window.pickText = pickText;
   </script>
 </body>
 </html>
