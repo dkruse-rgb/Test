@@ -431,11 +431,12 @@
       showMessage('New picture round loaded.', 'good');
     }
 
-    function cardClass(id) {
+    function cardClass(id, side) {
       if (state.matched.has(id)) return 'card matched';
       if (state.wrong.includes(id)) return 'card wrong';
-      if (state.selectedPicture === id || state.selectedIndication === id) return 'card selected';
-      return '';
+      if (side === 'picture' && state.selectedPicture === id) return 'card selected';
+      if (side === 'indication' && state.selectedIndication === id) return 'card selected';
+      return 'card';
     }
 
     function pickPicture(id) {
@@ -494,7 +495,7 @@
       picturesList.innerHTML = state.pictures.map(item => {
         const signal = getSignal(item.id);
         return `
-          <button class="card ${cardClass(item.id)}" onclick="pickPicture('${item.id}')">
+          <button class="${cardClass(item.id, 'picture')}" onclick="pickPicture('${item.id}')">
             <div class="signal-card">
               <div class="signal-box">${signalSvg(signal)}</div>
               <div class="signal-meta">
@@ -507,7 +508,7 @@
       }).join('');
 
       indicationsList.innerHTML = state.indications.map(item => `
-        <button class="card ${cardClass(item.id)}" onclick="pickIndication('${item.id}')">
+        <button class="${cardClass(item.id, 'indication')}" onclick="pickIndication('${item.id}')">
           <div class="indication-card">
             <small>Indication</small>
             <div>${item.indication}</div>
