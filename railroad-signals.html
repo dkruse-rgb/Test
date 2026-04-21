@@ -5,11 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Railroad Signals - Former SOO, DME and KCS Quiz</title>
   <style>
-    :root {--bg1:#08111f;--bg2:#111827;--panel:rgba(255,255,255,.07);--panel2:rgba(255,255,255,.05);--border:rgba(255,255,255,.12);--text:#e5e7eb;--muted:#94a3b8;--accent:#38bdf8;--good:#22c55e;--bad:#ef4444;--gold:#f59e0b;--shadow:rgba(0,0,0,.30)}
+    :root{--bg1:#08111f;--bg2:#111827;--panel:rgba(255,255,255,.07);--panel2:rgba(255,255,255,.05);--border:rgba(255,255,255,.12);--text:#e5e7eb;--muted:#94a3b8;--accent:#38bdf8;--good:#22c55e;--bad:#ef4444;--gold:#f59e0b;--shadow:rgba(0,0,0,.30)}
     *{box-sizing:border-box} body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:radial-gradient(circle at top, rgba(56,189,248,.12), transparent 28%),radial-gradient(circle at bottom, rgba(245,158,11,.08), transparent 24%),linear-gradient(180deg,var(--bg1),var(--bg2))}
     .wrap{width:min(940px,calc(100% - 24px));margin:0 auto;padding:18px 0 34px}.topbar,.hero,.panel,.modal-card{background:var(--panel);border:1px solid var(--border);border-radius:24px;box-shadow:0 20px 50px var(--shadow);backdrop-filter:blur(10px)}
     .topbar{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 16px;margin-bottom:16px}.brand{font-weight:900;letter-spacing:.08em;text-transform:uppercase}.topbar a{color:var(--text);text-decoration:none;font-weight:800;padding:10px 14px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.05)}
-    .hero,.panel{padding:20px} h1{margin:0 0 8px;font-size:clamp(2rem,4.8vw,3.1rem);line-height:.98} h2{margin:0 0 12px;font-size:1.22rem}.subtitle{color:var(--muted);line-height:1.65;max-width:72ch}
+    .hero,.panel{padding:20px}h1{margin:0 0 8px;font-size:clamp(2rem,4.8vw,3.1rem);line-height:.98}h2{margin:0 0 12px;font-size:1.22rem}.subtitle{color:var(--muted);line-height:1.65;max-width:72ch}
     .source-badge,.stage-banner{margin-top:14px;display:inline-flex;align-items:center;gap:10px;border-radius:999px;padding:10px 14px;font-weight:800}.source-badge{background:rgba(56,189,248,.12);color:#bae6fd;border:1px solid rgba(56,189,248,.3)}.stage-banner{background:rgba(245,158,11,.12);color:#fde68a;border:1px solid rgba(245,158,11,.3)}
     .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-top:18px}.stat{background:var(--panel2);border:1px solid var(--border);border-radius:18px;padding:14px}.stat .label{color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}.stat strong{display:block;margin-top:4px;font-size:1.18rem}
     .controls{margin-top:16px;display:flex;flex-wrap:wrap;gap:10px}button{font:inherit;border:0;border-radius:18px;padding:14px 16px;font-weight:800;cursor:pointer;transition:transform .15s ease, opacity .15s ease}button:hover{transform:translateY(-1px)}
@@ -30,7 +30,7 @@
     <div class="topbar"><div class="brand">Railroad Study Game</div><a href="index.html">Back to Arcade</a></div>
     <section class="hero">
       <h1>Railroad Signals Two-Stage Quiz</h1>
-      <div class="subtitle">This version is tied strictly to <strong>Former SOO, DME and KCS</strong> rules 9.1.1 through 9.1.16. Stage 1 shows one illustrated aspect and asks for the signal name. Stage 2 uses the aspect again and asks for the indication.</div>
+      <div class="subtitle">Strictly for <strong>Former SOO, DME and KCS</strong> rules 9.1.1 through 9.1.16. Stage 1 asks for the signal name. Stage 2 asks for the indication. Correct answers auto-advance. Wrong answers show the right answer and wait for you.</div>
       <div class="source-badge">Former SOO, DME and KCS only</div>
       <div id="stageBanner" class="stage-banner">Stage 1: Match the name to the signal</div>
       <div class="stats">
@@ -43,7 +43,7 @@
       <div class="controls"><button id="newRoundBtn" class="primary">New Round</button><button id="practiceTenBtn" class="secondary">Practice 10</button></div>
       <div class="progress-wrap"><div class="progress-label"><span>Stage progress</span><span id="progressLabel">0%</span></div><div class="progress"><div id="progressFill"></div></div></div>
       <div id="message" class="message"></div>
-      <div class="legend">Flashing lights are shown with a starburst halo. Distant signals include a <code>D</code> plate. Gameplay stays picture-only and does not print the active signal name under the picture.</div>
+      <div class="legend">Flashing lights are shown with a starburst halo. Distant signals include a <code>D</code> plate. Choice generation now uses the full rule set and always includes the correct answer.</div>
     </section>
 
     <section class="panel question-area">
@@ -67,10 +67,7 @@
       <div class="modal-kicker">Incorrect</div>
       <h3>Correct answer</h3>
       <p>You can review the right answer here before moving on.</p>
-      <div class="modal-answer">
-        <strong id="modalAnswerLabel">Signal name</strong>
-        <div id="modalAnswerText"></div>
-      </div>
+      <div class="modal-answer"><strong id="modalAnswerLabel">Signal name</strong><div id="modalAnswerText"></div></div>
       <button id="modalNextBtn" class="primary">Next Question</button>
     </div>
   </div>
@@ -79,69 +76,76 @@
     const SIGNALS = [
       { id:'9.1.1', name:'STOP', indication:'Stop.', variants:[{ items:[{kind:'head', lamps:['red']}] },{ items:[{kind:'stack', lamps:['red','dark']}] },{ items:[{kind:'stack', lamps:['red','red']}] },{ items:[{kind:'stack', lamps:['red','red','red']}] },{ items:[{kind:'dwarf', lamps:['red','red']}] }]},
       { id:'9.1.2', name:'RESTRICTING', indication:'Proceed at restricted speed.', variants:[{ items:[{kind:'head', lamps:['lunar']}] },{ items:[{kind:'head', lamps:['red'], plate:'number'}] },{ items:[{kind:'head', lamps:['red*']}] },{ items:[{kind:'head', lamps:['red*'], plate:'number'}] },{ items:[{kind:'stack', lamps:['lunar','red']}] },{ items:[{kind:'stack', lamps:['red*','red']}] },{ items:[{kind:'stack', lamps:['lunar','dark']}] },{ items:[{kind:'stack', lamps:['dark','lunar']}] },{ items:[{kind:'stack', lamps:['red','lunar']}] },{ items:[{kind:'stack', lamps:['red*','dark']}] },{ items:[{kind:'stack', lamps:['dark','red*']}] },{ items:[{kind:'stack', lamps:['red','red'], plate:'number'}] },{ items:[{kind:'stack', lamps:['lunar','red','red']}] },{ items:[{kind:'stack', lamps:['red','lunar','red']}] },{ items:[{kind:'stack', lamps:['red','red','lunar']}] },{ items:[{kind:'stack', lamps:['red*','red','dark']}] },{ items:[{kind:'stack', lamps:['red*','dark','red']}] },{ items:[{kind:'stack', lamps:['red*','dark','dark']}] },{ items:[{kind:'stack', lamps:['dark','red*','dark']}] },{ items:[{kind:'stack', lamps:['dark','dark','red*']}] },{ items:[{kind:'stack', lamps:['dark','red*','red']}] },{ items:[{kind:'stack', lamps:['red','dark','red*']}] },{ items:[{kind:'stack', lamps:['dark','red','red*']}] },{ items:[{kind:'stack', lamps:['red','red*','dark']}] }]},
-      { id:'9.1.4', name:'APPROACH', indication:'Proceed prepared to stop at next signal, freight trains exceeding 30 MPH or passenger trains exceeding 40 MPH must immediately reduce to that speed consistent with good train handling. Exception: Speeds within this rule do not apply to trains when operating with active PTC.', variants:[{ items:[{kind:'head', lamps:['yellow']}] },{ items:[{kind:'stack', lamps:['yellow','dark']}] },{ items:[{kind:'stack', lamps:['yellow','red']}] },{ items:[{kind:'stack', lamps:['yellow','dark','dark']}] },{ items:[{kind:'stack', lamps:['yellow','red','dark']}] },{ items:[{kind:'stack', lamps:['yellow','dark','red']}] },{ items:[{kind:'stack', lamps:['yellow','red','red']}] },{ items:[{kind:'dwarf', lamps:['yellow','red']}] }]},
+      { id:'9.1.4', name:'APPROACH', indication:'Proceed prepared to stop at next signal; freight trains exceeding 30 MPH or passenger trains exceeding 40 MPH must immediately reduce to that speed consistent with good train handling. Exception: Speeds within this rule do not apply to trains when operating with active PTC.', variants:[{ items:[{kind:'head', lamps:['yellow']}] },{ items:[{kind:'stack', lamps:['yellow','dark']}] },{ items:[{kind:'stack', lamps:['yellow','red']}] },{ items:[{kind:'stack', lamps:['yellow','dark','dark']}] },{ items:[{kind:'stack', lamps:['yellow','red','dark']}] },{ items:[{kind:'stack', lamps:['yellow','dark','red']}] },{ items:[{kind:'stack', lamps:['yellow','red','red']}] },{ items:[{kind:'dwarf', lamps:['yellow','red']}] }]},
       { id:'9.1.5', name:'CLEAR', indication:'Proceed.', variants:[{ items:[{kind:'head', lamps:['green']}] },{ items:[{kind:'stack', lamps:['green','dark']}] },{ items:[{kind:'stack', lamps:['green','red']}] },{ items:[{kind:'stack', lamps:['green','dark','dark']}] },{ items:[{kind:'stack', lamps:['green','red','dark']}] },{ items:[{kind:'stack', lamps:['green','dark','red']}] },{ items:[{kind:'stack', lamps:['green','red','red']}] },{ items:[{kind:'dwarf', lamps:['green','red']}] }]},
       { id:'9.1.6', name:'ADVANCE APPROACH', indication:'Proceed prepared to stop at second signal.', variants:[{ items:[{kind:'head', lamps:['yellow*']}] },{ items:[{kind:'stack', lamps:['yellow*','dark']}] },{ items:[{kind:'stack', lamps:['yellow*','red']}] },{ items:[{kind:'stack', lamps:['yellow*','dark','dark']}] },{ items:[{kind:'stack', lamps:['yellow*','red','dark']}] },{ items:[{kind:'stack', lamps:['yellow*','dark','red']}] },{ items:[{kind:'stack', lamps:['yellow*','red','red']}] },{ items:[{kind:'dwarf', lamps:['yellow*','red']}] }]},
       { id:'9.1.7', name:'APPROACH DIVERGING', indication:'Proceed prepared to advance on diverging route at the next signal at prescribed speed through turnout.', variants:[{ items:[{kind:'stack', lamps:['yellow','yellow']}] },{ items:[{kind:'stack', lamps:['yellow','green']}] },{ items:[{kind:'stack', lamps:['yellow','yellow','dark']}] },{ items:[{kind:'stack', lamps:['yellow','green','dark']}] },{ items:[{kind:'stack', lamps:['yellow','yellow','green']}] },{ items:[{kind:'stack', lamps:['yellow','yellow','red']}] },{ items:[{kind:'stack', lamps:['yellow','green','red']}] },{ items:[{kind:'stack', lamps:['red','yellow','yellow']}] },{ items:[{kind:'dwarf', lamps:['yellow','yellow']}] },{ items:[{kind:'dwarf', lamps:['yellow','green']}] }]},
       { id:'9.1.8', name:'DIVERGING ADVANCE APPROACH', indication:'Proceed on diverging route at prescribed speed through turnout, prepared to stop at second signal.', variants:[{ items:[{kind:'stack', lamps:['red','yellow*']}] },{ items:[{kind:'stack', lamps:['red','red','yellow*']}] },{ items:[{kind:'stack', lamps:['red','yellow*','red']}] },{ items:[{kind:'stack', lamps:['yellow*','red','red']}] },{ items:[{kind:'stack', lamps:['red','dark','yellow*']}] },{ items:[{kind:'stack', lamps:['red','yellow*','dark']}] },{ items:[{kind:'dwarf', lamps:['red','yellow*']}] }]},
       { id:'9.1.9', name:'DIVERGING APPROACH', indication:'Proceed on diverging route at prescribed speed through turnout prepared to stop at next signal.', variants:[{ items:[{kind:'stack', lamps:['red','yellow']}] },{ items:[{kind:'stack', lamps:['red','red','yellow']}] },{ items:[{kind:'stack', lamps:['red','yellow','red']}] },{ items:[{kind:'stack', lamps:['yellow','red','red']}] },{ items:[{kind:'stack', lamps:['red','dark','yellow']}] },{ items:[{kind:'stack', lamps:['red','yellow','dark']}] },{ items:[{kind:'dwarf', lamps:['red','yellow']}] }]},
       { id:'9.1.10', name:'DIVERGING CLEAR', indication:'Proceed on diverging route at prescribed speed through turnout.', variants:[{ items:[{kind:'stack', lamps:['red','green']}] },{ items:[{kind:'stack', lamps:['red','red','green']}] },{ items:[{kind:'stack', lamps:['red','green','red']}] },{ items:[{kind:'stack', lamps:['green','red','red']}] },{ items:[{kind:'stack', lamps:['red','dark','green']}] },{ items:[{kind:'stack', lamps:['red','green','dark']}] },{ items:[{kind:'dwarf', lamps:['red','green']}] }]},
-      { id:'9.1.11', name:'APPROACH RESTRICTING', indication:'Proceed prepared to pass next signal at restricted speed.', variants:[{ items:[{kind:'stack', lamps:['yellow','lunar']}] },{ items:[{kind:'stack', lamps:['yellow','red','lunar']}] },{ items:[{kind:'stack', lamps:['yellow','lunar','red']}] },{ items:[{kind:'dwarf', lamps:['yellow','lunar']}] }]},
-      { id:'9.1.12', name:'DISTANT SIGNAL CLEAR', indication:'Proceed. If delayed between this signal and next signal Rule 9.9 or Rule 9.9.1 applies.', variants:[{ items:[{kind:'stack', lamps:['green','dark'], plate:'D'}] },{ items:[{kind:'dwarf', lamps:['green'], plate:'D'}] }]},
-      { id:'9.1.13', name:'DISTANT SIGNAL APPROACH', indication:'Proceed prepared to stop short of next signal.', variants:[{ items:[{kind:'stack', lamps:['yellow','dark'], plate:'D'}] },{ items:[{kind:'stack', lamps:['dark','yellow'], plate:'D'}] },{ items:[{kind:'dwarf', lamps:['yellow'], plate:'D'}] }]},
-      { id:'9.1.14', name:'DISTANT SIGNAL APPROACH DIVERGING', indication:'Proceed prepared to advance on diverging route at the next signal at prescribed speed through turnout.', variants:[{ items:[{kind:'stack', lamps:['yellow','green'], plate:'D'}] },{ items:[{kind:'stack', lamps:['green','yellow'], plate:'D'}] },{ items:[{kind:'dwarf', lamps:['yellow','green'], plate:'D'}] }]},
-      { id:'9.1.15', name:'DISTANT SIGNAL APPROACH RESTRICTING', indication:'Proceed prepared to pass next signal at restricted speed.', variants:[{ items:[{kind:'stack', lamps:['yellow*','lunar'], plate:'D'}] },{ items:[{kind:'dwarf', lamps:['yellow*','lunar'], plate:'D'}] }]},
+      { id:'9.1.11', name:'APPROACH RESTRICTING', indication:'Proceed prepared to pass next signal at restricted speed.', variants:[{ items:[{kind:'stack', lamps:['yellow','lunar']}] },{ items:[{kind:'stack', lamps:['yellow','red*']}] },{ items:[{kind:'stack', lamps:['yellow','lunar','red']}] },{ items:[{kind:'stack', lamps:['yellow','red*','red']}] }]},
+      { id:'9.1.12', name:'DISTANT SIGNAL CLEAR', indication:'Proceed. If delayed between this signal and next signal Rule 9.9 or Rule 9.9.1 applies.', variants:[{ items:[{kind:'head', lamps:['green'], plate:'D'}] },{ items:[{kind:'stack', lamps:['green','dark'], plate:'D'}] }]},
+      { id:'9.1.13', name:'DISTANT SIGNAL APPROACH', indication:'Proceed prepared to stop short of next signal.', variants:[{ items:[{kind:'head', lamps:['yellow'], plate:'D'}] },{ items:[{kind:'stack', lamps:['dark','yellow'], plate:'D'}] }]},
+      { id:'9.1.14', name:'DISTANT SIGNAL APPROACH DIVERGING', indication:'Proceed prepared to advance on diverging route at the next signal at prescribed speed through turnout.', variants:[{ items:[{kind:'stack', lamps:['yellow','green'], plate:'D'}] }]},
+      { id:'9.1.15', name:'DISTANT SIGNAL APPROACH RESTRICTING', indication:'Proceed prepared to pass next signal at restricted speed.', variants:[{ items:[{kind:'stack', lamps:['yellow*','red'], plate:'D'}] }]},
       { id:'9.1.16', name:'DISTANT SIGNAL RESTRICTING', indication:'Proceed at restricted speed.', variants:[{ items:[{kind:'head', lamps:['red'], plate:'D'}] }]}
     ];
 
-    const state = { stage:1, round:[], index:0, moves:0, streak:0, bestStreak:0, size:6, options:[], answered:false, selectedId:null, answerId:null, currentVariant:null, modalOpen:false };
+    const state = { stage:1, round:[], index:0, moves:0, streak:0, bestStreak:0, size:6, answered:false, currentRule:null, currentVariant:null, selectedChoice:'', correctChoice:'', choiceTexts:[], modalOpen:false };
     const $ = id => document.getElementById(id);
-    function shuffle(items){ const copy=[...items]; for(let i=copy.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [copy[i],copy[j]]=[copy[j],copy[i]]; } return copy; }
-    function choose(items){ return items[Math.floor(Math.random()*items.length)]; }
-    function lightColor(light){ const base=light.replace('*',''); if(base==='red') return '#ef4444'; if(base==='yellow') return '#fde047'; if(base==='green') return '#22c55e'; if(base==='lunar') return '#e5e7eb'; return '#0b0b0f'; }
-    function isFlashing(light){ return light.includes('*'); }
-    function currentSignal(){ return state.round[state.index]; }
-    function answerText(signal){ return state.stage===1 ? signal.name : signal.indication; }
-    function nextButtonText(){ if(state.stage===1 && state.index===state.round.length-1) return 'Start Stage 2'; if(state.stage===2 && state.index===state.round.length-1) return 'Finish Round'; return 'Next Question'; }
-    function showMessage(text,type){ const box=$('message'); box.textContent=text; box.className='message show '+type; }
-    function hideModal(){ state.modalOpen=false; $('wrongModal').classList.remove('show'); $('wrongModal').setAttribute('aria-hidden','true'); }
-    function showWrongModal(){ const correct=currentSignal(); $('modalAnswerLabel').textContent = state.stage===1 ? 'Correct signal name' : 'Correct indication'; $('modalAnswerText').textContent = answerText(correct); $('modalNextBtn').textContent = nextButtonText(); $('wrongModal').classList.add('show'); $('wrongModal').setAttribute('aria-hidden','false'); state.modalOpen=true; }
+    const shuffle = items => { const copy=[...items]; for(let i=copy.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [copy[i],copy[j]]=[copy[j],copy[i]]; } return copy; };
+    const choose = items => items[Math.floor(Math.random()*items.length)];
+    const unique = items => [...new Set(items)];
+    const answerTextForRule = rule => state.stage===1 ? rule.name : rule.indication;
+    const nextButtonText = () => state.stage===1 && state.index===state.round.length-1 ? 'Start Stage 2' : (state.stage===2 && state.index===state.round.length-1 ? 'Finish Round' : 'Next Question');
+    const lightColor = light => { const base=light.replace('*',''); if(base==='red') return '#ef4444'; if(base==='yellow') return '#fde047'; if(base==='green') return '#22c55e'; if(base==='lunar') return '#e5e7eb'; return '#0b0b0f'; };
+    const isFlashing = light => light.includes('*');
+    const showMessage = (text,type) => { const box=$('message'); box.textContent=text; box.className='message show '+type; };
+    const hideModal = () => { state.modalOpen=false; $('wrongModal').classList.remove('show'); $('wrongModal').setAttribute('aria-hidden','true'); };
+    const showWrongModal = () => { $('modalAnswerLabel').textContent = state.stage===1 ? 'Correct signal name' : 'Correct indication'; $('modalAnswerText').textContent = state.correctChoice; $('modalNextBtn').textContent = nextButtonText(); $('wrongModal').classList.add('show'); $('wrongModal').setAttribute('aria-hidden','false'); state.modalOpen=true; };
 
     function renderLamp(cx, cy, r, light){
-      const dark = light === 'dark', color = dark ? '#05070d' : lightColor(light); let rays='';
-      if(!dark && isFlashing(light)){ for(let a=0;a<360;a+=45){ const r1=r+4, r2=r+11, rad=(a*Math.PI)/180; const x1=cx+Math.cos(rad)*r1, y1=cy+Math.sin(rad)*r1, x2=cx+Math.cos(rad)*r2, y2=cy+Math.sin(rad)*r2; rays += `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${lightColor(light)}" stroke-width="2.4" stroke-linecap="round" opacity="0.95" />`; } }
+      const dark = light === 'dark'; const color = dark ? '#05070d' : lightColor(light); let rays='';
+      if(!dark && isFlashing(light)){ for(let a=0;a<360;a+=45){ const r1=r+4, r2=r+11, rad=(a*Math.PI)/180; rays += `<line x1="${(cx+Math.cos(rad)*r1).toFixed(2)}" y1="${(cy+Math.sin(rad)*r1).toFixed(2)}" x2="${(cx+Math.cos(rad)*r2).toFixed(2)}" y2="${(cy+Math.sin(rad)*r2).toFixed(2)}" stroke="${lightColor(light)}" stroke-width="2.4" stroke-linecap="round" opacity="0.95" />`; } }
       return `${rays}<circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}" stroke="rgba(255,255,255,.24)" stroke-width="2" />`;
     }
+
     function renderItem(item, baseX, big=true){
       const moduleGap=big?84:44, stackW=big?58:28, padY=big?18:8, step=big?34:16, r=big?12:5.6, topY=big?26:12, lamps=item.lamps, plateText=item.plate==='number'?'':(item.plate||''), plateW=big?24:14, plateH=big?20:10, mastW=big?8:4;
       if(item.kind==='head'){ const cx=baseX+(big?28:14), cy=big?56:25; let svg=`<rect x="${cx-mastW/2}" y="${cy+r}" width="${mastW}" height="${big?42:18}" rx="${big?4:2}" fill="#8b8e99" /><circle cx="${cx}" cy="${cy}" r="${big?28:13}" fill="#0b0b0f" stroke="#8f99aa" stroke-width="${big?4:2}" />${renderLamp(cx,cy,r,lamps[0])}`; if(item.plate){ const px=cx-plateW/2, py=cy+(big?54:22); svg += `<rect x="${px}" y="${py}" width="${plateW}" height="${plateH}" rx="${big?4:3}" fill="#f8fafc" opacity="0.92" />`; if(plateText) svg += `<text x="${cx}" y="${py+(big?14:8)}" text-anchor="middle" font-size="${big?14:8}" font-family="Arial" fill="#0f172a" font-weight="700">${plateText}</text>`; } return { svg, width:moduleGap }; }
       if(item.kind==='dwarf'){ const cx=baseX+(big?28:14); let svg=''; lamps.forEach((lamp,i)=>{ const cy=topY+i*step+30; svg += `<circle cx="${cx}" cy="${cy}" r="${big?15:7}" fill="#0b0b0f" stroke="#8f99aa" stroke-width="${big?3:1.6}" />${renderLamp(cx,cy,r,lamp)}`; svg += `<rect x="${cx-mastW/2}" y="${cy+(big?15:7)}" width="${mastW}" height="${i<lamps.length-1?(big?18:8):(big?28:12)}" rx="${big?4:2}" fill="#8b8e99" />`; }); if(item.plate){ const py=topY+lamps.length*step+(big?36:15); svg += `<rect x="${cx-plateW/2}" y="${py}" width="${plateW}" height="${plateH}" rx="${big?4:3}" fill="#f8fafc" opacity="0.92" />`; if(plateText) svg += `<text x="${cx}" y="${py+(big?14:8)}" text-anchor="middle" font-size="${big?14:8}" font-family="Arial" fill="#0f172a" font-weight="700">${plateText}</text>`; } return { svg, width:moduleGap }; }
       const housingH=Math.max(big?40:18, lamps.length*step+(big?16:8)); const x=baseX; let svg=`<rect x="${x}" y="${padY}" width="${stackW}" height="${housingH}" rx="${big?24:10}" fill="#0b0b0f" stroke="#8f99aa" stroke-width="${big?4:2}" />`; lamps.forEach((lamp,i)=>{ const cx=x+stackW/2, cy=topY+i*step+(big?10:6); svg += renderLamp(cx,cy,r,lamp); }); svg += `<rect x="${x+stackW/2-mastW/2}" y="${padY+housingH}" width="${mastW}" height="${item.plate?(big?28:14):(big?40:16)}" rx="${big?4:2}" fill="#8b8e99" />`; if(item.plate){ const px=x+stackW/2-plateW/2, py=padY+housingH+(big?10:4); svg += `<rect x="${px}" y="${py}" width="${plateW}" height="${plateH}" rx="${big?4:3}" fill="#f8fafc" opacity="0.92" />`; if(plateText) svg += `<text x="${x+stackW/2}" y="${py+(big?14:8)}" text-anchor="middle" font-size="${big?14:8}" font-family="Arial" fill="#0f172a" font-weight="700">${plateText}</text>`; } return { svg, width:moduleGap };
     }
+
     function signalSvg(variant,big=true){ const gap=big?22:12, rendered=[]; let x=big?12:6; variant.items.forEach(item=>{ const part=renderItem(item,x,big); rendered.push(part.svg); x += part.width + gap; }); const width=x+(big?12:6), height=big?180:64; return `<svg viewBox="0 0 ${width} ${height}" width="${big?Math.min(720,width):Math.min(120,width)}" height="${big?170:52}" aria-label="signal picture" role="img">${rendered.join('')}</svg>`; }
 
-    function sampleOptions(){ const current=currentSignal(); const others=shuffle(state.round.filter(s=>s.id!==current.id)).slice(0, Math.min(3, state.round.length-1)); return shuffle([current,...others]); }
-    function loadQuestion(){ state.answered=false; state.selectedId=null; state.answerId=currentSignal().id; state.options=sampleOptions(); state.currentVariant=choose(currentSignal().variants); hideModal(); render(); }
-    function setupStage(stage){ state.stage=stage; state.index=0; state.answered=false; state.selectedId=null; $('stageCount').textContent=`${state.stage} / 2`; $('stageBanner').textContent=state.stage===1?'Stage 1: Match the name to the signal':'Stage 2: Match the indication to the signal'; $('questionPrompt').textContent=state.stage===1?'Which name matches this signal?':'Which indication matches this signal?'; $('answersTitle').textContent=state.stage===1?'Choose the correct signal name':'Choose the correct indication'; loadQuestion(); showMessage(state.stage===1?'Stage 1 loaded.':'Stage 2 loaded.','good'); }
+    function buildChoices(){
+      const correct = answerTextForRule(state.currentRule);
+      state.correctChoice = correct;
+      const pool = unique(SIGNALS.map(answerTextForRule)).filter(text => text !== correct);
+      state.choiceTexts = shuffle([correct, ...shuffle(pool).slice(0,3)]);
+    }
+
+    function loadQuestion(){
+      state.answered=false; state.selectedChoice=''; state.currentRule = state.round[state.index]; state.currentVariant = choose(state.currentRule.variants); buildChoices(); hideModal(); render();
+    }
+
+    function setupStage(stage){
+      state.stage=stage; state.index=0; state.answered=false; state.selectedChoice='';
+      $('stageCount').textContent=`${state.stage} / 2`;
+      $('stageBanner').textContent=state.stage===1?'Stage 1: Match the name to the signal':'Stage 2: Match the indication to the signal';
+      $('questionPrompt').textContent=state.stage===1?'Which name matches this signal?':'Which indication matches this signal?';
+      $('answersTitle').textContent=state.stage===1?'Choose the correct signal name':'Choose the correct indication';
+      loadQuestion(); showMessage(state.stage===1?'Stage 1 loaded.':'Stage 2 loaded.','good');
+    }
+
     function newRound(size=6){ state.size=size; state.round=shuffle(SIGNALS).slice(0,size); state.moves=0; state.streak=0; setupStage(1); }
 
-    function chooseAnswer(id){
+    function chooseAnswer(choice){
       if(state.answered || state.modalOpen) return;
-      state.answered=true; state.selectedId=id; state.moves += 1;
-      if(id===state.answerId){
-        state.streak += 1;
-        state.bestStreak=Math.max(state.bestStreak,state.streak);
-        showMessage('Correct. Moving to the next question.','good');
-        render();
-        setTimeout(advanceQuestion, 650);
-        return;
-      }
-      state.streak=0;
-      showMessage('Wrong answer selected. Review the popup and continue when ready.','bad');
-      render();
-      $('nextBtn').textContent = nextButtonText();
-      $('nextBtn').classList.add('show');
-      showWrongModal();
+      state.answered=true; state.selectedChoice=choice; state.moves += 1;
+      if(choice===state.correctChoice){ state.streak += 1; state.bestStreak=Math.max(state.bestStreak,state.streak); showMessage('Correct. Moving to the next question.','good'); render(); setTimeout(advanceQuestion, 650); return; }
+      state.streak=0; showMessage('Wrong answer selected. Review the popup and continue when ready.','bad'); render(); $('nextBtn').textContent = nextButtonText(); $('nextBtn').classList.add('show'); showWrongModal();
     }
 
     function advanceQuestion(){
@@ -152,19 +156,13 @@
       else { showMessage('Round finished. Start a new round when ready.','done'); state.answered=false; $('nextBtn').classList.remove('show'); }
     }
 
-    function answerClass(signal){ if(!state.answered) return 'answer-btn'; if(signal.id===state.answerId && state.selectedId===signal.id) return 'answer-btn correct'; if(signal.id===state.selectedId && state.selectedId!==state.answerId) return 'answer-btn wrong'; if(signal.id===state.answerId) return 'answer-btn reveal'; return 'answer-btn'; }
-    function renderAnswers(){ $('answerGrid').innerHTML = state.options.map(signal => `<button class="${answerClass(signal)}" onclick="chooseAnswer('${signal.id}')"><small>${state.stage===1?'Signal name':'Indication'}</small><div>${answerText(signal)}</div></button>`).join(''); }
-    function renderStudyGrid(){ $('studyGrid').innerHTML = SIGNALS.map(signal => { const thumbs=signal.variants.slice(0,4).map(v=>`<div class="thumb">${signalSvg(v,false)}</div>`).join(''); return `<div class="study-card"><div><div class="thumb-strip">${thumbs}</div></div><div><div class="study-rule">Rule ${signal.id}</div><div class="variant-count">${signal.variants.length} illustrated aspect${signal.variants.length===1?'':'s'}</div><h3>${signal.name}</h3><p>${signal.indication}</p></div></div>`; }).join(''); }
+    function answerClass(choice){ if(!state.answered) return 'answer-btn'; if(choice===state.correctChoice && choice===state.selectedChoice) return 'answer-btn correct'; if(choice===state.selectedChoice && choice!==state.correctChoice) return 'answer-btn wrong'; if(choice===state.correctChoice) return 'answer-btn reveal'; return 'answer-btn'; }
+    function renderAnswers(){ $('answerGrid').innerHTML = state.choiceTexts.map(choice => `<button class="${answerClass(choice)}" onclick="chooseAnswer(${JSON.stringify('${'}choice${'}')})"><small>${state.stage===1?'Signal name':'Indication'}</small><div>${choice}</div></button>`.replace('${choice}', choice.replace(/'/g, '&#39;'))).join(''); }
+    function renderStudyGrid(){ $('studyGrid').innerHTML = SIGNALS.map(rule => { const thumbs=rule.variants.slice(0,4).map(v=>`<div class="thumb">${signalSvg(v,false)}</div>`).join(''); return `<div class="study-card"><div><div class="thumb-strip">${thumbs}</div></div><div><div class="study-rule">Rule ${rule.id}</div><div class="variant-count">${rule.variants.length} illustrated aspect${rule.variants.length===1?'':'s'}</div><h3>${rule.name}</h3><p>${rule.indication}</p></div></div>`; }).join(''); }
     function renderStats(){ const pct=Math.round(((state.index + (state.answered ? 1 : 0))/state.round.length)*100); $('questionCount').textContent=`${state.index + 1} / ${state.round.length}`; $('moveCount').textContent=String(state.moves); $('streakCount').textContent=String(state.streak); $('bestStreakCount').textContent=String(state.bestStreak); $('progressFill').style.width=`${pct}%`; $('progressLabel').textContent=`${pct}%`; }
-    function render(){ $('signalBox').innerHTML = state.currentVariant ? signalSvg(state.currentVariant,true) : ''; renderStats(); renderAnswers(); const showManualNext = state.answered && state.selectedId !== state.answerId; $('nextBtn').classList.toggle('show', showManualNext); if(showManualNext) $('nextBtn').textContent = nextButtonText(); }
+    function render(){ $('signalBox').innerHTML = state.currentVariant ? signalSvg(state.currentVariant,true) : ''; renderStats(); renderAnswers(); const showManualNext = state.answered && state.selectedChoice !== state.correctChoice; $('nextBtn').classList.toggle('show', showManualNext); if(showManualNext) $('nextBtn').textContent = nextButtonText(); }
 
-    $('newRoundBtn').addEventListener('click', ()=>newRound(6));
-    $('practiceTenBtn').addEventListener('click', ()=>newRound(10));
-    $('nextBtn').addEventListener('click', advanceQuestion);
-    $('modalNextBtn').addEventListener('click', advanceQuestion);
-    window.chooseAnswer = chooseAnswer;
-    renderStudyGrid();
-    newRound(6);
+    $('newRoundBtn').addEventListener('click', ()=>newRound(6)); $('practiceTenBtn').addEventListener('click', ()=>newRound(10)); $('nextBtn').addEventListener('click', advanceQuestion); $('modalNextBtn').addEventListener('click', advanceQuestion); window.chooseAnswer = chooseAnswer; renderStudyGrid(); newRound(6);
   </script>
 </body>
 </html>
