@@ -209,6 +209,7 @@
     <div class="action-row">
       <a class="secondary" href="index.html">Back Home</a>
       <a class="secondary" href="scores.html">Hub</a>
+      <button id="soundBtn" class="secondary">Sound: On</button>
       <button id="restartBtn">Restart Round</button>
     </div>
 
@@ -227,7 +228,7 @@
       <div class="side-panel">
         <h2>How it works</h2>
         <p>On mobile, swipe a fruit toward the neighboring fruit you want to swap with. On desktop, click one fruit and then a neighboring fruit. Only real matches count.</p>
-        <p>Every match scores points. Cascades score more. Beat the target inside the move limit and the next round gets meaner.</p>
+        <p>Bigger clears are worth more now. A simple 3-match is solid, but 4s, 5s, and fat cascades pay out much better.</p>
         <div class="legend">
           <div class="legend-item"><span class="fruit-dot" style="background:#ef4444"></span>Apple</div>
           <div class="legend-item"><span class="fruit-dot" style="background:#f59e0b"></span>Orange</div>
@@ -259,12 +260,14 @@
     const overlayText = document.getElementById('overlayText');
     const overlayBtn = document.getElementById('overlayBtn');
     const restartBtn = document.getElementById('restartBtn');
+    const soundBtn = document.getElementById('soundBtn');
     const moodEl = document.getElementById('mood');
     const lineEl = document.getElementById('line');
 
     const GRID = 8;
     const CELL = canvas.width / GRID;
     const BEST_KEY = 'fruit-crush-best-score';
+    const SOUND_KEY = 'arcade-muted';
     const SWIPE_THRESHOLD = 18;
     const FRUITS = [
       { name: 'apple', color: '#ef4444', leaf: '#22c55e', glyph: '🍎' },
@@ -296,6 +299,11 @@
         'Combo chain. The produce has lost all discipline.',
         'That board just kept folding into itself beautifully.'
       ],
+      big: [
+        'Big clear. The fruit practically exploded into points.',
+        'That was a chunky match and the score felt it.',
+        'Heavy crush. Now we are talking real produce damage.'
+      ],
       win: [
         'Target cleared. The juice stand fears your efficiency.',
         'Round won. The fruit are filing a complaint.',
@@ -319,6 +327,8 @@
     let busy = false;
     let pointerStart = null;
     let swipeHandled = false;
+    let isMuted = localStorage.getItem(SOUND_KEY) === 'true';
+    let audioCtx = null;
 
     bestEl.textContent = String(best);
 
@@ -329,6 +339,48 @@
 
     function pick(arr) {
       return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function refreshSound() {
+      soundBtn.textContent = `Sound: ${isMuted ? 'Off' : 'On'}`;
+    }
+
+    function ensureAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function tone(freq, duration = 0.08, type = 'triangle', volume = 0.035, delay = 0) {
+      if (isMuted) return;
+      ensureAudio();
+      const start = audioCtx.currentTime + delay;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gain.gain.value = volume;
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(start);
+      osc.stop(start + duration);
+    }
+
+    function playSwapSound() {
+      tone(420, 0.04, 'square', 0.02);
+    }
+
+    function playInvalidSound() {
+      tone(220, 0.08, 'sawtooth', 0.03);
+    }
+
+    function playSparkleSound(matchCount, chain) {
+      const base = matchCount >= 5 ? 760 : matchCount === 4 ? 680 : 620;
+      const lift = (chain - 1) * 50;
+      tone(base + lift, 0.05, 'triangle', 0.03, 0);
+      tone(base + 150 + lift, 0.07, 'triangle', 0.028, 0.045);
+      if (matchCount >= 4) tone(base + 290 + lift, 0.09, 'sine', 0.024, 0.09);
+      if (chain >= 2) tone(base + 380 + lift, 0.08, 'sine', 0.022, 0.13);
     }
 
     function setOverlay(title, text, buttonText) {
@@ -529,15 +581,62 @@
       }
     }
 
+    function scoreForMatch(matchCount, chain) {
+      const base = 50 * matchCount;
+      const sizeBonus = matchCount >= 5 ? 220 : matchCount === 4 ? 90 : 0;
+      const chainMultiplier = 1 + (chain - 1) * 0.45;
+      return Math.round((base + sizeBonus) * chainMultiplier);
+    }
+
+    function summarizeMatchSizes(matches) {
+      const seen = new Set();
+      const sizes = [];
+
+      for (const cell of matches) {
+        const rowKey = `r:${cell.r}:${board[cell.r][cell.c]}`;
+        if (!seen.has(rowKey)) {
+          let count = 1;
+          let c = cell.c - 1;
+          while (c >= 0 && board[cell.r][c] === board[cell.r][cell.c]) { count++; c--; }
+          c = cell.c + 1;
+          while (c < GRID && board[cell.r][c] === board[cell.r][cell.c]) { count++; c++; }
+          if (count >= 3) sizes.push(count);
+          seen.add(rowKey);
+        }
+
+        const colKey = `c:${cell.c}:${board[cell.r][cell.c]}`;
+        if (!seen.has(colKey)) {
+          let count = 1;
+          let r = cell.r - 1;
+          while (r >= 0 && board[r][cell.c] === board[cell.r][cell.c]) { count++; r--; }
+          r = cell.r + 1;
+          while (r < GRID && board[r][cell.c] === board[cell.r][cell.c]) { count++; r++; }
+          if (count >= 3) sizes.push(count);
+          seen.add(colKey);
+        }
+      }
+
+      return sizes;
+    }
+
     async function resolveMatches(chain = 1) {
       let totalMatched = 0;
       while (true) {
         const matches = findMatches();
         if (!matches.length) break;
+        const matchSizes = summarizeMatchSizes(matches);
         totalMatched += matches.length;
-        score += matches.length * 50 * chain;
+        const biggestMatch = Math.max(...matchSizes, 3);
+        score += scoreForMatch(biggestMatch, chain) + Math.max(0, matches.length - biggestMatch) * 35 * chain;
         updateStats();
-        say(chain > 1 ? pick(lines.combo) : pick(lines.good), chain > 1 ? 'Combo call:' : 'Juice stand note:');
+        playSparkleSound(biggestMatch, chain);
+        if (chain > 1) {
+          say(pick(lines.combo), 'Combo call:');
+        } else if (biggestMatch >= 4) {
+          say(pick(lines.big), 'Big crush:');
+        } else {
+          say(pick(lines.good), 'Juice stand note:');
+        }
         matches.forEach(({ r, c }) => { board[r][c] = null; });
         drawBoard();
         await wait(180);
@@ -556,6 +655,7 @@
     async function trySwap(a, b) {
       if (busy) return;
       busy = true;
+      playSwapSound();
       swap(a, b);
       drawBoard();
       await wait(120);
@@ -563,6 +663,7 @@
       if (!matches.length) {
         swap(a, b);
         drawBoard();
+        playInvalidSound();
         say(pick(lines.invalid), 'Board reply:');
         busy = false;
         return;
@@ -736,6 +837,16 @@
       startRound();
     });
 
+    soundBtn.addEventListener('click', () => {
+      isMuted = !isMuted;
+      localStorage.setItem(SOUND_KEY, String(isMuted));
+      refreshSound();
+      if (!isMuted) {
+        tone(520, 0.04, 'square', 0.02);
+      }
+    });
+
+    refreshSound();
     resetRound(true);
   </script>
 </body>
