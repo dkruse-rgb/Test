@@ -43,7 +43,7 @@
       <div class="controls"><button id="newRoundBtn" class="primary">New Round</button><button id="practiceTenBtn" class="secondary">Practice 10</button></div>
       <div class="progress-wrap"><div class="progress-label"><span>Stage progress</span><span id="progressLabel">0%</span></div><div class="progress"><div id="progressFill"></div></div></div>
       <div id="message" class="message"></div>
-      <div class="legend">Flashing lights are shown with a starburst halo. Distant signals include a <code>D</code> plate. Choice generation now uses the full rule set and always includes the correct answer.</div>
+      <div class="legend">Flashing lights are shown with a starburst halo. Distant signals include a <code>D</code> plate. Choice generation uses the full rule set and always includes the correct answer.</div>
     </section>
 
     <section class="panel question-area">
@@ -100,21 +100,41 @@
     const nextButtonText = () => state.stage===1 && state.index===state.round.length-1 ? 'Start Stage 2' : (state.stage===2 && state.index===state.round.length-1 ? 'Finish Round' : 'Next Question');
     const lightColor = light => { const base=light.replace('*',''); if(base==='red') return '#ef4444'; if(base==='yellow') return '#fde047'; if(base==='green') return '#22c55e'; if(base==='lunar') return '#e5e7eb'; return '#0b0b0f'; };
     const isFlashing = light => light.includes('*');
+    const escapeHtml = text => String(text).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
     const showMessage = (text,type) => { const box=$('message'); box.textContent=text; box.className='message show '+type; };
     const hideModal = () => { state.modalOpen=false; $('wrongModal').classList.remove('show'); $('wrongModal').setAttribute('aria-hidden','true'); };
     const showWrongModal = () => { $('modalAnswerLabel').textContent = state.stage===1 ? 'Correct signal name' : 'Correct indication'; $('modalAnswerText').textContent = state.correctChoice; $('modalNextBtn').textContent = nextButtonText(); $('wrongModal').classList.add('show'); $('wrongModal').setAttribute('aria-hidden','false'); state.modalOpen=true; };
 
     function renderLamp(cx, cy, r, light){
       const dark = light === 'dark'; const color = dark ? '#05070d' : lightColor(light); let rays='';
-      if(!dark && isFlashing(light)){ for(let a=0;a<360;a+=45){ const r1=r+4, r2=r+11, rad=(a*Math.PI)/180; rays += `<line x1="${(cx+Math.cos(rad)*r1).toFixed(2)}" y1="${(cy+Math.sin(rad)*r1).toFixed(2)}" x2="${(cx+Math.cos(rad)*r2).toFixed(2)}" y2="${(cy+Math.sin(rad)*r2).toFixed(2)}" stroke="${lightColor(light)}" stroke-width="2.4" stroke-linecap="round" opacity="0.95" />`; } }
+      if(!dark && isFlashing(light)){
+        for(let a=0;a<360;a+=45){
+          const r1=r+4, r2=r+11, rad=(a*Math.PI)/180;
+          rays += `<line x1="${(cx+Math.cos(rad)*r1).toFixed(2)}" y1="${(cy+Math.sin(rad)*r1).toFixed(2)}" x2="${(cx+Math.cos(rad)*r2).toFixed(2)}" y2="${(cy+Math.sin(rad)*r2).toFixed(2)}" stroke="${lightColor(light)}" stroke-width="2.4" stroke-linecap="round" opacity="0.95" />`;
+        }
+      }
       return `${rays}<circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}" stroke="rgba(255,255,255,.24)" stroke-width="2" />`;
     }
 
     function renderItem(item, baseX, big=true){
       const moduleGap=big?84:44, stackW=big?58:28, padY=big?18:8, step=big?34:16, r=big?12:5.6, topY=big?26:12, lamps=item.lamps, plateText=item.plate==='number'?'':(item.plate||''), plateW=big?24:14, plateH=big?20:10, mastW=big?8:4;
-      if(item.kind==='head'){ const cx=baseX+(big?28:14), cy=big?56:25; let svg=`<rect x="${cx-mastW/2}" y="${cy+r}" width="${mastW}" height="${big?42:18}" rx="${big?4:2}" fill="#8b8e99" /><circle cx="${cx}" cy="${cy}" r="${big?28:13}" fill="#0b0b0f" stroke="#8f99aa" stroke-width="${big?4:2}" />${renderLamp(cx,cy,r,lamps[0])}`; if(item.plate){ const px=cx-plateW/2, py=cy+(big?54:22); svg += `<rect x="${px}" y="${py}" width="${plateW}" height="${plateH}" rx="${big?4:3}" fill="#f8fafc" opacity="0.92" />`; if(plateText) svg += `<text x="${cx}" y="${py+(big?14:8)}" text-anchor="middle" font-size="${big?14:8}" font-family="Arial" fill="#0f172a" font-weight="700">${plateText}</text>`; } return { svg, width:moduleGap }; }
-      if(item.kind==='dwarf'){ const cx=baseX+(big?28:14); let svg=''; lamps.forEach((lamp,i)=>{ const cy=topY+i*step+30; svg += `<circle cx="${cx}" cy="${cy}" r="${big?15:7}" fill="#0b0b0f" stroke="#8f99aa" stroke-width="${big?3:1.6}" />${renderLamp(cx,cy,r,lamp)}`; svg += `<rect x="${cx-mastW/2}" y="${cy+(big?15:7)}" width="${mastW}" height="${i<lamps.length-1?(big?18:8):(big?28:12)}" rx="${big?4:2}" fill="#8b8e99" />`; }); if(item.plate){ const py=topY+lamps.length*step+(big?36:15); svg += `<rect x="${cx-plateW/2}" y="${py}" width="${plateW}" height="${plateH}" rx="${big?4:3}" fill="#f8fafc" opacity="0.92" />`; if(plateText) svg += `<text x="${cx}" y="${py+(big?14:8)}" text-anchor="middle" font-size="${big?14:8}" font-family="Arial" fill="#0f172a" font-weight="700">${plateText}</text>`; } return { svg, width:moduleGap }; }
-      const housingH=Math.max(big?40:18, lamps.length*step+(big?16:8)); const x=baseX; let svg=`<rect x="${x}" y="${padY}" width="${stackW}" height="${housingH}" rx="${big?24:10}" fill="#0b0b0f" stroke="#8f99aa" stroke-width="${big?4:2}" />`; lamps.forEach((lamp,i)=>{ const cx=x+stackW/2, cy=topY+i*step+(big?10:6); svg += renderLamp(cx,cy,r,lamp); }); svg += `<rect x="${x+stackW/2-mastW/2}" y="${padY+housingH}" width="${mastW}" height="${item.plate?(big?28:14):(big?40:16)}" rx="${big?4:2}" fill="#8b8e99" />`; if(item.plate){ const px=x+stackW/2-plateW/2, py=padY+housingH+(big?10:4); svg += `<rect x="${px}" y="${py}" width="${plateW}" height="${plateH}" rx="${big?4:3}" fill="#f8fafc" opacity="0.92" />`; if(plateText) svg += `<text x="${x+stackW/2}" y="${py+(big?14:8)}" text-anchor="middle" font-size="${big?14:8}" font-family="Arial" fill="#0f172a" font-weight="700">${plateText}</text>`; } return { svg, width:moduleGap };
+      if(item.kind==='head'){
+        const cx=baseX+(big?28:14), cy=big?56:25;
+        let svg=`<rect x="${cx-mastW/2}" y="${cy+r}" width="${mastW}" height="${big?42:18}" rx="${big?4:2}" fill="#8b8e99" /><circle cx="${cx}" cy="${cy}" r="${big?28:13}" fill="#0b0b0f" stroke="#8f99aa" stroke-width="${big?4:2}" />${renderLamp(cx,cy,r,lamps[0])}`;
+        if(item.plate){ const px=cx-plateW/2, py=cy+(big?54:22); svg += `<rect x="${px}" y="${py}" width="${plateW}" height="${plateH}" rx="${big?4:3}" fill="#f8fafc" opacity="0.92" />`; if(plateText) svg += `<text x="${cx}" y="${py+(big?14:8)}" text-anchor="middle" font-size="${big?14:8}" font-family="Arial" fill="#0f172a" font-weight="700">${plateText}</text>`; }
+        return { svg, width:moduleGap };
+      }
+      if(item.kind==='dwarf'){
+        const cx=baseX+(big?28:14); let svg='';
+        lamps.forEach((lamp,i)=>{ const cy=topY+i*step+30; svg += `<circle cx="${cx}" cy="${cy}" r="${big?15:7}" fill="#0b0b0f" stroke="#8f99aa" stroke-width="${big?3:1.6}" />${renderLamp(cx,cy,r,lamp)}`; svg += `<rect x="${cx-mastW/2}" y="${cy+(big?15:7)}" width="${mastW}" height="${i<lamps.length-1?(big?18:8):(big?28:12)}" rx="${big?4:2}" fill="#8b8e99" />`; });
+        if(item.plate){ const py=topY+lamps.length*step+(big?36:15); svg += `<rect x="${cx-plateW/2}" y="${py}" width="${plateW}" height="${plateH}" rx="${big?4:3}" fill="#f8fafc" opacity="0.92" />`; if(plateText) svg += `<text x="${cx}" y="${py+(big?14:8)}" text-anchor="middle" font-size="${big?14:8}" font-family="Arial" fill="#0f172a" font-weight="700">${plateText}</text>`; }
+        return { svg, width:moduleGap };
+      }
+      const housingH=Math.max(big?40:18, lamps.length*step+(big?16:8)); const x=baseX; let svg=`<rect x="${x}" y="${padY}" width="${stackW}" height="${housingH}" rx="${big?24:10}" fill="#0b0b0f" stroke="#8f99aa" stroke-width="${big?4:2}" />`;
+      lamps.forEach((lamp,i)=>{ const cx=x+stackW/2, cy=topY+i*step+(big?10:6); svg += renderLamp(cx,cy,r,lamp); });
+      svg += `<rect x="${x+stackW/2-mastW/2}" y="${padY+housingH}" width="${mastW}" height="${item.plate?(big?28:14):(big?40:16)}" rx="${big?4:2}" fill="#8b8e99" />`;
+      if(item.plate){ const px=x+stackW/2-plateW/2, py=padY+housingH+(big?10:4); svg += `<rect x="${px}" y="${py}" width="${plateW}" height="${plateH}" rx="${big?4:3}" fill="#f8fafc" opacity="0.92" />`; if(plateText) svg += `<text x="${x+stackW/2}" y="${py+(big?14:8)}" text-anchor="middle" font-size="${big?14:8}" font-family="Arial" fill="#0f172a" font-weight="700">${plateText}</text>`; }
+      return { svg, width:moduleGap };
     }
 
     function signalSvg(variant,big=true){ const gap=big?22:12, rendered=[]; let x=big?12:6; variant.items.forEach(item=>{ const part=renderItem(item,x,big); rendered.push(part.svg); x += part.width + gap; }); const width=x+(big?12:6), height=big?180:64; return `<svg viewBox="0 0 ${width} ${height}" width="${big?Math.min(720,width):Math.min(120,width)}" height="${big?170:52}" aria-label="signal picture" role="img">${rendered.join('')}</svg>`; }
@@ -126,9 +146,7 @@
       state.choiceTexts = shuffle([correct, ...shuffle(pool).slice(0,3)]);
     }
 
-    function loadQuestion(){
-      state.answered=false; state.selectedChoice=''; state.currentRule = state.round[state.index]; state.currentVariant = choose(state.currentRule.variants); buildChoices(); hideModal(); render();
-    }
+    function loadQuestion(){ state.answered=false; state.selectedChoice=''; state.currentRule = state.round[state.index]; state.currentVariant = choose(state.currentRule.variants); buildChoices(); hideModal(); render(); }
 
     function setupStage(stage){
       state.stage=stage; state.index=0; state.answered=false; state.selectedChoice='';
@@ -157,12 +175,28 @@
     }
 
     function answerClass(choice){ if(!state.answered) return 'answer-btn'; if(choice===state.correctChoice && choice===state.selectedChoice) return 'answer-btn correct'; if(choice===state.selectedChoice && choice!==state.correctChoice) return 'answer-btn wrong'; if(choice===state.correctChoice) return 'answer-btn reveal'; return 'answer-btn'; }
-    function renderAnswers(){ $('answerGrid').innerHTML = state.choiceTexts.map(choice => `<button class="${answerClass(choice)}" onclick="chooseAnswer(${JSON.stringify('${'}choice${'}')})"><small>${state.stage===1?'Signal name':'Indication'}</small><div>${choice}</div></button>`.replace('${choice}', choice.replace(/'/g, '&#39;'))).join(''); }
+
+    function renderAnswers(){
+      const label = state.stage===1 ? 'Signal name' : 'Indication';
+      $('answerGrid').innerHTML = state.choiceTexts.map(choice => {
+        const encoded = encodeURIComponent(choice);
+        return `<button class="${answerClass(choice)} answer-btn" data-choice="${encoded}"><small>${label}</small><div>${escapeHtml(choice)}</div></button>`;
+      }).join('');
+      $('answerGrid').querySelectorAll('button[data-choice]').forEach(btn => {
+        btn.addEventListener('click', () => chooseAnswer(decodeURIComponent(btn.dataset.choice)));
+      });
+    }
+
     function renderStudyGrid(){ $('studyGrid').innerHTML = SIGNALS.map(rule => { const thumbs=rule.variants.slice(0,4).map(v=>`<div class="thumb">${signalSvg(v,false)}</div>`).join(''); return `<div class="study-card"><div><div class="thumb-strip">${thumbs}</div></div><div><div class="study-rule">Rule ${rule.id}</div><div class="variant-count">${rule.variants.length} illustrated aspect${rule.variants.length===1?'':'s'}</div><h3>${rule.name}</h3><p>${rule.indication}</p></div></div>`; }).join(''); }
     function renderStats(){ const pct=Math.round(((state.index + (state.answered ? 1 : 0))/state.round.length)*100); $('questionCount').textContent=`${state.index + 1} / ${state.round.length}`; $('moveCount').textContent=String(state.moves); $('streakCount').textContent=String(state.streak); $('bestStreakCount').textContent=String(state.bestStreak); $('progressFill').style.width=`${pct}%`; $('progressLabel').textContent=`${pct}%`; }
     function render(){ $('signalBox').innerHTML = state.currentVariant ? signalSvg(state.currentVariant,true) : ''; renderStats(); renderAnswers(); const showManualNext = state.answered && state.selectedChoice !== state.correctChoice; $('nextBtn').classList.toggle('show', showManualNext); if(showManualNext) $('nextBtn').textContent = nextButtonText(); }
 
-    $('newRoundBtn').addEventListener('click', ()=>newRound(6)); $('practiceTenBtn').addEventListener('click', ()=>newRound(10)); $('nextBtn').addEventListener('click', advanceQuestion); $('modalNextBtn').addEventListener('click', advanceQuestion); window.chooseAnswer = chooseAnswer; renderStudyGrid(); newRound(6);
+    $('newRoundBtn').addEventListener('click', ()=>newRound(6));
+    $('practiceTenBtn').addEventListener('click', ()=>newRound(10));
+    $('nextBtn').addEventListener('click', advanceQuestion);
+    $('modalNextBtn').addEventListener('click', advanceQuestion);
+    renderStudyGrid();
+    newRound(6);
   </script>
 </body>
 </html>
