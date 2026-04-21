@@ -128,11 +128,20 @@
     function chooseAnswer(id){
       if(state.answered || state.modalOpen) return;
       state.answered=true; state.selectedId=id; state.moves += 1;
-      if(id===state.answerId){ state.streak += 1; state.bestStreak=Math.max(state.bestStreak,state.streak); showMessage('Correct. Tap Next Question to continue.','good'); }
-      else { state.streak=0; showMessage('Wrong answer selected. Review the popup and continue when ready.','bad'); }
+      if(id===state.answerId){
+        state.streak += 1;
+        state.bestStreak=Math.max(state.bestStreak,state.streak);
+        showMessage('Correct. Moving to the next question.','good');
+        render();
+        setTimeout(advanceQuestion, 650);
+        return;
+      }
+      state.streak=0;
+      showMessage('Wrong answer selected. Review the popup and continue when ready.','bad');
       render();
-      $('nextBtn').textContent = nextButtonText(); $('nextBtn').classList.add('show');
-      if(id!==state.answerId) showWrongModal();
+      $('nextBtn').textContent = nextButtonText();
+      $('nextBtn').classList.add('show');
+      showWrongModal();
     }
 
     function advanceQuestion(){
@@ -147,7 +156,7 @@
     function renderAnswers(){ $('answerGrid').innerHTML = state.options.map(signal => `<button class="${answerClass(signal)}" onclick="chooseAnswer('${signal.id}')"><small>${state.stage===1?'Signal name':'Indication'}</small><div>${answerText(signal)}</div></button>`).join(''); }
     function renderStudyGrid(){ $('studyGrid').innerHTML = SIGNALS.map(signal => { const thumbs=signal.variants.slice(0,4).map(v=>`<div class="thumb">${signalSvg(v,false)}</div>`).join(''); return `<div class="study-card"><div><div class="thumb-strip">${thumbs}</div></div><div><div class="study-rule">Rule ${signal.id}</div><div class="variant-count">${signal.variants.length} illustrated aspect${signal.variants.length===1?'':'s'}</div><h3>${signal.name}</h3><p>${signal.indication}</p></div></div>`; }).join(''); }
     function renderStats(){ const pct=Math.round(((state.index + (state.answered ? 1 : 0))/state.round.length)*100); $('questionCount').textContent=`${state.index + 1} / ${state.round.length}`; $('moveCount').textContent=String(state.moves); $('streakCount').textContent=String(state.streak); $('bestStreakCount').textContent=String(state.bestStreak); $('progressFill').style.width=`${pct}%`; $('progressLabel').textContent=`${pct}%`; }
-    function render(){ $('signalBox').innerHTML = state.currentVariant ? signalSvg(state.currentVariant,true) : ''; renderStats(); renderAnswers(); $('nextBtn').classList.toggle('show', state.answered); if(state.answered) $('nextBtn').textContent = nextButtonText(); }
+    function render(){ $('signalBox').innerHTML = state.currentVariant ? signalSvg(state.currentVariant,true) : ''; renderStats(); renderAnswers(); const showManualNext = state.answered && state.selectedId !== state.answerId; $('nextBtn').classList.toggle('show', showManualNext); if(showManualNext) $('nextBtn').textContent = nextButtonText(); }
 
     $('newRoundBtn').addEventListener('click', ()=>newRound(6));
     $('practiceTenBtn').addEventListener('click', ()=>newRound(10));
