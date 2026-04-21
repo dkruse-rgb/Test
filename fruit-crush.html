@@ -218,7 +218,7 @@
         <div id="overlay" class="overlay">
           <div class="overlay-card">
             <h2 id="overlayTitle">Ready?</h2>
-            <p id="overlayText">Swap neighboring fruit to make matches of 3 or more. Big cascades pile on extra points. Hit the target before you run out of moves.</p>
+            <p id="overlayText">Swipe a fruit toward a neighboring fruit to swap. You can still tap one fruit and then another too. Hit the target before you run out of moves.</p>
             <button id="overlayBtn" style="width:100%;">Start Crush</button>
           </div>
         </div>
@@ -226,7 +226,7 @@
 
       <div class="side-panel">
         <h2>How it works</h2>
-        <p>Tap or click one fruit, then tap a neighboring fruit to swap. Only real matches count. Bad swaps bounce right back like they never happened.</p>
+        <p>On mobile, swipe a fruit toward the neighboring fruit you want to swap with. On desktop, click one fruit and then a neighboring fruit. Only real matches count.</p>
         <p>Every match scores points. Cascades score more. Beat the target inside the move limit and the next round gets meaner.</p>
         <div class="legend">
           <div class="legend-item"><span class="fruit-dot" style="background:#ef4444"></span>Apple</div>
@@ -265,6 +265,7 @@
     const GRID = 8;
     const CELL = canvas.width / GRID;
     const BEST_KEY = 'fruit-crush-best-score';
+    const SWIPE_THRESHOLD = 18;
     const FRUITS = [
       { name: 'apple', color: '#ef4444', leaf: '#22c55e', glyph: '🍎' },
       { name: 'orange', color: '#f59e0b', leaf: '#16a34a', glyph: '🍊' },
@@ -316,6 +317,8 @@
     let best = Number(localStorage.getItem(BEST_KEY) || 0);
     let started = false;
     let busy = false;
+    let pointerStart = null;
+    let swipeHandled = false;
 
     bestEl.textContent = String(best);
 
@@ -588,6 +591,19 @@
       return { r, c };
     }
 
+    function neighborFromSwipe(start, dx, dy) {
+      if (Math.abs(dx) < SWIPE_THRESHOLD && Math.abs(dy) < SWIPE_THRESHOLD) return null;
+      let dr = 0;
+      let dc = 0;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        dc = dx > 0 ? 1 : -1;
+      } else {
+        dr = dy > 0 ? 1 : -1;
+      }
+      const next = { r: start.r + dr, c: start.c + dc };
+      return inBounds(next.r, next.c) ? next : null;
+    }
+
     async function handlePick(pos) {
       if (!started || busy) return;
       if (!selected) {
@@ -611,6 +627,13 @@
       await trySwap(first, pos);
     }
 
+    async function handleSwipe(start, end) {
+      if (!started || busy || !start || !end) return;
+      selected = null;
+      drawBoard();
+      await trySwap(start, end);
+    }
+
     function resetRound(full = true) {
       if (full) {
         score = 0;
@@ -624,12 +647,14 @@
       }
       selected = null;
       busy = false;
+      pointerStart = null;
+      swipeHandled = false;
       createBoard();
       updateStats();
       drawBoard();
       say(pick(lines.start));
       if (full) {
-        setOverlay('Ready?', 'Swap neighboring fruit to make matches of 3 or more. Big cascades pile on extra points. Hit the target before you run out of moves.', 'Start Crush');
+        setOverlay('Ready?', 'Swipe a fruit toward a neighboring fruit to swap. You can still tap one fruit and then another too. Hit the target before you run out of moves.', 'Start Crush');
       }
     }
 
@@ -655,10 +680,39 @@
     }
 
     canvas.addEventListener('click', async e => {
+      if (swipeHandled) {
+        swipeHandled = false;
+        return;
+      }
       const pos = cellFromPointer(e.clientX, e.clientY);
       if (!pos) return;
       if (!started) startRound();
       await handlePick(pos);
+    });
+
+    canvas.addEventListener('pointerdown', e => {
+      const pos = cellFromPointer(e.clientX, e.clientY);
+      if (!pos) return;
+      pointerStart = { pos, x: e.clientX, y: e.clientY };
+      swipeHandled = false;
+    });
+
+    canvas.addEventListener('pointerup', async e => {
+      if (!pointerStart) return;
+      const start = pointerStart;
+      pointerStart = null;
+      const dx = e.clientX - start.x;
+      const dy = e.clientY - start.y;
+      const targetPos = neighborFromSwipe(start.pos, dx, dy);
+      if (!targetPos) return;
+      swipeHandled = true;
+      if (!started) startRound();
+      await handleSwipe(start.pos, targetPos);
+    });
+
+    canvas.addEventListener('pointercancel', () => {
+      pointerStart = null;
+      swipeHandled = false;
     });
 
     overlayBtn.addEventListener('click', () => {
