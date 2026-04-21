@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Railroad Signals Matching Game</title>
+  <title>Railroad Signals – Picture Matching Game</title>
   <style>
     :root {
-      --bg1: #0f172a;
+      --bg1: #0b1220;
       --bg2: #111827;
       --panel: rgba(255,255,255,0.07);
+      --panel-2: rgba(255,255,255,0.05);
       --border: rgba(255,255,255,0.12);
       --text: #e5e7eb;
       --muted: #94a3b8;
@@ -16,57 +17,67 @@
       --good: #22c55e;
       --bad: #ef4444;
       --gold: #f59e0b;
+      --shadow: rgba(0,0,0,0.28);
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
+      min-height: 100vh;
       font-family: Arial, Helvetica, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at top, rgba(56,189,248,0.12), transparent 28%),
+        radial-gradient(circle at top, rgba(56,189,248,.12), transparent 28%),
+        radial-gradient(circle at bottom, rgba(245,158,11,.08), transparent 24%),
         linear-gradient(180deg, var(--bg1), var(--bg2));
-      min-height: 100vh;
     }
     .wrap {
-      width: min(1200px, calc(100% - 24px));
+      width: min(1240px, calc(100% - 24px));
       margin: 0 auto;
-      padding: 18px 0 32px;
+      padding: 18px 0 34px;
+    }
+    .topbar,
+    .hero,
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px var(--shadow);
+      backdrop-filter: blur(10px);
     }
     .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 20px;
+      gap: 14px;
       padding: 14px 16px;
-      backdrop-filter: blur(10px);
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
-    .brand { font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+    .brand {
+      font-weight: 900;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
     .topbar a {
       color: var(--text);
       text-decoration: none;
-      border: 1px solid var(--border);
+      font-weight: 800;
       padding: 10px 14px;
       border-radius: 999px;
-      font-weight: 700;
-      background: rgba(255,255,255,0.05);
-    }
-    .hero, .panel {
-      background: var(--panel);
       border: 1px solid var(--border);
-      border-radius: 26px;
-      padding: 20px;
-      box-shadow: 0 20px 50px rgba(0,0,0,0.22);
+      background: rgba(255,255,255,.05);
     }
+    .hero { padding: 20px; }
     h1 {
-      margin: 0 0 10px;
-      font-size: clamp(2rem, 5vw, 3.2rem);
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 4.8vw, 3.25rem);
       line-height: .98;
     }
-    .subtitle { color: var(--muted); max-width: 70ch; line-height: 1.6; }
+    h2 { margin: 0 0 12px; font-size: 1.45rem; }
+    .subtitle {
+      color: var(--muted);
+      line-height: 1.65;
+      max-width: 72ch;
+    }
     .stats {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -74,17 +85,27 @@
       margin-top: 18px;
     }
     .stat {
-      background: rgba(255,255,255,0.05);
+      background: var(--panel-2);
       border: 1px solid var(--border);
       border-radius: 18px;
       padding: 14px;
     }
-    .stat strong { display:block; font-size: 1.5rem; margin-top: 4px; }
+    .stat .label {
+      color: var(--muted);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .stat strong {
+      display: block;
+      margin-top: 4px;
+      font-size: 1.55rem;
+    }
     .controls {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
       margin-top: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     button {
       border: 0;
@@ -96,80 +117,147 @@
     }
     button:hover { transform: translateY(-1px); }
     .primary { background: var(--accent); color: #001018; }
-    .secondary { background: rgba(255,255,255,0.07); color: var(--text); border: 1px solid var(--border); }
-    .progress-bar {
+    .secondary {
+      color: var(--text);
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+    }
+    .progress-wrap {
+      margin-top: 16px;
+      display: grid;
+      gap: 8px;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    .progress {
       height: 12px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.08);
+      background: rgba(255,255,255,.08);
       overflow: hidden;
-      margin-top: 16px;
     }
-    .progress-fill {
-      height: 100%;
+    .progress > div {
       width: 0%;
+      height: 100%;
       background: linear-gradient(90deg, var(--accent), var(--good));
       transition: width .25s ease;
     }
-    .layout {
+    .message {
+      display: none;
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      font-weight: 700;
+    }
+    .message.show { display: block; }
+    .message.good { background: rgba(34,197,94,.14); border: 1px solid rgba(34,197,94,.35); }
+    .message.bad { background: rgba(239,68,68,.14); border: 1px solid rgba(239,68,68,.35); }
+    .message.done { background: rgba(245,158,11,.14); border: 1px solid rgba(245,158,11,.35); }
+    .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
       margin-top: 18px;
     }
-    .list {
-      display: grid;
-      gap: 10px;
-      margin-top: 10px;
-    }
+    .panel { padding: 18px; }
+    .list { display: grid; gap: 10px; }
     .card {
       width: 100%;
       text-align: left;
-      background: rgba(255,255,255,0.05);
       color: var(--text);
+      background: var(--panel-2);
       border: 1px solid var(--border);
       border-radius: 18px;
-      padding: 14px;
-      min-height: 88px;
+      padding: 12px;
+      min-height: 112px;
+      transition: border-color .15s ease, background .15s ease, transform .15s ease;
     }
-    .card small {
-      display: block;
+    .card:hover { transform: translateY(-1px); }
+    .card.selected { border-color: var(--accent); background: rgba(56,189,248,.12); }
+    .card.matched { border-color: var(--good); background: rgba(34,197,94,.12); }
+    .card.wrong { border-color: var(--bad); background: rgba(239,68,68,.12); }
+    .signal-card {
+      display: grid;
+      grid-template-columns: 108px 1fr;
+      gap: 12px;
+      align-items: center;
+    }
+    .signal-box {
+      width: 108px;
+      height: 96px;
+      border-radius: 16px;
+      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .signal-meta small,
+    .indication-card small,
+    .study-rule {
       color: var(--muted);
       font-size: .78rem;
-      letter-spacing: .05em;
       text-transform: uppercase;
+      letter-spacing: .06em;
+      display: block;
       margin-bottom: 6px;
     }
-    .card.selected { border-color: var(--accent); background: rgba(56,189,248,0.12); }
-    .card.matched { border-color: var(--good); background: rgba(34,197,94,0.14); }
-    .card.wrong { border-color: var(--bad); background: rgba(239,68,68,0.14); }
-    .message {
-      margin-top: 14px;
-      padding: 14px 16px;
-      border-radius: 18px;
-      display: none;
-      font-weight: 700;
+    .signal-meta strong { font-size: 1rem; }
+    .indication-card {
+      display: grid;
+      gap: 6px;
+      min-height: 112px;
+      align-content: start;
     }
-    .message.show { display: block; }
-    .message.good { background: rgba(34,197,94,0.14); border: 1px solid rgba(34,197,94,0.35); }
-    .message.bad { background: rgba(239,68,68,0.14); border: 1px solid rgba(239,68,68,0.35); }
-    .message.done { background: rgba(245,158,11,0.14); border: 1px solid rgba(245,158,11,0.35); }
-    .bank {
+    .study-grid {
       margin-top: 18px;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 12px;
     }
-    .mini {
-      background: rgba(255,255,255,0.05);
+    .study-card {
+      background: var(--panel-2);
       border: 1px solid var(--border);
       border-radius: 18px;
       padding: 14px;
+      display: grid;
+      grid-template-columns: 96px 1fr;
+      gap: 12px;
+      align-items: center;
     }
-    .mini .rule { color: var(--muted); font-size: .82rem; text-transform: uppercase; }
-    .mini h3 { margin: 6px 0 8px; font-size: 1rem; }
-    .mini p { margin: 0; color: var(--muted); line-height: 1.5; font-size: .95rem; }
-    @media (max-width: 900px) {
-      .stats, .layout, .bank { grid-template-columns: 1fr; }
+    .study-card h3 {
+      margin: 0 0 6px;
+      font-size: 1rem;
+    }
+    .study-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: .95rem;
+    }
+    .legend {
+      margin-top: 10px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: .95rem;
+    }
+    .legend code {
+      color: var(--text);
+      background: rgba(255,255,255,.06);
+      border: 1px solid var(--border);
+      padding: 2px 6px;
+      border-radius: 8px;
+    }
+    @media (max-width: 980px) {
+      .stats, .grid, .study-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .signal-card, .study-card { grid-template-columns: 1fr; }
+      .signal-box { width: 100%; }
     }
   </style>
 </head>
@@ -181,29 +269,38 @@
     </div>
 
     <section class="hero">
-      <h1>Railroad Signals Matching Game</h1>
-      <div class="subtitle">Match each signal name to its indication. This version is built from the rules shown in your signal pages and is meant for quick study reps on a phone or laptop.</div>
+      <h1>Picture-Based Railroad Signals Matching Game</h1>
+      <div class="subtitle">
+        Match the signal picture to the correct indication. These are representative signal aspect pictures designed for quick study and recognition practice.
+      </div>
 
       <div class="stats">
-        <div class="stat">Pairs matched<strong id="matchedCount">0 / 6</strong></div>
-        <div class="stat">Moves<strong id="moveCount">0</strong></div>
-        <div class="stat">Streak<strong id="streakCount">0</strong></div>
-        <div class="stat">Best streak<strong id="bestStreakCount">0</strong></div>
+        <div class="stat"><div class="label">Pairs matched</div><strong id="matchedCount">0 / 6</strong></div>
+        <div class="stat"><div class="label">Moves</div><strong id="moveCount">0</strong></div>
+        <div class="stat"><div class="label">Current streak</div><strong id="streakCount">0</strong></div>
+        <div class="stat"><div class="label">Best streak</div><strong id="bestStreakCount">0</strong></div>
       </div>
 
       <div class="controls">
-        <button class="primary" id="newRoundBtn">New Round</button>
-        <button class="secondary" id="practiceTenBtn">Practice 10</button>
+        <button id="newRoundBtn" class="primary">New Round</button>
+        <button id="practiceTenBtn" class="secondary">Practice 10</button>
       </div>
 
-      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Round progress</span><span id="progressLabel">0%</span></div>
+        <div class="progress"><div id="progressFill"></div></div>
+      </div>
+
       <div id="message" class="message"></div>
+      <div class="legend">
+        Picture cards show a representative aspect. Flashing lights are shown with a starburst halo. Distant signals include a small <code>D</code> plate.
+      </div>
     </section>
 
-    <section class="layout">
+    <section class="grid">
       <div class="panel">
-        <h2>Signal names</h2>
-        <div id="namesList" class="list"></div>
+        <h2>Signal pictures</h2>
+        <div id="picturesList" class="list"></div>
       </div>
       <div class="panel">
         <h2>Indications</h2>
@@ -212,35 +309,35 @@
     </section>
 
     <section class="panel" style="margin-top:18px;">
-      <h2>Full signal bank</h2>
-      <div id="signalBank" class="bank"></div>
+      <h2>Study bank</h2>
+      <div id="studyGrid" class="study-grid"></div>
     </section>
   </div>
 
   <script>
     const SIGNALS = [
-      { id: '9.1.1', name: 'STOP', indication: 'Stop.' },
-      { id: '9.1.2', name: 'RESTRICTING', indication: 'Proceed at restricted speed.' },
-      { id: '9.1.4', name: 'APPROACH', indication: 'Proceed prepared to stop at next signal; freight trains exceeding 30 MPH or passenger trains exceeding 40 MPH must immediately reduce to that speed consistent with good train handling.' },
-      { id: '9.1.5', name: 'CLEAR', indication: 'Proceed.' },
-      { id: '9.1.6', name: 'ADVANCE APPROACH', indication: 'Proceed prepared to stop at second signal.' },
-      { id: '9.1.7', name: 'APPROACH DIVERGING', indication: 'Proceed prepared to advance on diverging route at the next signal at prescribed speed through turnout.' },
-      { id: '9.1.8', name: 'DIVERGING ADVANCE APPROACH', indication: 'Proceed on diverging route at prescribed speed through turnout, prepared to stop at second signal.' },
-      { id: '9.1.9', name: 'DIVERGING APPROACH', indication: 'Proceed on diverging route at prescribed speed through turnout prepared to stop at next signal.' },
-      { id: '9.1.10', name: 'DIVERGING CLEAR', indication: 'Proceed on diverging route at prescribed speed through turnout.' },
-      { id: '9.1.11', name: 'APPROACH RESTRICTING', indication: 'Proceed prepared to pass next signal at restricted speed.' },
-      { id: '9.1.12', name: 'DISTANT SIGNAL CLEAR', indication: 'Proceed. If delayed between this signal and next signal Rule 9.9 or Rule 9.9.1 applies.' },
-      { id: '9.1.13', name: 'DISTANT SIGNAL APPROACH', indication: 'Proceed prepared to stop short of next signal.' },
-      { id: '9.1.14', name: 'DISTANT SIGNAL APPROACH DIVERGING', indication: 'Proceed prepared to advance on diverging route at the next signal at prescribed speed through turnout.' },
-      { id: '9.1.15', name: 'DISTANT SIGNAL APPROACH RESTRICTING', indication: 'Proceed prepared to pass next signal at restricted speed.' },
-      { id: '9.1.16', name: 'DISTANT SIGNAL RESTRICTING', indication: 'Proceed at restricted speed.' }
+      { id: '9.1.1', name: 'STOP', indication: 'Stop.', lights: ['red'] },
+      { id: '9.1.2', name: 'RESTRICTING', indication: 'Proceed at restricted speed.', lights: ['lunar'] },
+      { id: '9.1.4', name: 'APPROACH', indication: 'Proceed prepared to stop at next signal; freight trains exceeding 30 MPH or passenger trains exceeding 40 MPH must immediately reduce to that speed consistent with good train handling.', lights: ['yellow'] },
+      { id: '9.1.5', name: 'CLEAR', indication: 'Proceed.', lights: ['green'] },
+      { id: '9.1.6', name: 'ADVANCE APPROACH', indication: 'Proceed prepared to stop at second signal.', lights: ['yellow*'] },
+      { id: '9.1.7', name: 'APPROACH DIVERGING', indication: 'Proceed prepared to advance on diverging route at the next signal at prescribed speed through turnout.', lights: ['yellow', 'green'] },
+      { id: '9.1.8', name: 'DIVERGING ADVANCE APPROACH', indication: 'Proceed on diverging route at prescribed speed through turnout, prepared to stop at second signal.', lights: ['red', 'yellow*'] },
+      { id: '9.1.9', name: 'DIVERGING APPROACH', indication: 'Proceed on diverging route at prescribed speed through turnout prepared to stop at next signal.', lights: ['red', 'yellow'] },
+      { id: '9.1.10', name: 'DIVERGING CLEAR', indication: 'Proceed on diverging route at prescribed speed through turnout.', lights: ['red', 'green'] },
+      { id: '9.1.11', name: 'APPROACH RESTRICTING', indication: 'Proceed prepared to pass next signal at restricted speed.', lights: ['yellow', 'lunar'] },
+      { id: '9.1.12', name: 'DISTANT SIGNAL CLEAR', indication: 'Proceed. If delayed between this signal and next signal Rule 9.9 or Rule 9.9.1 applies.', lights: ['green'], plate: 'D' },
+      { id: '9.1.13', name: 'DISTANT SIGNAL APPROACH', indication: 'Proceed prepared to stop short of next signal.', lights: ['yellow'], plate: 'D' },
+      { id: '9.1.14', name: 'DISTANT SIGNAL APPROACH DIVERGING', indication: 'Proceed prepared to advance on diverging route at the next signal at prescribed speed through turnout.', lights: ['yellow', 'green'], plate: 'D' },
+      { id: '9.1.15', name: 'DISTANT SIGNAL APPROACH RESTRICTING', indication: 'Proceed prepared to pass next signal at restricted speed.', lights: ['yellow*', 'lunar'], plate: 'D' },
+      { id: '9.1.16', name: 'DISTANT SIGNAL RESTRICTING', indication: 'Proceed at restricted speed.', lights: ['red'], plate: 'D' }
     ];
 
     const state = {
       round: [],
-      names: [],
+      pictures: [],
       indications: [],
-      selectedName: null,
+      selectedPicture: null,
       selectedIndication: null,
       matched: new Set(),
       wrong: [],
@@ -250,8 +347,8 @@
       size: 6
     };
 
-    function shuffle(arr) {
-      const copy = [...arr];
+    function shuffle(items) {
+      const copy = [...items];
       for (let i = copy.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [copy[i], copy[j]] = [copy[j], copy[i]];
@@ -259,19 +356,58 @@
       return copy;
     }
 
-    function newRound(size = 6) {
-      state.size = size;
-      state.round = shuffle(SIGNALS).slice(0, size);
-      state.names = shuffle(state.round.map(s => ({ id: s.id, label: s.name, rule: s.id })));
-      state.indications = shuffle(state.round.map(s => ({ id: s.id, label: s.indication, rule: s.id })));
-      state.selectedName = null;
-      state.selectedIndication = null;
-      state.matched = new Set();
-      state.wrong = [];
-      state.moves = 0;
-      state.streak = 0;
-      render();
-      showMessage('New round loaded.', 'good');
+    function lightColor(light) {
+      const base = light.replace('*', '');
+      if (base === 'red') return '#ef4444';
+      if (base === 'yellow') return '#fde047';
+      if (base === 'green') return '#22c55e';
+      if (base === 'lunar') return '#e5e7eb';
+      return '#64748b';
+    }
+
+    function signalSvg(signal) {
+      const lights = signal.lights;
+      const height = 88;
+      const width = 80;
+      const housingH = Math.max(34, lights.length * 22 + 12);
+      const housingY = 10;
+      const housingX = 20;
+      const cx = 40;
+      const startY = housingY + 16;
+      let rays = '';
+      let circles = '';
+      lights.forEach((light, i) => {
+        const cy = startY + i * 22;
+        const color = lightColor(light);
+        const flashing = light.includes('*');
+        if (flashing) {
+          for (let a = 0; a < 360; a += 45) {
+            const r1 = 10;
+            const r2 = 14;
+            const rad = (a * Math.PI) / 180;
+            const x1 = cx + Math.cos(rad) * r1;
+            const y1 = cy + Math.sin(rad) * r1;
+            const x2 = cx + Math.cos(rad) * r2;
+            const y2 = cy + Math.sin(rad) * r2;
+            rays += `<line x1="${x1.toFixed(2)}" y1="${y1.toFixed(2)}" x2="${x2.toFixed(2)}" y2="${y2.toFixed(2)}" stroke="${color}" stroke-width="2" stroke-linecap="round" opacity="0.95" />`;
+          }
+        }
+        circles += `<circle cx="${cx}" cy="${cy}" r="7.5" fill="${color}" stroke="rgba(255,255,255,.28)" stroke-width="1.5" />`;
+      });
+
+      const plate = signal.plate
+        ? `<rect x="31" y="${housingY + housingH + 6}" width="18" height="14" rx="3" fill="#f8fafc" opacity="0.92" />
+           <text x="40" y="${housingY + housingH + 16}" text-anchor="middle" font-size="10" font-family="Arial" fill="#0f172a" font-weight="700">${signal.plate}</text>`
+        : '';
+
+      return `
+      <svg viewBox="0 0 ${width} ${height}" width="80" height="88" aria-label="${signal.name}" role="img">
+        <rect x="38" y="${housingY + housingH}" width="4" height="${signal.plate ? 16 : 22}" rx="2" fill="#71717a" />
+        <rect x="${housingX}" y="${housingY}" width="40" height="${housingH}" rx="18" fill="#0b0b0f" stroke="#5b6472" stroke-width="2" />
+        ${rays}
+        ${circles}
+        ${plate}
+      </svg>`;
     }
 
     function showMessage(text, type) {
@@ -280,48 +416,66 @@
       box.className = 'message show ' + type;
     }
 
-    function clearWrongSoon() {
-      window.setTimeout(() => {
-        state.wrong = [];
-        renderLists();
-      }, 700);
+    function newRound(size = 6) {
+      state.size = size;
+      state.round = shuffle(SIGNALS).slice(0, size);
+      state.pictures = shuffle(state.round.map(s => ({ id: s.id })));
+      state.indications = shuffle(state.round.map(s => ({ id: s.id, indication: s.indication })));
+      state.selectedPicture = null;
+      state.selectedIndication = null;
+      state.matched = new Set();
+      state.wrong = [];
+      state.moves = 0;
+      state.streak = 0;
+      render();
+      showMessage('New picture round loaded.', 'good');
     }
 
-    function pickName(id) {
+    function cardClass(id) {
+      if (state.matched.has(id)) return 'card matched';
+      if (state.wrong.includes(id)) return 'card wrong';
+      if (state.selectedPicture === id || state.selectedIndication === id) return 'card selected';
+      return '';
+    }
+
+    function pickPicture(id) {
       if (state.matched.has(id)) return;
       if (state.selectedIndication) {
         evaluate(id, state.selectedIndication);
       } else {
-        state.selectedName = id;
+        state.selectedPicture = id;
         renderLists();
       }
     }
 
     function pickIndication(id) {
       if (state.matched.has(id)) return;
-      if (state.selectedName) {
-        evaluate(state.selectedName, id);
+      if (state.selectedPicture) {
+        evaluate(state.selectedPicture, id);
       } else {
         state.selectedIndication = id;
         renderLists();
       }
     }
 
-    function evaluate(nameId, indicationId) {
+    function evaluate(pictureId, indicationId) {
       state.moves += 1;
-      if (nameId === indicationId) {
-        state.matched.add(nameId);
+      if (pictureId === indicationId) {
+        state.matched.add(pictureId);
         state.streak += 1;
-        if (state.streak > state.bestStreak) state.bestStreak = state.streak;
+        state.bestStreak = Math.max(state.bestStreak, state.streak);
         state.wrong = [];
         showMessage('Correct match.', 'good');
       } else {
-        state.wrong = [nameId, indicationId];
+        state.wrong = [pictureId, indicationId];
         state.streak = 0;
         showMessage('Not a match. Try again.', 'bad');
-        clearWrongSoon();
+        setTimeout(() => {
+          state.wrong = [];
+          renderLists();
+        }, 700);
       }
-      state.selectedName = null;
+      state.selectedPicture = null;
       state.selectedIndication = null;
       render();
       if (state.matched.size === state.round.length) {
@@ -329,47 +483,61 @@
       }
     }
 
-    function cardClass(id) {
-      if (state.matched.has(id)) return 'card matched';
-      if (state.wrong.includes(id)) return 'card wrong';
-      if (state.selectedName === id || state.selectedIndication === id) return 'card selected';
-      return 'card';
+    function getSignal(id) {
+      return SIGNALS.find(s => s.id === id);
     }
 
     function renderLists() {
-      const namesList = document.getElementById('namesList');
+      const picturesList = document.getElementById('picturesList');
       const indicationsList = document.getElementById('indicationsList');
-      namesList.innerHTML = state.names.map(item => `
-        <button class="${cardClass(item.id)}" onclick="pickName('${item.id.replace(/'/g, "\\'")}')">
-          <small>Rule ${item.rule}</small>
-          <strong>${item.label}</strong>
-        </button>
-      `).join('');
+
+      picturesList.innerHTML = state.pictures.map(item => {
+        const signal = getSignal(item.id);
+        return `
+          <button class="card ${cardClass(item.id)}" onclick="pickPicture('${item.id}')">
+            <div class="signal-card">
+              <div class="signal-box">${signalSvg(signal)}</div>
+              <div class="signal-meta">
+                <small>Rule ${signal.id}</small>
+                <strong>${signal.name}</strong>
+              </div>
+            </div>
+          </button>
+        `;
+      }).join('');
+
       indicationsList.innerHTML = state.indications.map(item => `
-        <button class="${cardClass(item.id)}" onclick="pickIndication('${item.id.replace(/'/g, "\\'")}')">
-          <small>Indication</small>
-          <div>${item.label}</div>
+        <button class="card ${cardClass(item.id)}" onclick="pickIndication('${item.id}')">
+          <div class="indication-card">
+            <small>Indication</small>
+            <div>${item.indication}</div>
+          </div>
         </button>
       `).join('');
     }
 
-    function renderBank() {
-      const bank = document.getElementById('signalBank');
-      bank.innerHTML = SIGNALS.map(signal => `
-        <div class="mini">
-          <div class="rule">Rule ${signal.id}</div>
-          <h3>${signal.name}</h3>
-          <p>${signal.indication}</p>
+    function renderStudyGrid() {
+      const studyGrid = document.getElementById('studyGrid');
+      studyGrid.innerHTML = SIGNALS.map(signal => `
+        <div class="study-card">
+          <div class="signal-box" style="width:96px; height:94px;">${signalSvg(signal)}</div>
+          <div>
+            <div class="study-rule">Rule ${signal.id}</div>
+            <h3>${signal.name}</h3>
+            <p>${signal.indication}</p>
+          </div>
         </div>
       `).join('');
     }
 
     function renderStats() {
+      const pct = Math.round((state.matched.size / state.round.length) * 100);
       document.getElementById('matchedCount').textContent = `${state.matched.size} / ${state.round.length}`;
       document.getElementById('moveCount').textContent = String(state.moves);
       document.getElementById('streakCount').textContent = String(state.streak);
       document.getElementById('bestStreakCount').textContent = String(state.bestStreak);
-      document.getElementById('progressFill').style.width = `${(state.matched.size / state.round.length) * 100}%`;
+      document.getElementById('progressFill').style.width = `${pct}%`;
+      document.getElementById('progressLabel').textContent = `${pct}%`;
     }
 
     function render() {
@@ -380,9 +548,9 @@
     document.getElementById('newRoundBtn').addEventListener('click', () => newRound(6));
     document.getElementById('practiceTenBtn').addEventListener('click', () => newRound(10));
 
-    renderBank();
+    renderStudyGrid();
     newRound(6);
-    window.pickName = pickName;
+    window.pickPicture = pickPicture;
     window.pickIndication = pickIndication;
   </script>
 </body>
