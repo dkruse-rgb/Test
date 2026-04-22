@@ -228,56 +228,23 @@
     .score-pill:nth-child(2) { animation-delay: .4s; } .score-pill:nth-child(3) { animation-delay: .8s; } .score-pill:nth-child(4) { animation-delay: 1.2s; }
     .score-pill strong { display: block; font-size: 1.08rem; margin-bottom: 0.15rem; }
     @keyframes panelHum { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
-    .cabinet-grid .preview-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: 0.65rem; margin-top: 1rem; }
-    .preview { aspect-ratio: 1 / 1; border-radius: 18px; background: linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px), #020617; background-size: 10% 10%, 10% 10%, auto; position: relative; overflow: hidden; animation: previewIdle 5.2s ease-in-out infinite; }
-    .preview:nth-child(2) { animation-delay: .3s; } .preview:nth-child(3) { animation-delay: .6s; } .preview:nth-child(4) { animation-delay: .9s; } .preview:nth-child(5) { animation-delay: 1.2s; } .preview:nth-child(6) { animation-delay: 1.5s; } .preview:nth-child(7) { animation-delay: 1.8s; } .preview:nth-child(8) { animation-delay: 2.1s; } .preview:nth-child(9) { animation-delay: 2.4s; }
-    @keyframes previewIdle { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-3px) scale(1.015); } }
-    .featured-preview { box-shadow: 0 0 0 rgba(245,158,11,0); animation: previewIdle 5.2s ease-in-out infinite, featuredGlow 3.8s ease-in-out infinite; }
-    @keyframes featuredGlow { 0%,100% { box-shadow: 0 0 0 rgba(245,158,11,0); } 50% { box-shadow: 0 0 20px rgba(245,158,11,0.22); } }
-    .snake-preview { border: 2px solid rgba(56,189,248,0.55); } .breakout-preview { border: 2px solid rgba(245,158,11,0.55); } .pong-preview { border: 2px solid rgba(34,197,94,0.55); } .mine-preview { border: 2px solid rgba(239,68,68,0.55); } .fish-preview { border: 2px solid rgba(14,165,233,0.6); } .casino-preview { border: 2px solid rgba(245,158,11,0.7); } .gallery-preview { border: 2px solid rgba(56,189,248,0.7); } .quiz-preview { border: 2px solid rgba(245,158,11,0.65); } .helper-preview { border: 2px solid rgba(148,163,184,0.65); }
-    .snake-seg,.food,.brick,.ball,.paddle,.pong-paddle,.pong-ball,.net,.mine-cell,.fish-shape,.hook-line,.hook-dot,.chip-dot,.card-mini,.target-dot,.cross-dot,.quiz-card,.quiz-badge,.helper-rail,.helper-train,.helper-person,.helper-top { position:absolute; border-radius:8px; }
-    .snake-seg,.food { width:18%; height:18%; } .snake-seg { background:var(--green); } .snake-head { background:var(--accent); } .food { background:var(--red); }
-    .seg1 { left:38%; top:50%; animation: snakeHeadBob 2.2s ease-in-out infinite; } .seg2 { left:22%; top:50%; } .seg3 { left:6%; top:50%; } .apple { left:64%; top:22%; animation: targetPulse 1.8s ease-in-out infinite; }
-    @keyframes snakeHeadBob { 0%,100% { transform: translateX(0); } 50% { transform: translateX(5px); } }
-    .brick { width:20%; height:10%; border-radius:6px; } .b1 { left:8%; top:10%; background:#f59e0b; } .b2 { left:31%; top:10%; background:#ef4444; } .b3 { left:54%; top:10%; background:#38bdf8; } .b4 { left:20%; top:23%; background:#22c55e; } .b5 { left:43%; top:23%; background:#a855f7; }
-    .paddle { width:34%; height:8%; left:33%; bottom:8%; background:var(--accent); border-radius:999px; animation: paddleSlide 2.6s ease-in-out infinite; }
-    .ball { width:10%; height:10%; left:58%; bottom:22%; background:#e2e8f0; border-radius:999px; animation: breakoutBall 2.6s ease-in-out infinite; }
-    @keyframes paddleSlide { 0%,100% { transform: translateX(0); } 50% { transform: translateX(-10px); } }
-    @keyframes breakoutBall { 0% { transform: translate(0,0); } 25% { transform: translate(-16px,-12px); } 50% { transform: translate(-28px,-28px); } 75% { transform: translate(-6px,-16px); } 100% { transform: translate(0,0); } }
-    .pong-paddle { width:8%; height:34%; background:var(--accent); border-radius:999px; } .pong-left { left:8%; top:33%; animation: pongLeft 2.4s ease-in-out infinite; } .pong-right { right:8%; top:25%; background:var(--green); animation: pongRight 2.8s ease-in-out infinite; } .pong-ball { width:10%; height:10%; left:47%; top:44%; background:#e2e8f0; border-radius:999px; animation: pongBall 2s linear infinite; } .net { left:49%; top:0; width:2%; height:100%; background:repeating-linear-gradient(to bottom, rgba(255,255,255,.18) 0 10%, transparent 10% 18%); border-radius:0; }
-    @keyframes pongLeft { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-    @keyframes pongRight { 0%,100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
-    @keyframes pongBall { 0% { transform: translate(-12px,-8px); } 50% { transform: translate(14px,8px); } 100% { transform: translate(-12px,-8px); } }
-    .mine-cell { width:22%; height:22%; background:#1e293b; border:1px solid rgba(255,255,255,.08); } .m1 { left:12%; top:12%; } .m2 { left:38%; top:12%; background:#0b1220; color:#60a5fa; animation: mineBlink 4s steps(1) infinite; } .m3 { left:64%; top:12%; background:rgba(245,158,11,.18); } .m4 { left:12%; top:38%; background:#0b1220; color:#22c55e; } .m5 { left:38%; top:38%; background:rgba(239,68,68,.18); animation: bombGlow 1.9s ease-in-out infinite; }
-    @keyframes mineBlink { 0%,85% { opacity: 1; } 86%,100% { opacity: .65; } }
-    @keyframes bombGlow { 0%,100% { box-shadow: 0 0 0 rgba(239,68,68,0); } 50% { box-shadow: 0 0 16px rgba(239,68,68,0.28); } }
-    .fish-water { position:absolute; inset:0; background:linear-gradient(180deg, #7dd3fc 0%, #38bdf8 22%, #1d4ed8 23%, #1e3a8a 100%); } .fish-boat { position:absolute; left:18px; top:22px; width:56px; height:16px; background:#92400e; clip-path:polygon(0 0,100% 0,84% 100%,16% 100%); animation: boatRock 2.8s ease-in-out infinite; } .fish-shape { width:34px; height:18px; border-radius:999px; background:var(--gold); } .fish-shape.small { background:#38bdf8; left:56px; top:68px; animation: fishSwim1 2.7s ease-in-out infinite; } .fish-shape.medium { background:#22c55e; left:30px; top:112px; animation: fishSwim2 3s ease-in-out infinite; }
-    .hook-line { width:2px; background:#e2e8f0; } .hook-dot { width:10px; height:10px; border-radius:999px; background:#f8fafc; }
-    @keyframes boatRock { 0%,100% { transform: rotate(0deg); } 50% { transform: rotate(-3deg); } }
-    @keyframes fishSwim1 { 0%,100% { transform: translateX(0); } 50% { transform: translateX(8px); } }
-    @keyframes fishSwim2 { 0%,100% { transform: translateX(0); } 50% { transform: translateX(-10px); } }
-    .casino-felt { position:absolute; inset:0; background:radial-gradient(circle at center, #14532d, #0b3b20); } .card-mini { width:28px; height:40px; background:#f8fafc; color:#0f172a; border:1px solid rgba(15,23,42,.1); padding:4px; font-size:12px; font-weight:900; animation: casinoCardFloat 3.2s ease-in-out infinite; } .card-mini.red { color:#b91c1c; animation-delay: .5s; } .chip-dot { width:26px; height:26px; border-radius:999px; background:#f59e0b; border:2px solid #fde68a; animation: chipPulse 2.4s ease-in-out infinite; } .chip-dot.red { background:#ef4444; border-color:#fecaca; animation-delay: .3s; }
-    @keyframes casinoCardFloat { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-3px) rotate(-2deg); } }
-    @keyframes chipPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
-    .gallery-bg { position:absolute; inset:0; background:linear-gradient(180deg, #040b15, #101826 55%, #2b1e14 100%); } .target-dot { border-radius:999px; animation: targetPulse 1.8s ease-in-out infinite; } .target-dot:nth-child(3) { animation-delay: .25s; } .target-dot:nth-child(4) { animation-delay: .5s; } .cross-dot { width:38px; height:38px; left:50%; top:55%; transform:translate(-50%,-50%); border:2px solid rgba(255,255,255,.7); background:transparent; animation: crosshairSweep 3.6s ease-in-out infinite; }
-    .quiz-card { left:18px; top:18px; right:18px; bottom:18px; border-radius:14px; background: linear-gradient(180deg, #1e293b, #0f172a); border:1px solid rgba(255,255,255,.08); }
-    .quiz-badge { left:14px; top:14px; padding: 4px 8px; border-radius: 999px; background: rgba(245,158,11,.15); color: #fcd34d; font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
-    .quiz-line { position:absolute; left:14px; right:14px; height:8px; background: rgba(255,255,255,.08); border-radius: 999px; }
-    .quiz-line.one { top:46px; width:65%; animation: quizLine 2.6s ease-in-out infinite; }
-    .quiz-line.two { top:62px; width:78%; animation: quizLine 2.6s ease-in-out infinite .2s; }
-    .quiz-line.three { top:92px; width:82%; background: rgba(56,189,248,.18); border: 1px solid rgba(56,189,248,.24); animation: quizChoice 2.8s ease-in-out infinite; }
-    .quiz-line.four { top:112px; width:70%; }
-    .quiz-line.five { top:132px; width:76%; }
-    .helper-top { left:0; right:0; top:0; height:28%; background:linear-gradient(180deg,#166534,#14532d); border-radius:0; }
-    .helper-rail { left:0; right:0; height:10%; background:#1f2937; border-radius:0; }
-    .helper-train { width:34%; height:8%; background:#f59e0b; border-radius:8px; animation: helperTrain 2.4s linear infinite; }
-    .helper-train.two { top:56%; background:#38bdf8; animation-duration:2.9s; animation-direction:reverse; }
-    .helper-person { width:12%; height:16%; background:#38bdf8; left:42%; bottom:8%; border-radius:10px; }
-    @keyframes helperTrain { 0% { transform: translateX(-120%); } 100% { transform: translateX(320%); } }
-    @keyframes quizLine { 0%,100% { opacity: .7; } 50% { opacity: 1; } }
-    @keyframes quizChoice { 0%,100% { transform: translateX(0); } 50% { transform: translateX(4px); } }
-    @keyframes targetPulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
-    @keyframes crosshairSweep { 0%,100% { transform: translate(-50%,-50%) translateX(-6px); } 50% { transform: translate(-50%,-50%) translateX(8px); } }
+    .cabinet-list {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: .65rem;
+    }
+    .cabinet-pill {
+      border-radius: 14px;
+      padding: .8rem .9rem;
+      background: rgba(255,255,255,.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      text-align: left;
+      font-size: .92rem;
+      font-weight: 700;
+    }
+    .cabinet-pill strong { display: block; color: var(--text); margin-bottom: .2rem; }
     .section { padding: 0.5rem 0 2.5rem; }
     .section-intro { max-width: 58ch; margin-bottom: 1rem; }
     .leaderboard-shell { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 1rem; }
@@ -311,10 +278,22 @@
     .art-gallery { background:linear-gradient(180deg, #040b15, #101826 55%, #2b1e14 100%); }
     .art-quiz { background:radial-gradient(circle at top, rgba(245,158,11,.14), transparent 35%), linear-gradient(180deg, #111827, #1f2937 55%, #0f172a); }
     .art-helper { background:linear-gradient(180deg, #166534 0 22%, #1f2937 22% 100%); }
+    .art-fruit { background:radial-gradient(circle at top, rgba(245,158,11,.18), transparent 35%), linear-gradient(180deg, #1e293b, #0f172a 60%, #111827); }
+    .snake-trail,.snake-food,.break-brick,.break-ball,.break-paddle,.pong-line,.pong-bar,.pong-dot,.mine-square,.fish-boat,.fish-shape,.hook-line,.hook-dot,.casino-felt,.card-mini,.chip-dot,.target-dot,.cross-dot,.quiz-card,.quiz-badge,.quiz-line,.helper-top,.helper-rail,.helper-train,.helper-person,.fruit-piece { position:absolute; }
+    .snake-trail { width:34px; height:34px; border-radius:8px; background:#22c55e; } .snake-trail.head { background:#38bdf8; } .snake-food { width:28px; height:28px; border-radius:999px; background:#ef4444; }
+    .break-brick { width:52px; height:18px; border-radius:6px; } .break-ball { width:18px; height:18px; border-radius:999px; background:#e2e8f0; } .break-paddle { width:96px; height:16px; border-radius:999px; background:#38bdf8; }
+    .pong-line { left:50%; top:0; bottom:0; width:2px; transform:translateX(-50%); background:repeating-linear-gradient(to bottom, rgba(255,255,255,.18) 0 10%, transparent 10% 18%); } .pong-bar { width:14px; height:78px; border-radius:999px; background:#38bdf8; } .pong-bar.right { background:#22c55e; } .pong-dot { width:18px; height:18px; border-radius:999px; background:#e2e8f0; }
+    .mine-square { width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:900; background:#1e293b; border:1px solid rgba(255,255,255,.08); } .mine-open { background:#0b1220; } .mine-flag { background:rgba(245,158,11,.18); } .mine-hot { background:rgba(239,68,68,.18); }
+    .fish-boat { left:18px; top:22px; width:56px; height:16px; background:#92400e; clip-path:polygon(0 0,100% 0,84% 100%,16% 100%); } .fish-shape { width:34px; height:18px; border-radius:999px; background:#f59e0b; } .fish-shape.small { background:#38bdf8; } .fish-shape.medium { background:#22c55e; } .hook-line { width:2px; background:#e2e8f0; } .hook-dot { width:10px; height:10px; border-radius:999px; background:#f8fafc; }
+    .casino-felt { inset:0; background:radial-gradient(circle at center, #14532d, #0b3b20); } .card-mini { width:28px; height:40px; background:#f8fafc; color:#0f172a; border:1px solid rgba(15,23,42,.1); padding:4px; font-size:12px; font-weight:900; } .card-mini.red { color:#b91c1c; } .chip-dot { width:26px; height:26px; border-radius:999px; background:#f59e0b; border:2px solid #fde68a; } .chip-dot.red { background:#ef4444; border-color:#fecaca; }
+    .target-dot { border-radius:999px; } .cross-dot { width:38px; height:38px; left:50%; top:55%; transform:translate(-50%,-50%); border:2px solid rgba(255,255,255,.7); background:transparent; border-radius:999px; }
+    .quiz-card { left:18px; top:18px; right:18px; bottom:18px; border-radius:14px; background: linear-gradient(180deg, #1e293b, #0f172a); border:1px solid rgba(255,255,255,.08); } .quiz-badge { left:14px; top:14px; padding: 4px 8px; border-radius: 999px; background: rgba(245,158,11,.15); color: #fcd34d; font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; } .quiz-line { left:14px; right:14px; height:8px; background: rgba(255,255,255,.08); border-radius: 999px; } .quiz-line.one { top:46px; width:65%; } .quiz-line.two { top:62px; width:78%; } .quiz-line.three { top:92px; width:82%; background: rgba(56,189,248,.18); border: 1px solid rgba(56,189,248,.24); } .quiz-line.four { top:112px; width:70%; } .quiz-line.five { top:132px; width:76%; }
+    .helper-top { left:0; right:0; top:0; height:28%; background:linear-gradient(180deg,#166534,#14532d); } .helper-rail { left:0; right:0; height:10%; background:#1f2937; } .helper-train { width:34%; height:8%; background:#f59e0b; border-radius:8px; } .helper-train.two { top:56%; background:#38bdf8; } .helper-person { width:12%; height:16%; background:#38bdf8; left:42%; bottom:8%; border-radius:10px; }
+    .fruit-piece { width:36px; height:36px; border-radius:999px; box-shadow: inset 0 0 0 2px rgba(255,255,255,.22); }
     footer { padding: 0.5rem 0 3rem; color: var(--muted); text-align: center; }
-    @media (max-width: 1180px) { .games-grid { grid-template-columns: repeat(4,1fr); } .cabinet-grid .preview-grid { grid-template-columns: repeat(5,1fr); } }
+    @media (max-width: 1180px) { .games-grid { grid-template-columns: repeat(4,1fr); } }
     @media (max-width: 980px) { .hero-panel, .leaderboard-shell, .score-strip, .featured-marquee { grid-template-columns: 1fr 1fr; } .games-grid { grid-template-columns: repeat(3,1fr); } }
-    @media (max-width: 760px) { nav { flex-direction: column; align-items: flex-start; } .hero-panel, .leaderboard-shell, .score-strip, .games-grid, .cabinet-grid .preview-grid, .featured-marquee, .featured-mini-grid { grid-template-columns: 1fr; } .button-row { justify-content: center; } .tile p { min-height: 0; } }
+    @media (max-width: 760px) { nav { flex-direction: column; align-items: flex-start; } .hero-panel, .leaderboard-shell, .score-strip, .games-grid, .featured-marquee, .featured-mini-grid, .cabinet-list { grid-template-columns: 1fr; } .button-row { justify-content: center; } .tile p { min-height: 0; } }
   </style>
 </head>
 <body>
@@ -335,7 +314,7 @@
       <section id="title" class="title-screen">
         <div class="marquee">Insert Coin Energy</div>
         <h1 class="arcade-title">TEST <span>ARCADE</span></h1>
-        <p class="subtitle">A compact little browser arcade with nine cabinets, shared sound controls, and just enough bad influence to wreck an evening.</p>
+        <p class="subtitle">A compact little browser arcade with ten cabinets, shared sound controls, and just enough bad influence to wreck an evening.</p>
         <div class="press-start">Press Start*</div>
         <div class="attract-note">Featured cabinet blinking somewhere on purpose</div>
         <p class="note">*No coin required.</p>
@@ -353,7 +332,7 @@
             <div class="featured-mini-grid">
               <div class="featured-mini"><strong id="featuredType">Blackjack</strong><span>Current spotlight</span></div>
               <div class="featured-mini"><strong id="featuredFlavor">Goblin energy</strong><span>Cabinet flavor</span></div>
-              <div class="featured-mini"><strong>9</strong><span>Total cabinets</span></div>
+              <div class="featured-mini"><strong>10</strong><span>Total cabinets</span></div>
               <div class="featured-mini"><strong>Rotating</strong><span>Attract mode</span></div>
             </div>
           </div>
@@ -372,7 +351,7 @@
               <a class="btn btn-secondary" href="scores.html">Open Hub</a>
             </div>
             <div class="score-strip">
-              <div class="score-pill"><strong>9</strong><span>Cabinets</span></div>
+              <div class="score-pill"><strong>10</strong><span>Cabinets</span></div>
               <div class="score-pill"><strong>Shared</strong><span>Sound toggle</span></div>
               <div class="score-pill"><strong>Local</strong><span>Saved scores</span></div>
               <div class="score-pill"><strong>Fast</strong><span>Jump in</span></div>
@@ -381,17 +360,18 @@
 
           <section class="panel panel-pad cabinet-grid">
             <h2>Arcade lineup</h2>
-            <p class="section-intro">A quick wall of what is waiting inside.</p>
-            <div class="preview-grid" aria-hidden="true">
-              <div class="preview snake-preview"><div class="snake-seg snake-head seg1"></div><div class="snake-seg seg2"></div><div class="snake-seg seg3"></div><div class="food apple"></div></div>
-              <div class="preview breakout-preview"><div class="brick b1"></div><div class="brick b2"></div><div class="brick b3"></div><div class="brick b4"></div><div class="brick b5"></div><div class="paddle"></div><div class="ball"></div></div>
-              <div class="preview pong-preview"><div class="net"></div><div class="pong-paddle pong-left"></div><div class="pong-paddle pong-right"></div><div class="pong-ball"></div></div>
-              <div class="preview mine-preview"><div class="mine-cell m1"></div><div class="mine-cell m2">1</div><div class="mine-cell m3">🚩</div><div class="mine-cell m4">2</div><div class="mine-cell m5">💣</div></div>
-              <div class="preview fish-preview"><div class="fish-water"></div><div class="fish-boat"></div><div class="hook-line" style="left:30px; top:38px; height:54px;"></div><div class="hook-dot" style="left:26px; top:88px;"></div><div class="fish-shape small"></div></div>
-              <div class="preview helper-preview"><div class="helper-top"></div><div class="helper-rail" style="top:30%;"></div><div class="helper-rail" style="top:52%;"></div><div class="helper-train" style="top:33%; left:-26%;"></div><div class="helper-train two" style="left:48%;"></div><div class="helper-person"></div></div>
-              <div class="preview casino-preview featured-preview"><div class="casino-felt"></div><div class="card-mini" style="left:18px; top:22px;">A♠</div><div class="card-mini red" style="left:46px; top:34px;">K♥</div><div class="chip-dot" style="left:22px; top:86px;"></div></div>
-              <div class="preview gallery-preview"><div class="gallery-bg"></div><div class="target-dot" style="width:28px;height:28px;left:12px;top:26px;background:#22c55e;"></div><div class="target-dot" style="width:22px;height:22px;left:58px;top:62px;background:#38bdf8;"></div><div class="cross-dot"></div></div>
-              <div class="preview quiz-preview"><div class="quiz-card"></div><div class="quiz-badge">Quiz</div><div class="quiz-line one"></div><div class="quiz-line two"></div><div class="quiz-line three"></div><div class="quiz-line four"></div><div class="quiz-line five"></div></div>
+            <p class="section-intro">No preview wall now — just the names so the front page stays cleaner and the cabinets do the talking.</p>
+            <div class="cabinet-list">
+              <div class="cabinet-pill"><strong>Snake</strong>Grow, dodge, survive.</div>
+              <div class="cabinet-pill"><strong>Breakout</strong>Angles, panic, recovery.</div>
+              <div class="cabinet-pill"><strong>Pong</strong>Clean duel, rude robot.</div>
+              <div class="cabinet-pill"><strong>Minesweeper</strong>Quiet until it is not.</div>
+              <div class="cabinet-pill"><strong>Jimmy's Big Catch</strong>Cast, hook, reel.</div>
+              <div class="cabinet-pill"><strong>Helper</strong>Track hopping and consequences.</div>
+              <div class="cabinet-pill"><strong>Fruit Crush</strong>Swipe, chain, sparkle.</div>
+              <div class="cabinet-pill"><strong>Greg's Casino</strong>Math and regret.</div>
+              <div class="cabinet-pill"><strong>Chad's Shooting Gallery</strong>Loud target panic.</div>
+              <div class="cabinet-pill"><strong>Rulebook Rumble</strong>Unofficial railroad nonsense.</div>
             </div>
           </section>
         </div>
@@ -427,6 +407,7 @@
           <div class="tile"><div class="cabinet-art art-mine"><div class="mine-square mine-open" style="left:18px; top:22px; color:#60a5fa;">1</div><div class="mine-square mine-flag" style="left:72px; top:22px;">🚩</div><div class="mine-square mine-hot" style="left:72px; top:76px;">💣</div><div class="poster-title">Minesweeper<span class="poster-sub">Reveal • Flag • Outsmart</span></div></div><h3>Minesweeper</h3><p>Quiet until it is not.</p><div class="button-row"><a class="btn btn-primary" href="minesweeper.html">Play</a></div></div>
           <div class="tile"><div class="cabinet-art art-fish"><div class="fish-boat"></div><div class="hook-line" style="left:54px; top:26px; height:70px;"></div><div class="hook-dot" style="left:50px; top:92px;"></div><div class="fish-shape small" style="left:112px; top:62px;"></div><div class="fish-shape medium" style="left:70px; top:108px;"></div><div class="poster-title">Jimmy's Big Catch<span class="poster-sub">Cast • Hook • Reel</span></div></div><h3>Jimmy's Big Catch</h3><p>Relaxed until the timer bites.</p><div class="button-row"><a class="btn btn-primary" href="fishing.html">Play</a></div></div>
           <div class="tile"><div class="cabinet-art art-helper"><div class="helper-top"></div><div class="helper-rail" style="top:30%;"></div><div class="helper-rail" style="top:52%;"></div><div class="helper-train" style="top:33%; left:-26%;"></div><div class="helper-train two" style="left:48%;"></div><div class="helper-person"></div><div class="poster-title">Helper<span class="poster-sub">Cross • Dodge • Report</span></div></div><h3>Helper</h3><p>Railroad Frogger with consequences and a conductor waiting up top.</p><div class="button-row"><a class="btn btn-primary" href="helper.html">Play</a></div></div>
+          <div class="tile"><div class="cabinet-art art-fruit"><div class="fruit-piece" style="left:24px; top:28px; background:#ef4444;"></div><div class="fruit-piece" style="left:78px; top:50px; background:#f59e0b;"></div><div class="fruit-piece" style="left:132px; top:28px; background:#facc15;"></div><div class="fruit-piece" style="left:56px; top:104px; background:#22c55e;"></div><div class="fruit-piece" style="left:118px; top:110px; background:#a855f7;"></div><div class="poster-title">Fruit Crush<span class="poster-sub">Swap • Chain • Sparkle</span></div></div><h3>Fruit Crush</h3><p>Swipe fruit, trigger cascades, and make the whole board glitter while the score climbs.</p><div class="button-row"><a class="btn btn-primary" href="fruit-crush.html">Play</a></div></div>
           <div class="tile"><div class="cabinet-art art-casino"><div class="casino-felt"></div><div class="card-mini" style="left:18px; top:22px;">A♠</div><div class="card-mini red" style="left:46px; top:34px;">K♥</div><div class="chip-dot" style="left:22px; top:86px;"></div><div class="chip-dot red" style="left:54px; top:96px;"></div><div class="poster-title">Greg's Casino<span class="poster-sub">Deal • Hit • Stand</span></div></div><h3>Greg's Casino</h3><p>Math and regret.</p><div class="button-row"><a class="btn btn-primary" href="gregs-casino.html">Play</a></div></div>
           <div class="tile"><div class="cabinet-art art-gallery"><div class="target-dot" style="width:36px;height:36px;left:22px;top:28px;background:#22c55e;border-radius:999px;"></div><div class="target-dot" style="width:26px;height:26px;left:92px;top:62px;background:#38bdf8;border-radius:999px;"></div><div class="target-dot" style="width:32px;height:32px;left:136px;top:94px;background:#ef4444;border-radius:999px;"></div><div class="cross-dot"></div><div class="poster-title">Chad's Shooting Gallery<span class="poster-sub">Aim • Blast • Reload</span></div></div><h3>Chad's Shooting Gallery</h3><p>Loud target panic.</p><div class="button-row"><a class="btn btn-primary" href="chads-shooting-gallery.html">Play</a></div></div>
           <div class="tile"><div class="cabinet-art art-quiz"><div class="quiz-card"></div><div class="quiz-badge">GCOR-ish</div><div class="quiz-line one"></div><div class="quiz-line two"></div><div class="quiz-line three"></div><div class="quiz-line four"></div><div class="quiz-line five"></div><div class="poster-title">Rulebook Rumble<span class="poster-sub">Think • Pick • Survive</span></div></div><h3>Rulebook Rumble</h3><p>Twenty railroad logic questions with three gloriously stupid traps every round.</p><div class="button-row"><a class="btn btn-primary" href="rulebook-rumble.html">Play</a></div></div>
@@ -434,7 +415,7 @@
       </section>
     </main>
 
-    <footer><p>Test Arcade • Nine games and one increasingly questionable use of a GitHub repo</p></footer>
+    <footer><p>Test Arcade • Ten games and one increasingly questionable use of a GitHub repo</p></footer>
   </div>
 
   <script>
@@ -475,6 +456,17 @@
         sub: 'Conductor already yelling'
       },
       {
+        name: "Fruit Crush",
+        tagline: 'Swap • Chain • Sparkle',
+        copy: 'A bright little match-3 cabinet where the fruit explode into points and the board keeps trying to outdo itself.',
+        href: 'fruit-crush.html',
+        type: 'Match-3 cabinet',
+        flavor: 'Juice chaos',
+        visualClass: 'art-fruit',
+        visualHtml: '<div class="fruit-piece" style="left:24px; top:28px; background:#ef4444;"></div><div class="fruit-piece" style="left:78px; top:50px; background:#f59e0b;"></div><div class="fruit-piece" style="left:132px; top:28px; background:#facc15;"></div><div class="fruit-piece" style="left:56px; top:104px; background:#22c55e;"></div><div class="fruit-piece" style="left:118px; top:110px; background:#a855f7;"></div>',
+        sub: 'Combo sugar rush'
+      },
+      {
         name: "Jimmy\'s Big Catch",
         tagline: 'Cast • Hook • Reel',
         copy: 'Relaxing for about twelve seconds, then the lake starts taking your success personally.',
@@ -506,6 +498,7 @@
         { name: 'Minesweeper', raw: localStorage.getItem('minesweeper-best-medium'), type: 'time', label: 'best medium time', href: 'minesweeper.html' },
         { name: "Jimmy's Big Catch", raw: localStorage.getItem('fishing-best-score'), type: 'score', label: 'best score', href: 'fishing.html' },
         { name: 'Helper', raw: localStorage.getItem('helper-best-crossings'), type: 'score', label: 'best crossings', href: 'helper.html' },
+        { name: 'Fruit Crush', raw: localStorage.getItem('fruit-crush-best-score'), type: 'score', label: 'best fruit score', href: 'fruit-crush.html' },
         { name: "Greg's Casino", raw: localStorage.getItem('gregs-casino-best-bankroll'), type: 'score', label: 'best bankroll', href: 'gregs-casino.html' },
         { name: "Chad's Shooting Gallery", raw: localStorage.getItem('chads-gallery-best-score'), type: 'score', label: 'best score', href: 'chads-shooting-gallery.html' },
         { name: 'Rulebook Rumble', raw: localStorage.getItem('rulebook-rumble-best-score'), type: 'score', label: 'best quiz score', href: 'rulebook-rumble.html' }
